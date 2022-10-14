@@ -3,9 +3,7 @@ const hydrate = async (element) => {
   const props = JSON.parse(element.getAttribute("props"));
   const load = performance.now();
   const { default: Component } = await import(`/${name}.js`);
-  console.info(`Loaded ${name} in ${performance.now() - load}ms`);
-
-  console.log(props);
+  console.info(`Loaded ${name} in ${performance.now() - load}ms`, props);
 
   const hydrate = performance.now();
   new Component({

@@ -1,8 +1,8 @@
 {
   "tasks": {
-    "build": "deno run -A build.ts",
-    "build:watch": "deno run --cached-only --watch -A build.ts dev",
-    "serve": "deno run --watch -A server.ts",
+    "build": "deno run -A server/build.ts",
+    "build:watch": "deno run --cached-only --watch -A server/build.ts dev",
+    "serve": "deno run --watch -A server/main.ts",
     "dev": "deno task build && deno task serve & deno task build:watch "
   }
 }

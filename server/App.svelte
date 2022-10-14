@@ -1,8 +1,8 @@
 <script>
   import Header from "./Header.svelte";
   import Island from "./Island.svelte";
-  import Counter from "./islands/Counter.svelte";
-  import Name from "./islands/Name.svelte";
+  import Counter from "../shared/Counter.svelte";
+  import Name from "../shared/Name.svelte";
 </script>
 
 <body>

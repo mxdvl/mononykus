@@ -5,7 +5,7 @@ export const getAsset = async (
 ): Promise<Response | undefined> => {
   try {
     const file = await Deno.readFile(
-      new URL(`../build/islands/${pathname}`, import.meta.url)
+      new URL(`../build/client/${pathname}`, import.meta.url)
     );
 
     return new Response(file, {

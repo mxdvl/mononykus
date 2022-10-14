@@ -4,15 +4,15 @@ import { css, external, internal } from "./plugins.ts";
 
 const getIslandComponents = async () => {
   const islands = [];
-  for await (const { name } of Deno.readDir("./components/islands")) {
-    islands.push(name);
+  for await (const { name } of Deno.readDir("shared")) {
+    if (name.endsWith(".svelte")) islands.push(name);
   }
-  return islands.map((island) => `./components/islands/${island}`);
+  return islands.map((island) => `shared/${island}`);
 };
 
 const ssr = {
-  input: "./components/App.svelte",
-  output: { dir: "./build" },
+  input: `./server/App.svelte`,
+  output: { dir: "./build/server" },
   plugins: [
     // keep multi-line
     css(),
@@ -27,7 +27,7 @@ const ssr = {
 
 const islands = {
   input: await getIslandComponents(),
-  output: { dir: "./build/islands" },
+  output: { dir: "./build/client" },
   plugins: [
     // keep multi-line
     css(),

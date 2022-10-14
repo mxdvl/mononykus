@@ -24,4 +24,4 @@ jobs:
         uses: denoland/deployctl@v1
         with:
           project: "mononykus"
-          entrypoint: "./server.ts"
+          entrypoint: "./server/main.ts"

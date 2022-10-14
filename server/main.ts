@@ -1,7 +1,7 @@
 import { Handler, serve } from "https://deno.land/std@0.154.0/http/server.ts";
-import { getAsset } from "./src/asset.ts";
+import { getAsset } from "./asset.ts";
 // Make sure you build your app once!
-import App from "./build/App.js";
+import App from "../build/server/App.js";
 
 const handler: Handler = async ({ url }) => {
   const { pathname } = new URL(url);
@@ -26,7 +26,7 @@ const handler: Handler = async ({ url }) => {
   </head>
     ${html}
   <script type="module">${await Deno.readTextFile(
-    new URL("islands.js", import.meta.url)
+    new URL("../client/islands.js", import.meta.url)
   )}</script>
 </html>`;
 

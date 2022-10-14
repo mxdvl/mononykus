@@ -12,13 +12,13 @@
     <h2>Subtitle</h2>
     <p>This is an interesting thing</p>
 
-    <Island name="Counter" count={7} component={Counter} />
-    <Island name="Counter" component={Counter} />
-    <Island name="Counter" count={10} component={Counter} />
+    <Island component={Counter} name="counter" props={{ count: 7 }} />
+    <Island component={Counter} name="counter" props={{}} />
+    <Island component={Counter} name="counter" props={{ count: 10 }} />
 
     <hr />
 
-    <Island name="Name" component={Name} />
+    <Island component={Name} name="name" props={{ value: "World" }} />
   </main>
 </body>
 

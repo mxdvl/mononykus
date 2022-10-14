@@ -5,3 +5,7 @@ using Svelte and Deno as the underlying technologies.
 
 > **Note**
 > Work-in-progress
+
+## About the name Mononykus
+
+[Mononykus](https://en.wikipedia.org/wiki/Mononykus) is a svelte dinosaur.

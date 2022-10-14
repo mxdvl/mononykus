@@ -1,8 +1,6 @@
 <script>
   import Header from "./Header.svelte";
   import Island from "./Island.svelte";
-  import Counter from "../shared/Counter.svelte";
-  import Name from "../shared/Name.svelte";
 </script>
 
 <body>
@@ -12,13 +10,21 @@
     <h2>Subtitle</h2>
     <p>This is an interesting thing</p>
 
-    <Island component={Counter} name="counter" props={{ count: 7 }} />
-    <Island component={Counter} name="counter" props={{}} />
-    <Island component={Counter} name="counter" props={{ count: 10 }} />
+    <ul>
+      <li>
+        <Island name="Counter" props={{ count: 7 }} />
+      </li>
+      <li>
+        <Island name="Counter" props={{}} />
+      </li>
+      <li>
+        <Island name="Counter" props={{ count: 10 }} />
+      </li>
+    </ul>
 
     <hr />
 
-    <Island component={Name} name="name" props={{ value: "World" }} />
+    <Island name="Name" props={{ value: "World" }} />
   </main>
 </body>
 

@@ -10,7 +10,7 @@ const getIslandComponents = async () => {
   return islands.map((island) => `./components/islands/${island}`);
 };
 
-const options = {
+const ssr = {
   input: "./components/App.svelte",
   output: { dir: "./build" },
   plugins: [
@@ -41,7 +41,7 @@ const islands = {
 };
 
 if (Deno.args[0] === "dev") {
-  const watcher = watch([options, islands]);
+  const watcher = watch([ssr, islands]);
   watcher.on("event", (e) => {
     if (e.code === "BUNDLE_END") {
       console.log(
@@ -54,6 +54,8 @@ if (Deno.args[0] === "dev") {
   // Prevent Deno from exiting
   setTimeout(() => {}, Number.MAX_VALUE);
 } else {
-  const bundle = await rollup(options);
-  bundle.write(options.output);
+  for (const options of [ssr, islands]) {
+    const bundle = await rollup(options);
+    bundle.write(options.output);
+  }
 }

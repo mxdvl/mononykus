@@ -1,6 +1,6 @@
 import { rollup, watch } from "https://esm.sh/rollup@3.1.0";
 import svelte from "https://esm.sh/rollup-plugin-svelte@7.1.0";
-import { css, external, internal } from "./plugins.ts";
+import { css, external, getSvelteInternal, internal } from "./plugins.ts";
 
 const getIslandComponents = async () => {
   const islands = [];
@@ -14,7 +14,6 @@ const ssr = {
   input: `./server/App.svelte`,
   output: { dir: "./build/server" },
   plugins: [
-    // keep multi-line
     css(),
     svelte({
       emitCss: false,
@@ -29,16 +28,17 @@ const islands = {
   input: await getIslandComponents(),
   output: { dir: "./build/client" },
   plugins: [
-    // keep multi-line
     css(),
     svelte({
-      emitCss: false,
+      emitCss: true,
       compilerOptions: { generate: "dom", hydratable: true },
     }),
     internal(),
   ],
   external: [external],
 };
+
+getSvelteInternal();
 
 if (Deno.args[0] === "dev") {
   const watcher = watch([ssr, islands]);

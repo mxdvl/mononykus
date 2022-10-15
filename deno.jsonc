@@ -4,5 +4,10 @@
     "build:watch": "deno run --cached-only --watch -A server/build.ts dev",
     "serve": "deno run --watch -A server/main.ts",
     "dev": "deno task build && deno task serve & deno task build:watch "
+  },
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"],
+    "checkJs": true,
+    "noUncheckedIndexedAccess": true
   }
 }

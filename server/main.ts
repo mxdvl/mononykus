@@ -1,7 +1,7 @@
 import { Handler, serve } from "https://deno.land/std@0.154.0/http/server.ts";
 import { getAsset } from "./asset.ts";
-// Make sure you build your app once!
-import App from "../build/server/App.js";
+
+import Home from "../build/server/Home.js";
 
 const handler: Handler = async ({ url }) => {
   const { pathname } = new URL(url);
@@ -13,7 +13,7 @@ const handler: Handler = async ({ url }) => {
   const {
     html,
     css: { code: css },
-  } = App.render();
+  } = Home.render();
 
   const body = `<!DOCTYPE html>
 <html lang="en">
@@ -22,7 +22,10 @@ const handler: Handler = async ({ url }) => {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Svelte + Deno</title>
-    <style>${css}</style>
+    <style>
+    ${await Deno.readTextFile(new URL("../client/styles.css", import.meta.url))}
+    ${css}
+    </style>
   </head>
     ${html}
   <script type="module">${await Deno.readTextFile(

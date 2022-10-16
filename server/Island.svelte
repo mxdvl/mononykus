@@ -12,6 +12,6 @@
   };
 </script>
 
-<island {name} props={JSON.stringify(props)}>
+<one-claw {name} props={JSON.stringify(props)}>
   <svelte:component this={islands[name]} {...props} />
-</island>
+</one-claw>

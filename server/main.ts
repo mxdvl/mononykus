@@ -22,7 +22,10 @@ const handler: Handler = async ({ url }) => {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Svelte + Deno</title>
-    <style>${css}</style>
+    <style>
+    ${await Deno.readTextFile(new URL("../client/styles.css", import.meta.url))}
+    ${css}
+    </style>
   </head>
     ${html}
   <script type="module">${await Deno.readTextFile(

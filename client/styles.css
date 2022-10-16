@@ -1,8 +1,12 @@
-body {
-  margin: 0;
-  padding: 0;
-}
-
 * {
   box-sizing: border-box;
+}
+
+one-claw {
+  display: block;
+  background-color: ghostwhite;
+}
+
+one-claw[foraging="complete"] {
+  background-color: honeydew;
 }

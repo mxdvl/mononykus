@@ -11,7 +11,7 @@ const getIslandComponents = async () => {
 };
 
 const ssr = {
-  input: `./server/App.svelte`,
+  input: `./server/Home.svelte`,
   output: { dir: "./build/server" },
   plugins: [
     css(),

@@ -1,7 +1,7 @@
 import { Handler, serve } from "https://deno.land/std@0.154.0/http/server.ts";
 import { getAsset } from "./asset.ts";
-// Make sure you build your app once!
-import App from "../build/server/App.js";
+
+import Home from "../build/server/Home.js";
 
 const handler: Handler = async ({ url }) => {
   const { pathname } = new URL(url);
@@ -13,7 +13,7 @@ const handler: Handler = async ({ url }) => {
   const {
     html,
     css: { code: css },
-  } = App.render();
+  } = Home.render();
 
   const body = `<!DOCTYPE html>
 <html lang="en">

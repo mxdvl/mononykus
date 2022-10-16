@@ -1,5 +1,6 @@
 /** @type {(element: Element) => Promise<void>} */
 const hydrate = async (element) => {
+  element.setAttribute("foraging", "started");
   const name = element.getAttribute("name");
   const props = JSON.parse(element.getAttribute("props") ?? "{}");
   const load = performance.now();
@@ -12,6 +13,7 @@ const hydrate = async (element) => {
     props,
     hydrate: true,
   });
+  element.setAttribute("foraging", "complete");
   console.info(`Hydrated ${name} in ${performance.now() - hydrate}ms`);
 };
 

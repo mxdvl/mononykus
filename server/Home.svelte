@@ -42,6 +42,8 @@
 
     margin: 0;
     padding: 0;
+    background-color: floralwhite;
+    color: hsl(6, 60%, 18%);
   }
 
   main {

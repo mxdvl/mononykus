@@ -38,7 +38,7 @@ const islands = {
   external: [external],
 };
 
-getSvelteInternal();
+await getSvelteInternal();
 
 if (Deno.args[0] === "dev") {
   const watcher = watch([ssr, islands]);

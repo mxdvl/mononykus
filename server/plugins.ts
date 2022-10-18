@@ -1,24 +1,9 @@
-import type { Plugin } from "https://esm.sh/rollup@3.1.0";
+import type { Plugin } from "./build.ts";
 import { ensureDir } from "https://deno.land/std@0.159.0/fs/mod.ts?s=ensureDir";
 
-export const external = "https://esm.sh/svelte@3.51.0/internal";
 const noCheck = "// @ts-nocheck -- build output \n\n";
 
 const BUILD_DIR = new URL(`../build/`, import.meta.url);
-
-export const css = (): Plugin => ({
-  name: "css",
-  transform: async (code, id) => {
-    if (id.endsWith(".css")) {
-      const filename = id.split("/").at(-1) ?? "styles";
-      console.warn({ code, id, filename });
-      await ensureDir(BUILD_DIR);
-      await Deno.writeTextFile(new URL(filename, BUILD_DIR), code);
-      return "";
-    }
-    return null;
-  },
-});
 
 export const getSvelteInternal = async () => {
   const code = await fetch(
@@ -33,15 +18,16 @@ export const getSvelteInternal = async () => {
 };
 
 export const internal = (): Plugin => ({
-  name: "internal",
-  resolveId: (source) => {
-    if (source === "svelte/internal") return "./build/internal.js";
-  },
-  transform: (code, id) => {
-    if (id.endsWith(".svelte")) {
-      return code;
-      // return code.replace("svelte/internal", external);
-    }
-    return null;
+  name: "svelte/internal",
+  setup(build) {
+    build.onResolve({ filter: /^svelte\/internal$/ }, async () => {
+      const result = await build.resolve("./internal.js", {
+        resolveDir: "./build",
+      });
+      if (result.errors.length > 0) {
+        return { errors: result.errors };
+      }
+      return { path: result.path, external: false };
+    });
   },
 });

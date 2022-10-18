@@ -9,5 +9,12 @@
 
   <input type="text" bind:value />
 
-  (try changing this name)
+  <em>(try changing this name)</em>
 </div>
+
+<style>
+  input {
+    border: 2px solid maroon;
+    border-radius: 4px;
+  }
+</style>

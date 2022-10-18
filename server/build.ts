@@ -1,8 +1,8 @@
-import { rollup, watch } from "https://esm.sh/rollup@3.1.0";
-import svelte from "https://esm.sh/rollup-plugin-svelte@7.1.0";
-import { css, external, getSvelteInternal, internal } from "./plugins.ts";
+import * as esbuild from "https://deno.land/x/esbuild@v0.15.11/mod.js";
+import svelte from "https://esm.sh/esbuild-svelte@0.7.1";
+import { getSvelteInternal, internal } from "./plugins.ts";
 
-const getIslandComponents = async () => {
+export const getIslandComponents = async () => {
   const islands = [];
   for await (const { name } of Deno.readDir("shared")) {
     if (name.endsWith(".svelte")) islands.push(name);
@@ -10,52 +10,65 @@ const getIslandComponents = async () => {
   return islands.map((island) => `shared/${island}`);
 };
 
-const ssr = {
-  input: `./server/Home.svelte`,
-  output: { dir: "./build/server" },
+const configs = {
+  logLevel: "info",
+  format: "esm",
+  incremental: true,
+  minify: true,
+};
+
+const ssr: esbuild.BuildOptions = {
+  entryPoints: [`./server/Home.svelte`],
+  outdir: "./build/server",
+  bundle: true,
   plugins: [
-    css(),
+    // @ts-expect-error -- there’s an issue with ImportKind
     svelte({
-      emitCss: false,
       compilerOptions: { generate: "ssr", hydratable: true },
     }),
     internal(),
   ],
-  external: [external],
+  ...configs,
 };
 
-const islands = {
-  input: await getIslandComponents(),
-  output: { dir: "./build/client" },
+const islands: esbuild.BuildOptions = {
+  entryPoints: await getIslandComponents(),
+  outdir: "./build/client",
+  bundle: true,
   plugins: [
-    css(),
+    // @ts-expect-error -- there’s an issue with ImportKind
     svelte({
-      emitCss: true,
       compilerOptions: { generate: "dom", hydratable: true },
     }),
     internal(),
   ],
-  external: [external],
+  ...configs,
 };
 
 await getSvelteInternal();
 
+const results = await Promise.all([ssr, islands].map(esbuild.build));
+
 if (Deno.args[0] === "dev") {
-  const watcher = watch([ssr, islands]);
-  watcher.on("event", (e) => {
-    if (e.code === "BUNDLE_END") {
-      console.log(
-        "Built",
-        e.result.watchFiles.map((file) => file.split("/").at(-1)),
-        `in ${e.duration}ms`
-      );
+  let timeout;
+  const watcher = Deno.watchFs(["./server", "./client", "./shared"]);
+  for await (const { paths } of watcher) {
+    if (paths.some((path) => path.endsWith(".svelte"))) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        const start = performance.now();
+        for (const result of results) {
+          result.rebuild?.();
+        }
+        const duration = Math.ceil(performance.now() - start);
+        console.log(`Rebuilt in ${duration}ms`);
+      }, 24);
     }
-  });
+  }
   // Prevent Deno from exiting
   setTimeout(() => {}, Number.MAX_VALUE);
-} else {
-  for (const options of [ssr, islands]) {
-    const bundle = await rollup(options);
-    bundle.write(options.output);
-  }
 }
+
+esbuild.stop();
+
+export type Plugin = esbuild.Plugin;

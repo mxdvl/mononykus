@@ -51,7 +51,7 @@ const results = await Promise.all([ssr, islands].map(esbuild.build));
 
 if (Deno.args[0] === "dev") {
   let timeout;
-  const watcher = Deno.watchFs(["./server", "./client"]);
+  const watcher = Deno.watchFs(["./server", "./client", "./shared"]);
   for await (const { paths } of watcher) {
     if (paths.some((path) => path.endsWith(".svelte"))) {
       clearTimeout(timeout);

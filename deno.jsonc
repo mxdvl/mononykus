@@ -6,8 +6,14 @@
     "dev": "deno task build && deno task serve & deno task build:watch "
   },
   "compilerOptions": {
+    "strict": true,
     "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"],
     "checkJs": true,
     "noUncheckedIndexedAccess": true
+  },
+  "lint": {
+    "files": {
+      "exclude": ["build"]
+    }
   }
 }

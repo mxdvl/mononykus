@@ -1,7 +1,15 @@
 import { Handler, serve } from "https://deno.land/std@0.154.0/http/server.ts";
 import { getAsset } from "./asset.ts";
 
-import Home from "../build/server/Home.js";
+import StaticHome from "../build/server/Home.js";
+
+const getHome = (watch: boolean) => {
+  if (!watch) return StaticHome;
+
+  return import(`../build/server/Home.js?r=${performance.now()}`).then(
+    (module) => module.default
+  );
+};
 
 const handler: Handler = async ({ url }) => {
   const { pathname } = new URL(url);
@@ -9,6 +17,8 @@ const handler: Handler = async ({ url }) => {
     const assetResponse = await getAsset(pathname);
     if (assetResponse) return assetResponse;
   }
+
+  const Home = await getHome(true);
 
   const {
     html,

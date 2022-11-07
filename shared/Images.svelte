@@ -9,27 +9,25 @@
     .filter(Boolean)
     .map((path) => new URL(`/img/media${path}`, "https://i.guim.co.uk"));
 
+  let width = 320;
+
   /** @type {Array<>}*/
   const configs = [
     {
       dpr: 2,
       quality: 45,
-      width: 110,
     },
     {
       dpr: 2,
-      quality: 45,
-      width: 320,
+      quality: 50,
     },
     {
       dpr: 1,
       quality: 85,
-      width: 320,
     },
     {
       dpr: 1,
-      quality: 85,
-      width: 110,
+      quality: 65,
     },
   ];
 </script>
@@ -41,8 +39,15 @@
 
 <hr />
 
+<label>
+  Width
+  <input type="number" max="1300" step="1" bind:value={width} />
+</label>
+
+<hr />
+
 <ul style:--count={urls.length + 1}>
-  {#each configs as { dpr, quality, width }}
+  {#each configs as { dpr, quality }}
     <Column {dpr} {quality} {width} {urls} />
   {/each}
 </ul>

@@ -28,11 +28,6 @@
     Quality
     <input type="number" min="45" max="85" step="1" bind:value={quality} />
   </label>
-
-  <label>
-    Width
-    <input type="number" max="1300" step="1" bind:value={width} />
-  </label>
 </li>
 {#each urls.map((url) => {
   const searchParams = new URLSearchParams({ dpr, quality, width, s: "none" });
@@ -66,5 +61,9 @@
   li.config {
     display: flex;
     flex-direction: column;
+    position: sticky;
+    padding: 12px 0;
+    top: 0;
+    background-color: #112c;
   }
 </style>

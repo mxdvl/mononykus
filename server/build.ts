@@ -24,7 +24,7 @@ const ssr: esbuild.BuildOptions = {
   plugins: [
     // @ts-expect-error -- there’s an issue with ImportKind
     svelte({
-      compilerOptions: { generate: "ssr", hydratable: true },
+      compilerOptions: { generate: "ssr", hydratable: true, immutable: true },
     }),
     internal(),
   ],
@@ -38,7 +38,7 @@ const islands: esbuild.BuildOptions = {
   plugins: [
     // @ts-expect-error -- there’s an issue with ImportKind
     svelte({
-      compilerOptions: { generate: "dom", hydratable: true },
+      compilerOptions: { generate: "dom", hydratable: true, immutable: true },
     }),
     internal(),
   ],

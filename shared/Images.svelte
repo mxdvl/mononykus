@@ -1,90 +1,64 @@
 <script>
+  import Column from "./Column.svelte";
+
   /** @type {string} */
   export let input;
-
-  let dpr = 2;
-  let quality = 50;
-  let width = 320;
 
   $: urls = input
     .split("\n")
     .filter(Boolean)
-    .map(
-      (path) =>
-        new URL(
-          `/img/media${path}?${new URLSearchParams({
-            dpr,
-            quality,
-            width,
-            s: "none",
-          })}`,
-          "https://i.guim.co.uk"
-        )
-    );
+    .map((path) => new URL(`/img/media${path}`, "https://i.guim.co.uk"));
 
-  /** @type {(src: URL) => number}*/
-  const ratio = (src) => {
-    const [, , , crop] = src.pathname.split("/");
-    if (!crop) return 1;
-    const [width, height] = crop.split("_").slice(2);
-    return height / width;
-  };
+  /** @type {Array<>}*/
+  const configs = [
+    {
+      dpr: 2,
+      quality: 45,
+      width: 110,
+    },
+    {
+      dpr: 2,
+      quality: 45,
+      width: 320,
+    },
+    {
+      dpr: 1,
+      quality: 85,
+      width: 320,
+    },
+    {
+      dpr: 1,
+      quality: 85,
+      width: 110,
+    },
+  ];
 </script>
 
-<textarea cols="120" rows="12" bind:value={input} />
+<label>
+  Enter i.guim.co.uk URLs crops below, each on its own line:<br />
+  <textarea cols="120" rows="12" bind:value={input} />
+</label>
 
 <hr />
 
-<label for="">
-  DPR
-  <input type="number" min="1" max="2" step="1" bind:value={dpr} />
-</label>
-
-<label for="">
-  Quality
-  <input type="number" min="45" max="85" step="1" bind:value={quality} />
-</label>
-
-<label for="">
-  Width
-  <input type="number" max="1300" step="1" bind:value={width} />
-</label>
-
-<ul>
-  {#each urls as src}
-    <li>
-      {#await fetch(src).then((r) => r.blob())}
-        <img {width} height={Math.round(ratio(src) * width)} alt="" />
-        <code>&nbsp;__._ kB</code>
-      {:then blob}
-        <img {src} {width} height={Math.round(ratio(src) * width)} alt="" />
-        <code>
-          {@html (blob.size / 1000)
-            .toFixed(1)
-            .padStart(5, " ")
-            .replaceAll(" ", "&nbsp;")} kB
-        </code>
-      {/await}
-    </li>
+<ul style:--count={urls.length + 1}>
+  {#each configs as { dpr, quality, width }}
+    <Column {dpr} {quality} {width} {urls} />
   {/each}
 </ul>
 
 <style>
   ul {
     width: 50%;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: repeat(var(--count), auto);
+    grid-auto-flow: column;
+    grid-auto-columns: auto;
     padding: 0;
     gap: 12px;
   }
 
-  li {
-    list-style-type: none;
-    display: flex;
-    gap: 12px;
-  }
-
-  code {
-    font-family: Menlo, monospace;
+  label {
+    display: block;
   }
 </style>

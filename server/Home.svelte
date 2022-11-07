@@ -1,5 +1,4 @@
 <script>
-  import Header from "./Header.svelte";
   import Island from "./Island.svelte";
 
   /** @type {string} */
@@ -7,11 +6,11 @@
 </script>
 
 <body>
-  <Header />
+  <header>
+    <h1>Image Comparison tool</h1>
+    <h2>Compare various image qualities and formats</h2>
+  </header>
   <main>
-    <h1>The Guardian – Image Comparison tool</h1>
-    <h2>Partial Hydration with Svelte and Deno</h2>
-
     <Island name="Images" props={{ input }} />
   </main>
 </body>
@@ -23,12 +22,15 @@
 
     margin: 0;
     padding: 0;
-    background-color: floralwhite;
-    color: hsl(6, 60%, 18%);
+    background-color: #112;
+    color: #ccc;
+  }
+  header {
+    padding: 1rem;
   }
 
   main {
-    padding: 0 3rem;
+    padding: 0 1rem;
     margin: auto;
   }
 </style>

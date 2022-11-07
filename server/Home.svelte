@@ -1,6 +1,7 @@
 <script>
   import Header from "./Header.svelte";
   import Island from "./Island.svelte";
+  import Svelte from "./Svelte.svelte";
 </script>
 
 <body>
@@ -32,6 +33,10 @@
     </p>
 
     <Island name="Name" props={{ value: "late Cretaceous friend" }} />
+
+    <hr />
+
+    <Svelte size="36" />
   </main>
 </body>
 

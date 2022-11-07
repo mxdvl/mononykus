@@ -10,12 +10,12 @@ const handler: Handler = async ({ url }) => {
     if (assetResponse) return assetResponse;
   }
 
+  const input = searchParams.get("paths")?.replaceAll(",", "\n") ?? "";
+
   const {
     html,
     css: { code: css },
-  } = Home.render({
-    input: searchParams.get("paths")?.replaceAll(",", "\n"),
-  });
+  } = Home.render({ input });
 
   const body = `<!DOCTYPE html>
 <html lang="en">

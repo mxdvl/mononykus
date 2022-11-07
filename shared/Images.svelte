@@ -6,26 +6,32 @@
   let quality = 50;
   let width = 320;
 
-  $: urls = input.split("\n").map(
-    (path) =>
-      new URL(
-        `/img/media${path}?${new URLSearchParams({
-          dpr,
-          quality,
-          width,
-          s: "none",
-        })}`,
-        "https://i.guim.co.uk"
-      )
-  );
+  $: urls = input
+    .split("\n")
+    .filter(Boolean)
+    .map(
+      (path) =>
+        new URL(
+          `/img/media${path}?${new URLSearchParams({
+            dpr,
+            quality,
+            width,
+            s: "none",
+          })}`,
+          "https://i.guim.co.uk"
+        )
+    );
 
+  /** @type {(src: URL) => number}*/
   const ratio = (src) => {
-    const [width, height] = src.pathname.split("/").at(4).split("_").slice(2);
+    const [, , , crop] = src.pathname.split("/");
+    if (!crop) return 1;
+    const [width, height] = crop.split("_").slice(2);
     return height / width;
   };
 </script>
 
-<textarea name="input" cols="120" rows="10" bind:value={input} />
+<textarea cols="120" rows="12" bind:value={input} />
 
 <hr />
 

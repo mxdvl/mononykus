@@ -1,6 +1,5 @@
 <script>
-  import Counter from "../shared/Counter.svelte";
-  import Name from "../shared/Name.svelte";
+  import Images from "../shared/Images.svelte";
 
   /** @type {keyof islands} */
   export let name;
@@ -9,8 +8,7 @@
 
   /** @TODO This should be auto-generated */
   const islands = {
-    Counter,
-    Name,
+    Images,
   };
 </script>
 

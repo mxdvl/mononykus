@@ -4,7 +4,7 @@ import { getAsset } from "./asset.ts";
 import Home from "../build/server/Home.js";
 
 const handler: Handler = async ({ url }) => {
-  const { pathname } = new URL(url);
+  const { pathname, searchParams } = new URL(url);
   if (pathname !== "/") {
     const assetResponse = await getAsset(pathname);
     if (assetResponse) return assetResponse;
@@ -13,7 +13,9 @@ const handler: Handler = async ({ url }) => {
   const {
     html,
     css: { code: css },
-  } = Home.render();
+  } = Home.render({
+    input: searchParams.get("paths")?.replaceAll(",", "\n"),
+  });
 
   const body = `<!DOCTYPE html>
 <html lang="en">

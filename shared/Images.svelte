@@ -14,14 +14,6 @@
   /** @type {Array<>}*/
   const configs = [
     {
-      dpr: 2,
-      quality: 45,
-    },
-    {
-      dpr: 2,
-      quality: 50,
-    },
-    {
       dpr: 1,
       quality: 85,
     },
@@ -29,7 +21,17 @@
       dpr: 1,
       quality: 65,
     },
+    {
+      dpr: 2,
+      quality: 45,
+    },
+    {
+      dpr: 2,
+      quality: 50,
+    },
   ];
+
+  let baseline = [];
 </script>
 
 <label>
@@ -47,8 +49,19 @@
 <hr />
 
 <ul style:--count={urls.length + 1}>
-  {#each configs as { dpr, quality }}
-    <Column {dpr} {quality} {width} {urls} />
+  {#each configs as { dpr, quality }, index}
+    <Column
+      {dpr}
+      {quality}
+      {width}
+      {urls}
+      {baseline}
+      setBaseline={index === 0
+        ? (i, b) => {
+            baseline[i] = b;
+          }
+        : undefined}
+    />
   {/each}
 </ul>
 

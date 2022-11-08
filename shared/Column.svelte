@@ -16,6 +16,13 @@
     const [width, height] = crop.split("_").slice(2);
     return height / width;
   };
+
+  /** @type {number[]}*/
+  export let baseline;
+  /** @type {undefined | (number) => void}*/
+  export let setBaseline;
+
+  $: getDiff = (baseline, size) => Math.round((size / baseline) * 100 - 100);
 </script>
 
 <li class="config">
@@ -32,15 +39,30 @@
 {#each urls.map((url) => {
   const searchParams = new URLSearchParams({ dpr, quality, width, s: "none" });
   return new URL(`${url.href}?${searchParams}`);
-}) as src}
+}) as src, index}
   <li>
     <figure>
-      <img {src} {width} height={Math.round(ratio(src) * width)} alt="" />
       <figcaption>
-        {#await fetch(src).then((r) => r.blob())}
+        <img {src} {width} height={Math.round(ratio(src) * width)} alt="" />
+
+        {#await fetch( src, { headers: { // TODO: get headers from actual browsing session!
+                Accept: ["image/avif", "image/webp", "image/png", "image/svg+xml", "image/*"].join(",") } } )
+          .then((r) => r.blob())
+          .then((blob) => {
+            const { size, type } = blob;
+            setBaseline?.(index, size);
+
+            return { size, type };
+          })}
           kB
-        {:then blob}
-          {(blob.size / 1000).toFixed(1)} kB
+        {:then { size, type }}
+          {type} –
+          <span class:positive={getDiff(baseline[index], size) > 0}
+            >{getDiff(baseline[index], size)}%</span
+          >
+          –
+
+          {(size / 1000).toFixed(1)} kB
         {/await}
       </figcaption>
     </figure>
@@ -65,5 +87,12 @@
     padding: 12px 0;
     top: 0;
     background-color: #112c;
+  }
+
+  .positive {
+    color: orangered;
+  }
+  .positive::before {
+    content: "+";
   }
 </style>

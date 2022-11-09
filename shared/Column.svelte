@@ -11,16 +11,22 @@
 
   /** @type {(src: URL) => number}*/
   const ratio = (src) => {
-    const [, , , crop] = src.pathname.split("/");
+    const [, , , , crop] = src.pathname.split("/");
     if (!crop) return 1;
     const [width, height] = crop.split("_").slice(2);
     return height / width;
   };
 
-  /** @type {number[]}*/
-  export let baseline;
-  /** @type {undefined | (number) => void}*/
-  export let setBaseline;
+  const blobToDataUri = (blob) =>
+    new Promise((resolve) => {
+      let reader = new FileReader();
+      reader.onload = (e) => {
+        resolve(e.target.result);
+      };
+      reader.readAsDataURL(blob);
+    });
+
+  const IS_BROWSER = typeof document !== "undefined";
 
   $: getDiff = (baseline, size) => Math.round((size / baseline) * 100 - 100);
 </script>
@@ -42,29 +48,42 @@
 }) as src, index}
   <li>
     <figure>
-      <figcaption>
-        <img {src} {width} height={Math.round(ratio(src) * width)} alt="" />
-
+      {#if IS_BROWSER}
         {#await fetch( src, { headers: { // TODO: get headers from actual browsing session!
                 Accept: ["image/avif", "image/webp", "image/png", "image/svg+xml", "image/*"].join(",") } } )
           .then((r) => r.blob())
-          .then((blob) => {
+          .then(async (blob) => {
             const { size, type } = blob;
-            setBaseline?.(index, size);
 
-            return { size, type };
+            const dataUri = await blobToDataUri(blob);
+
+            return { size, type, dataUri };
           })}
-          kB
-        {:then { size, type }}
-          {type} –
-          <span class:positive={getDiff(baseline[index], size) > 0}
-            >{getDiff(baseline[index], size)}%</span
-          >
-          –
+          <div
+            style={`
+            width: ${width}px;
+            height: ${Math.round(ratio(src) * width)}px;`}
+          />
+          <figcaption>
+            <span>image/</span>
+            <span>kB</span>
+          </figcaption>
+        {:then { size, type, dataUri }}
+          <img
+            src={dataUri}
+            {width}
+            height={Math.round(ratio(src) * width)}
+            alt=""
+          />
+          <figcaption>
+            <span>{type}</span>
 
-          {(size / 1000).toFixed(1)} kB
+            <span>
+              {(size / 1000).toFixed(1)} kB
+            </span>
+          </figcaption>
         {/await}
-      </figcaption>
+      {/if}
     </figure>
   </li>
 {/each}
@@ -76,8 +95,17 @@
     gap: 12px;
   }
 
+  figure {
+    margin: 0;
+  }
+
+  figure img {
+    display: block;
+  }
+
   figcaption {
-    text-align: right;
+    display: flex;
+    justify-content: space-between;
   }
 
   li.config {
@@ -87,12 +115,5 @@
     padding: 12px 0;
     top: 0;
     background-color: #112c;
-  }
-
-  .positive {
-    color: orangered;
-  }
-  .positive::before {
-    content: "+";
   }
 </style>

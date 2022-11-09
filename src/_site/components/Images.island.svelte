@@ -25,10 +25,6 @@
       quality: 85,
     },
     {
-      dpr: 1,
-      quality: 65,
-    },
-    {
       dpr: 2,
       quality: 45,
     },
@@ -56,34 +52,27 @@
 <hr />
 
 <ul style:--count={urls.length + 1}>
-  {#each configs as { dpr, quality }, index}
-    <Column
-      {dpr}
-      {quality}
-      {width}
-      {urls}
-      {baseline}
-      setBaseline={index === 0
-        ? (i, b) => {
-            baseline[i] = b;
-          }
-        : undefined}
-    />
+  {#each configs as { dpr, quality }}
+    <Column {dpr} {quality} {width} {urls} {baseline} />
   {/each}
 </ul>
 
 <style>
   ul {
-    width: 50%;
     display: grid;
     grid-template-rows: repeat(var(--count), auto);
     grid-auto-flow: column;
     grid-auto-columns: auto;
     padding: 0;
-    gap: 12px;
+    gap: 36px;
+    overflow-x: scroll;
   }
 
   label {
     display: block;
+  }
+
+  textarea {
+    max-width: 90vw;
   }
 </style>

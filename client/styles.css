@@ -2,11 +2,15 @@
   box-sizing: border-box;
 }
 
+:root {
+  color-scheme: dark;
+}
+
 one-claw {
   display: block;
-  background-color: ghostwhite;
+  background-color: #fff1;
 }
 
 one-claw[foraging="complete"] {
-  background-color: honeydew;
+  background-color: transparent;
 }

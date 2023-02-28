@@ -1,5 +1,5 @@
 import type { Plugin } from "./build.ts";
-import { ensureDir } from "https://deno.land/std@0.178.0/fs/mod.ts";
+import { ensureDir } from "https://deno.land/std@0.177.0/fs/mod.ts";
 
 const noCheck = "// @ts-nocheck -- build output \n\n";
 

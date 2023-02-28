@@ -15,5 +15,6 @@
     "files": {
       "exclude": ["build"]
     }
-  }
+  },
+  "fmt": { "options": { "useTabs": true } }
 }

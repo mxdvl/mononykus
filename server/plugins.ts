@@ -1,5 +1,5 @@
 import type { Plugin } from "./build.ts";
-import { ensureDir } from "https://deno.land/std@0.159.0/fs/mod.ts?s=ensureDir";
+import { ensureDir } from "https://deno.land/std@0.178.0/fs/mod.ts";
 
 const noCheck = "// @ts-nocheck -- build output \n\n";
 
@@ -7,7 +7,7 @@ const BUILD_DIR = new URL(`../build/`, import.meta.url);
 
 export const getSvelteInternal = async () => {
   const code = await fetch(
-    "https://esm.sh/svelte@3.51.0/internal?target=es2020"
+    "https://esm.sh/v108/svelte@3.51.0/internal?target=es2020"
   ).then((r) => r.text());
 
   const [, source] = code.match(/from "(.+)"/) ?? [];

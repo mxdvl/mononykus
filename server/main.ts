@@ -23,13 +23,13 @@ const handler: Handler = async ({ url }) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Svelte + Deno</title>
     <style>
-    ${await Deno.readTextFile(new URL("../client/styles.css", import.meta.url))}
+    ${await Deno.readTextFile(new URL("../assets/styles.css", import.meta.url))}
     ${css}
     </style>
   </head>
     ${html}
   <script type="module">${await Deno.readTextFile(
-    new URL("../client/islands.js", import.meta.url)
+    new URL("../assets/islands.js", import.meta.url)
   )}</script>
 </html>`;
 

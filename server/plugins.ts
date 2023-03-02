@@ -23,6 +23,7 @@ export const internal = (): Plugin => ({
     build.onResolve({ filter: /^svelte\/internal$/ }, async () => {
       const result = await build.resolve("./internal.js", {
         resolveDir: "./build",
+        kind: "import-rule",
       });
       if (result.errors.length > 0) {
         return { errors: result.errors };

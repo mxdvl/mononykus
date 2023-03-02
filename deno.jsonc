@@ -1,9 +1,9 @@
 {
   "tasks": {
     "build": "deno run -A server/build.ts",
-    "build:watch": "deno run --cached-only --watch -A server/build.ts dev",
+    "build:watch": "deno run --watch -A server/build.ts dev",
     "serve": "deno run --watch -A server/main.ts",
-    "dev": "deno task build && deno task serve & deno task build:watch "
+    "dev": "deno task build:watch & deno task serve "
   },
   "compilerOptions": {
     "strict": true,
@@ -15,5 +15,6 @@
     "files": {
       "exclude": ["build"]
     }
-  }
+  },
+  "fmt": { "options": { "useTabs": true } }
 }

@@ -31,7 +31,9 @@
       have JavaScript enabled.
     </p>
 
-    <Island name="Name" props={{ value: "late Cretaceous friend" }} />
+    <Island name="HelloFriend" props={{ value: "late Cretaceous friend" }} />
+
+    <Island name="Counter" />
   </main>
 </body>
 

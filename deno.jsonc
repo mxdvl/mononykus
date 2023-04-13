@@ -1,7 +1,7 @@
 {
   "tasks": {
     "build": "deno run -A server/build.ts",
-    "build:watch": "deno run --watch -A server/build.ts dev",
+    "build:watch": "deno run server/build.ts dev",
     "serve": "deno run --watch -A server/main.ts",
     "dev": "deno task build:watch & deno task serve "
   },

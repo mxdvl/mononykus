@@ -1,4 +1,4 @@
-import * as esbuild from "https://deno.land/x/esbuild@v0.17.10/mod.js";
+import * as esbuild from "https://deno.land/x/esbuild@v0.17.16/mod.js";
 import sveltePlugin from "https://esm.sh/v108/esbuild-svelte@0.7.3";
 import { getSvelteInternal, internal } from "./plugins.ts";
 

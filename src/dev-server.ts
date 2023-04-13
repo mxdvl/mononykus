@@ -9,8 +9,7 @@ import Home from "./_site/build/routes/Home.js";
 const handler: Handler = async (request) => {
 	const { pathname } = new URL(request.url);
 	if (pathname !== "/") {
-		const directory = pathname.startsWith("/islands/") ? "build" : "assets";
-		return serveFile(request, "src/_site/" + directory + pathname);
+		return serveFile(request, "src/_site/build" + pathname);
 	}
 
 	const {

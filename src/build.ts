@@ -98,13 +98,30 @@ const client: esbuild.BuildOptions = {
 await create_island_component(svelte_islands);
 await get_svelte_internal();
 
+const copy_assets = async () => {
+	for await (const { name } of Deno.readDir(site_dir + "assets")) {
+		await Deno.copyFile(site_dir + "assets/" + name, build_dir + name);
+	}
+};
+
 if (Deno.args[0] === "dev") {
+	const watcher = Deno.watchFs(site_dir + "assets");
 	await esbuild.context(server).then(({ watch }) => watch());
 	await esbuild.context(client).then(({ watch }) => watch());
+	await copy_assets();
+	for await (const { kind, paths: [path] } of watcher) {
+		if (path && (kind === "modify" || kind === "create")) {
+			await Deno.copyFile(
+				path,
+				path.replace("/_site/assets/", "/_site/build/"),
+			);
+		}
+	}
 } else {
 	await esbuild.build(server);
 	await esbuild.build(client);
 	esbuild.stop();
+	await copy_assets();
 }
 
 export type Plugin = esbuild.Plugin;

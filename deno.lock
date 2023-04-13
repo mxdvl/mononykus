@@ -458,6 +458,13 @@
     "https://esm.sh/v108/esbuild-svelte@0.7.3/deno/esbuild-svelte.js": "9a58e74d01eeec1c5be6fb28fb2089ed2acfa506f65a6ea6782a9d0e58d5eb77",
     "https://esm.sh/v108/esbuild-svelte@0.7.3/dist/index.d.ts": "7ed43f23ad64fd19ae7bd5cadd8a422668ed42f573f11f1776c78635a1af2afc",
     "https://esm.sh/v108/esbuild@0.17.10/lib/main.d.ts": "e58aa7814b943c0bc3e8ac8dd2def9cb7919e75236ba3d0b1c7028ef54f9234b",
-    "https://esm.sh/v108/svelte@3.55.1/deno/compiler.js": "ebb4c07f1f36e2ed3885748225296cde88eaeee67e756fb060281ef4e7e255b9"
+    "https://esm.sh/v108/svelte@3.55.1/deno/compiler.js": "ebb4c07f1f36e2ed3885748225296cde88eaeee67e756fb060281ef4e7e255b9",
+    "https://esm.sh/v115/esbuild-svelte@0.7.3": "cb50bc9567802c7ceb14514555bc3e8d133d977ab50399fcef5d1463cffe1499",
+    "https://esm.sh/v115/esbuild-svelte@0.7.3/deno/esbuild-svelte.mjs": "c07fb3e1993d7b3b429133f8ba57c5d046951ef99e6549161c2133362c000392",
+    "https://esm.sh/v115/esbuild-svelte@0.7.3/dist/index.d.ts": "188c05306f1ff77e86790977ffe74130aa5741361201b767029fe6fa1987e591",
+    "https://esm.sh/v115/esbuild@0.17.16/lib/main.d.ts": "1de57a4b04b40d72846a68a7bc4a249398d8f2ed6f064ae6396500a1f7d86434",
+    "https://esm.sh/v115/svelte@3.58.0/deno/compiler.js": "8201b8eb732956080c0c3e39d626857446c42d77570895998e5fa3d401667a28",
+    "https://esm.sh/v115/svelte@3.58.0/types/runtime/ambient.d.ts": "87e050a99a47903235f3b8b84fca1f9fb80ae4492cfd9a750b2c2a6d92fb186f",
+    "https://esm.sh/v115/svelte@3.58.0/types/runtime/index.d.ts": "4c02ff13240e321323cef19c083f7d53ec51fda9ea984670263664ab7c43c52d"
   }
 }

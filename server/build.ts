@@ -1,8 +1,8 @@
 import * as esbuild from "https://deno.land/x/esbuild@v0.17.16/mod.js";
-import sveltePlugin from "https://esm.sh/v108/esbuild-svelte@0.7.3";
+import sveltePlugin from "https://esm.sh/v115/esbuild-svelte@0.7.3";
 import { getSvelteInternal, internal } from "./plugins.ts";
 
-const dir = "components/islands";
+const dir = "./src/components/islands";
 export const getIslandComponents = async () => {
 	const islands = [];
 	for await (const { name } of Deno.readDir(dir)) {
@@ -18,7 +18,7 @@ const configs = {
 } as const satisfies Partial<esbuild.BuildOptions>;
 
 const ssr: esbuild.BuildOptions = {
-	entryPoints: [`./components/Home.svelte`],
+	entryPoints: [`./src/components/Home.svelte`],
 	outdir: "./build/server",
 	bundle: true,
 	plugins: [
@@ -59,7 +59,7 @@ ${components.join(",\n")}
 `;
 
 await Deno.writeTextFile(
-	"components/Island.svelte",
+	"./src/components/Island.svelte",
 	Island,
 );
 

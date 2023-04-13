@@ -3,7 +3,7 @@ import { ensureDir } from "https://deno.land/std@0.177.0/fs/mod.ts";
 
 const noCheck = "// @ts-nocheck -- build output \n\n";
 
-const BUILD_DIR = "build";
+const BUILD_DIR = "build/";
 
 export const getSvelteInternal = async () => {
 	const code = await fetch(
@@ -14,7 +14,7 @@ export const getSvelteInternal = async () => {
 	if (!source) throw new Error("Could not download svelte/internal");
 	const js = await fetch(source).then((r) => r.text());
 	await ensureDir(BUILD_DIR);
-	await Deno.writeTextFile(new URL("internal.js", BUILD_DIR), noCheck + js);
+	await Deno.writeTextFile(BUILD_DIR + "internal.js", noCheck + js);
 };
 
 export const internal = (): Plugin => ({

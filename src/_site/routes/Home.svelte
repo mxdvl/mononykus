@@ -1,6 +1,6 @@
 <script>
-  import Header from "./Header.svelte";
-  import Island from "./Island.svelte";
+  import Header from "../components/Header.svelte";
+  import Island from "../build/Island.svelte";
 </script>
 
 <body>

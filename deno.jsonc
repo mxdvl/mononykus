@@ -1,8 +1,8 @@
 {
   "tasks": {
-    "build": "deno run -A server/build.ts",
-    "build:watch": "deno run -A server/build.ts dev",
-    "serve": "deno run --watch -A server/main.ts",
+    "build": "deno run -A src/build.ts",
+    "build:watch": "deno run -A src/build.ts dev",
+    "serve": "deno run --watch -A src/dev-server.ts",
     "dev": "deno task build:watch & deno task serve "
   },
   "compilerOptions": {

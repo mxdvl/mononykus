@@ -5,7 +5,7 @@ const noCheck = "// @ts-nocheck -- build output \n\n";
 
 const BUILD_DIR = "build/";
 
-export const getSvelteInternal = async () => {
+export const get_svelte_internal = async () => {
 	const code = await fetch(
 		"https://esm.sh/v108/svelte@3.51.0/internal?target=es2020",
 	).then((r) => r.text());

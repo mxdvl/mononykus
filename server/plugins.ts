@@ -3,32 +3,32 @@ import { ensureDir } from "https://deno.land/std@0.177.0/fs/mod.ts";
 
 const noCheck = "// @ts-nocheck -- build output \n\n";
 
-const BUILD_DIR = new URL(`../build/`, import.meta.url);
+const BUILD_DIR = "build";
 
 export const getSvelteInternal = async () => {
-  const code = await fetch(
-    "https://esm.sh/v108/svelte@3.51.0/internal?target=es2020"
-  ).then((r) => r.text());
+	const code = await fetch(
+		"https://esm.sh/v108/svelte@3.51.0/internal?target=es2020",
+	).then((r) => r.text());
 
-  const [, source] = code.match(/from "(.+)"/) ?? [];
-  if (!source) throw new Error("Could not download svelte/internal");
-  const js = await fetch(source).then((r) => r.text());
-  await ensureDir(BUILD_DIR);
-  await Deno.writeTextFile(new URL("internal.js", BUILD_DIR), noCheck + js);
+	const [, source] = code.match(/from "(.+)"/) ?? [];
+	if (!source) throw new Error("Could not download svelte/internal");
+	const js = await fetch(source).then((r) => r.text());
+	await ensureDir(BUILD_DIR);
+	await Deno.writeTextFile(new URL("internal.js", BUILD_DIR), noCheck + js);
 };
 
 export const internal = (): Plugin => ({
-  name: "svelte/internal",
-  setup(build) {
-    build.onResolve({ filter: /^svelte\/internal$/ }, async () => {
-      const result = await build.resolve("./internal.js", {
-        resolveDir: "./build",
-        kind: "import-rule",
-      });
-      if (result.errors.length > 0) {
-        return { errors: result.errors };
-      }
-      return { path: result.path, external: false };
-    });
-  },
+	name: "svelte/internal",
+	setup(build) {
+		build.onResolve({ filter: /^svelte\/internal$/ }, async () => {
+			const result = await build.resolve("./internal.js", {
+				resolveDir: "./build",
+				kind: "import-rule",
+			});
+			if (result.errors.length > 0) {
+				return { errors: result.errors };
+			}
+			return { path: result.path, external: false };
+		});
+	},
 });

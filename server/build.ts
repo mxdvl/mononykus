@@ -4,41 +4,43 @@ import { getSvelteInternal, internal } from "./plugins.ts";
 
 const dir = "components/islands";
 export const getIslandComponents = async () => {
-  const islands = [];
-  for await (const { name } of Deno.readDir(dir)) {
-    if (name.endsWith(".svelte")) islands.push(name.replace(".svelte", ""));
-  }
-  return islands;
+	const islands = [];
+	for await (const { name } of Deno.readDir(dir)) {
+		if (name.endsWith(".svelte")) islands.push(name.replace(".svelte", ""));
+	}
+	return islands;
 };
 
 const configs = {
-  logLevel: "info",
-  format: "esm",
-  minify: true,
+	logLevel: "info",
+	format: "esm",
+	minify: true,
 } as const satisfies Partial<esbuild.BuildOptions>;
 
 const ssr: esbuild.BuildOptions = {
-  entryPoints: [`./components/Home.svelte`],
-  outdir: "./build/server",
-  bundle: true,
-  plugins: [
-    // @ts-expect-error -- there’s an issue with ImportKind
-    sveltePlugin({
-      compilerOptions: { generate: "ssr", hydratable: true },
-    }),
-    internal(),
-  ],
-  ...configs,
+	entryPoints: [`./components/Home.svelte`],
+	outdir: "./build/server",
+	bundle: true,
+	plugins: [
+		// @ts-expect-error -- there’s an issue with ImportKind
+		sveltePlugin({
+			compilerOptions: { generate: "ssr", hydratable: true },
+		}),
+		internal(),
+	],
+	...configs,
 };
 
 const components = await getIslandComponents();
 
 const Island = `<script>
-${components
-  .map(
-    (component) => `import ${component} from "./islands/${component}.svelte"`
-  )
-  .join("\n")}
+${
+	components
+		.map(
+			(component) => `import ${component} from "./islands/${component}.svelte"`,
+		)
+		.join("\n")
+}
 
 /** @type {${components.map((component) => `'${component}'`).join(" | ")}} */
 export let name;
@@ -57,33 +59,33 @@ ${components.join(",\n")}
 `;
 
 await Deno.writeTextFile(
-  new URL("../components/Island.svelte", import.meta.url),
-  Island
+	"components/Island.svelte",
+	Island,
 );
 
 const islands: esbuild.BuildOptions = {
-  entryPoints: components.map((component) => `${dir}/${component}.svelte`),
-  outdir: "./build/client",
-  bundle: true,
-  plugins: [
-    // @ts-expect-error -- there’s an issue with ImportKind
-    sveltePlugin({
-      compilerOptions: { generate: "dom", hydratable: true },
-    }),
-    internal(),
-  ],
-  ...configs,
+	entryPoints: components.map((component) => `${dir}/${component}.svelte`),
+	outdir: "./build/client",
+	bundle: true,
+	plugins: [
+		// @ts-expect-error -- there’s an issue with ImportKind
+		sveltePlugin({
+			compilerOptions: { generate: "dom", hydratable: true },
+		}),
+		internal(),
+	],
+	...configs,
 };
 
 await getSvelteInternal();
 
 if (Deno.args[0] === "dev") {
-  await esbuild.context(ssr).then(({ watch }) => watch());
-  await esbuild.context(islands).then(({ watch }) => watch());
+	await esbuild.context(ssr).then(({ watch }) => watch());
+	await esbuild.context(islands).then(({ watch }) => watch());
 } else {
-  await esbuild.build(ssr);
-  await esbuild.build(islands);
-  esbuild.stop()
+	await esbuild.build(ssr);
+	await esbuild.build(islands);
+	esbuild.stop();
 }
 
 export type Plugin = esbuild.Plugin;

@@ -1,4 +1,11 @@
 {
-    "deno.enable": true,
-    "deno.unstable": true
+	"deno.enable": true,
+	"deno.unstable": true,
+	"editor.defaultFormatter": "denoland.vscode-deno",
+	"[html]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[css]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	}
 }

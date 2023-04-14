@@ -90,6 +90,10 @@ export let props;
 	);
 };
 
+const internal_filepath = build_dir + "internal.js";
+await create_island_component(svelte_islands);
+await get_svelte_internal(internal_filepath);
+
 const server: esbuild.BuildOptions = {
 	entryPoints: [
 		await get_svelte_files({ dir: "routes/" }),
@@ -103,7 +107,7 @@ const server: esbuild.BuildOptions = {
 		sveltePlugin({
 			compilerOptions: { generate: "ssr", hydratable: true },
 		}),
-		internal(),
+		internal(internal_filepath),
 	],
 	...configs,
 };
@@ -117,13 +121,10 @@ const client: esbuild.BuildOptions = {
 		sveltePlugin({
 			compilerOptions: { generate: "dom", hydratable: true },
 		}),
-		internal(),
+		internal(internal_filepath),
 	],
 	...configs,
 };
-
-await create_island_component(svelte_islands);
-await get_svelte_internal();
 
 const copy_assets = async () => {
 	for await (const { name } of Deno.readDir(site_dir + "assets")) {
@@ -150,5 +151,3 @@ if (Deno.args[0] === "dev") {
 	esbuild.stop();
 	await copy_assets();
 }
-
-export type Plugin = esbuild.Plugin;

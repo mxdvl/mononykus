@@ -4,13 +4,37 @@ import { get_svelte_internal, internal } from "./plugins.ts";
 import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
 
 const site_dir = "src/_site/";
-export const build_dir = `${site_dir}build/` as const;
-export const get_svelte_files = async (
-	dir: "routes/" | "components/" | "components/islands/",
-) => {
+const build_dir = `${site_dir}build/` as const;
+
+// clean out old builds, if they exist
+try {
+	await Deno.remove(build_dir, { recursive: true });
+} catch (_error) {
+	// do nothing
+}
+
+export const get_svelte_files = async ({
+	dir,
+	islands = false,
+}: {
+	dir: "routes/" | "components/";
+	islands?: boolean;
+}) => {
 	const files = [];
 	for await (const { name, isFile } of Deno.readDir(site_dir + dir)) {
-		if (isFile && name.endsWith(".svelte")) files.push(site_dir + dir + name);
+		if (islands) {
+			if (isFile && name.endsWith(".island.svelte")) {
+				files.push(site_dir + dir + name);
+			}
+		} else {
+			if (
+				isFile &&
+				name.endsWith(".svelte") &&
+				!name.endsWith(".island.svelte")
+			) {
+				files.push(site_dir + dir + name);
+			}
+		}
 	}
 	return files;
 };
@@ -23,11 +47,14 @@ const configs = {
 
 await ensureDir(build_dir);
 
-const svelte_islands = await get_svelte_files("components/islands/");
+const svelte_islands = await get_svelte_files({
+	dir: "components/",
+	islands: true,
+});
 
 const create_island_component = async (islands: string[]) => {
 	const island_names = islands
-		.map((island) => island.split("/").at(-1)?.replace(".svelte", ""))
+		.map((island) => island.split("/").at(-1)?.replace(".island.svelte", ""))
 		.filter(Boolean);
 
 	const Island = `
@@ -38,7 +65,7 @@ ${
 		island_names
 			.map(
 				(island) =>
-					`import ${island} from "../components/islands/${island}.svelte";`,
+					`import ${island} from "../components/${island}.island.svelte";`,
 			)
 			.join("\n")
 	}
@@ -49,7 +76,7 @@ export let props;
 	const islands = /** @type {const} */ ({ ${island_names.join(",")} });
 
 	/** @type {keyof typeof islands} */
-	export let name;	
+	export let name;
 </script>
 
 <one-claw {name} props={JSON.stringify(props)}>
@@ -69,8 +96,8 @@ await get_svelte_internal(internal_filepath);
 
 const server: esbuild.BuildOptions = {
 	entryPoints: [
-		await get_svelte_files("routes/"),
-		await get_svelte_files("components/"),
+		await get_svelte_files({ dir: "routes/" }),
+		await get_svelte_files({ dir: "components/" }),
 	]
 		.flat(),
 	outdir: build_dir,
@@ -87,7 +114,7 @@ const server: esbuild.BuildOptions = {
 
 const client: esbuild.BuildOptions = {
 	entryPoints: svelte_islands,
-	outdir: build_dir + "islands/",
+	outdir: build_dir + "components/",
 	bundle: true,
 	plugins: [
 		// @ts-expect-error -- there’s an issue with ImportKind

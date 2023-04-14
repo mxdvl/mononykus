@@ -9,7 +9,7 @@ const hydrate = async (target) => {
 	const load = performance.now();
 
 	/** @type {import("https://esm.sh/v115/svelte@3.51.0/internal/index.d.ts").ComponentType} */
-	const Component = (await import(`/islands/${name}.js`)).default;
+	const Component = (await import(`/components/${name}.island.js`)).default;
 	console.info(`Loaded ${name} in ${performance.now() - load}ms`, props);
 
 	const hydrate = performance.now();

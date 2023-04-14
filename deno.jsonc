@@ -1,20 +1,20 @@
 {
-  "tasks": {
-    "build": "deno run -A src/build.ts",
-    "build:watch": "deno run -A src/build.ts dev",
-    "serve": "deno run --watch -A src/dev-server.ts",
-    "dev": "deno task build:watch & deno task serve "
-  },
-  "compilerOptions": {
-    "strict": true,
-    "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"],
-    "checkJs": true,
-    "noUncheckedIndexedAccess": true
-  },
-  "lint": {
-    "files": {
-      "exclude": ["src/_site/build"]
-    }
-  },
-  "fmt": { "options": { "useTabs": true } }
+	"tasks": {
+		"build": "deno run -A src/build.ts --site src/_site",
+		"build:watch": "deno run -A src/build.ts --site src/_site --dev",
+		"serve": "deno run --watch -A src/dev-server.ts",
+		"dev": "deno task build:watch & deno task serve "
+	},
+	"compilerOptions": {
+		"strict": true,
+		"lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"],
+		"checkJs": true,
+		"noUncheckedIndexedAccess": true
+	},
+	"lint": {
+		"files": {
+			"exclude": ["src/_site/build"]
+		}
+	},
+	"fmt": { "options": { "useTabs": true } }
 }

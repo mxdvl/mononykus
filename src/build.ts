@@ -2,9 +2,17 @@ import * as esbuild from "https://deno.land/x/esbuild@v0.17.16/mod.js";
 import sveltePlugin from "https://esm.sh/v115/esbuild-svelte@0.7.3";
 import { get_svelte_internal, internal } from "./plugins.ts";
 import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
+import { parse } from "https://deno.land/std@0.182.0/flags/mod.ts";
 
-const site_dir = "src/_site/";
-const build_dir = `${site_dir}build/` as const;
+const flags = parse(Deno.args, {
+	string: ["site", "build"],
+	boolean: ["dev"],
+	default: { site: "_site/", dev: false },
+});
+
+const site_dir = flags.site.replace(/\/?$/, "/");
+const build_dir = (flags.build ?? `${site_dir}build/`).replace(/\/?$/, "/");
+
 export const get_svelte_files = async (
 	dir: "routes/" | "components/" | "components/islands/",
 ) => {
@@ -104,7 +112,7 @@ const copy_assets = async () => {
 	}
 };
 
-if (Deno.args[0] === "dev") {
+if (flags.dev) {
 	const watcher = Deno.watchFs(site_dir + "assets");
 	await esbuild.context(server).then(({ watch }) => watch());
 	await esbuild.context(client).then(({ watch }) => watch());

@@ -4,7 +4,7 @@ import { get_svelte_internal, internal } from "./plugins.ts";
 import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
 
 const site_dir = "src/_site/";
-const build_dir = `${site_dir}build/` as const;
+export const build_dir = `${site_dir}build/` as const;
 export const get_svelte_files = async (
 	dir: "routes/" | "components/" | "components/islands/",
 ) => {

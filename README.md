@@ -13,7 +13,7 @@ Head to [mononykus.deno.dev](https://mononykus.deno.dev/) to see it in action.
 - [x] Compile Svelte components
 - [x] Partial hydration
 - [x] Create a logo
-- [ ] Serve assets with proper headers (mime, cache-control, etag, …)
+- [X] Serve assets with proper headers (mime, cache-control, etag, …)
 - [ ] Add various hydration/foraging strategies
 - [ ] Analyse performance (timings, comparison, web vitals, …)
 - [x] Continuous deployment

@@ -4,7 +4,7 @@ import {
 } from "https://deno.land/std@0.177.0/http/server.ts";
 import { serveFile } from "https://deno.land/std@0.177.0/http/file_server.ts";
 
-import Home from "./_site/build/routes/Home.js";
+import Home from "./_site/build/routes/index.js";
 
 const handler: Handler = async (request) => {
 	const { pathname } = new URL(request.url);

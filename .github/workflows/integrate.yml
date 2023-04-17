@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  DENO_DIR: ./cache
+  DENO_DIR: ./.cache
 
 jobs:
   health:

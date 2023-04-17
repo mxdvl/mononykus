@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  DENO_DIR: ./cache
+  DENO_DIR: ./.cache
 
 permissions:
   contents: read # Needed to clone the repository

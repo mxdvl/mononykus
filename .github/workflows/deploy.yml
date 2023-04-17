@@ -13,17 +13,15 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  DENO_DIR: ./cache
+  DENO_DIR: ./.cache
 
 permissions:
   contents: read # Needed to clone the repository
   id-token: write # Needed for authentication
+  pages: write # Needed for Github Pages
 
 jobs:
   deno:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     name: Deploy to Deno Deploy
     runs-on: ubuntu-latest
 

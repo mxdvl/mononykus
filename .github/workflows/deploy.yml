@@ -1,4 +1,4 @@
-name: Deploy
+name: Continuous Deployment
 on:
   push:
     branches:
@@ -10,6 +10,9 @@ on:
 concurrency:
   group: "pages"
   cancel-in-progress: false
+
+env:
+  DENO_DIR: ./cache
 
 jobs:
   deploy:
@@ -30,6 +33,12 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
+
+      - name: Cache Deno dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.DENO_DIR }}
+          key: ${{ hashFiles('deno.lock') }}
 
       - name: Build svelte
         run: "deno task build"

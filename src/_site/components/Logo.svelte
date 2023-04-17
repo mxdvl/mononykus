@@ -5,6 +5,8 @@
     [15, 5],
     [4, 12],
   ].map(([x, y]) => `${x},${y}`);
+
+  const a = points[5];
 </script>
 
 <svg style={`--colour:${colour}`} viewBox="0 0 16 16" width={32}>

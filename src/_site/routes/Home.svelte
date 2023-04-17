@@ -1,4 +1,5 @@
 <script>
+  // @ts-check
   import Header from "../components/Header.svelte";
   import Island from "../build/Island.svelte";
 </script>

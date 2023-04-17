@@ -8,7 +8,7 @@ import { parse } from "https://deno.land/std@0.177.0/flags/mod.ts";
 import { green } from "https://deno.land/std@0.177.0/fmt/colors.ts";
 
 const flags = parse(Deno.args, {
-	string: ["site", "build"],
+	string: ["site", "build", "base"],
 	boolean: ["dev"],
 	default: { site: "_site/", dev: false },
 });
@@ -147,6 +147,13 @@ const template = await Deno.readTextFile(
 );
 const islands = await Deno.readTextFile(
 	new URL(import.meta.resolve("./islands.js")),
+).then((contents) =>
+	flags.base
+		? contents.replace(
+			"import(`/components",
+			`import(\`${flags.base}/components)`,
+		)
+		: contents
 );
 const inline_styles = await Deno.readTextFile(
 	site_dir + "assets" + "/inline.css",

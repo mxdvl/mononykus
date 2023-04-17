@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+  pull_request: 
   workflow_dispatch:
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
@@ -14,17 +15,17 @@ concurrency:
 env:
   DENO_DIR: ./cache
 
+permissions:
+  contents: read # Needed to clone the repository
+  id-token: write # Needed for authentication
+
 jobs:
-  deploy:
+  deno:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    name: Deploy to all environments
+    name: Deploy to Deno Deploy
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write # Needed for auth with Deno Deploy
-      contents: read # Needed to clone the repository
-      pages: write # Needed for deployment to GitHub Pages
 
     steps:
       - name: Clone repository
@@ -41,7 +42,7 @@ jobs:
           key: ${{ hashFiles('deno.lock') }}
 
       - name: Build svelte
-        run: "deno task build"
+        run: deno task build
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
@@ -49,6 +50,31 @@ jobs:
           project: mononykus
           entrypoint: https://deno.land/std@0.183.0/http/file_server.ts
           root: src/_site/build
+
+  gh:
+    if: github.ref_name == 'main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    name: Deploy to Github Pages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Cache Deno dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.DENO_DIR }}
+          key: ${{ hashFiles('deno.lock') }}
+
+      - name: Build svelte for GH
+        run: deno run -A src/build.ts --site src/_site --base /mononykus
 
       - name: Setup Pages
         uses: actions/configure-pages@v3

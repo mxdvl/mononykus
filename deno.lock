@@ -238,6 +238,7 @@
     "https://deno.land/std@0.177.0/version.ts": "259c8866ec257c3511b437baa95205a86761abaef852a9b2199072accb2ef046",
     "https://deno.land/std@0.182.0/_util/asserts.ts": "178dfc49a464aee693a7e285567b3d0b555dc805ff490505a8aae34f9cfb1462",
     "https://deno.land/std@0.182.0/flags/mod.ts": "4d829c5bd1d657799cdeb487c6e418960efc6f4d8ce6cadc38a54b9ce266160a",
+    "https://deno.land/std@0.183.0/fs/exists.ts": "29c26bca8584a22876be7cb8844f1b6c8fc35e9af514576b78f5c6884d7ed02d",
     "https://deno.land/x/denoflate@1.2.1/mod.ts": "f5628e44b80b3d80ed525afa2ba0f12408e3849db817d47a883b801f9ce69dd6",
     "https://deno.land/x/denoflate@1.2.1/pkg/denoflate.js": "b9f9ad9457d3f12f28b1fb35c555f57443427f74decb403113d67364e4f2caf4",
     "https://deno.land/x/denoflate@1.2.1/pkg/denoflate_bg.wasm.js": "d581956245407a2115a3d7e8d85a9641c032940a8e810acbd59ca86afd34d44d",

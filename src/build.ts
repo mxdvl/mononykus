@@ -6,6 +6,7 @@ import { globToRegExp } from "https://deno.land/std@0.177.0/path/glob.ts";
 import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
 import { parse } from "https://deno.land/std@0.177.0/flags/mod.ts";
 import { green } from "https://deno.land/std@0.177.0/fmt/colors.ts";
+import { exists } from "https://deno.land/std@0.183.0/fs/exists.ts";
 
 const flags = parse(Deno.args, {
 	string: ["site", "build", "base"],
@@ -142,19 +143,25 @@ const copy_assets = async () => {
 	}
 };
 
-const template = await Deno.readTextFile(
-	new URL(import.meta.resolve("./template.html")),
-);
-const islands = await Deno.readTextFile(
-	new URL(import.meta.resolve("./islands.js")),
-).then((contents) =>
-	flags.base
-		? contents.replace(
-			"import(`/components/",
-			`import(\`${flags.base}/components/`,
-		)
-		: contents
-);
+for (const required_file of ["template.html", "islands.js"]) {
+	if (!(await exists(site_dir + required_file))) {
+		const content = await fetch(
+			"https://deno.land/x/mononykus@0.2.1/src/" + required_file,
+		).then((r) => r.text());
+		await Deno.writeTextFile(site_dir + required_file, content);
+	}
+}
+
+const template = await Deno.readTextFile(site_dir + "template.html");
+const islands = await Deno.readTextFile(site_dir + "islands.js")
+	.then((contents) =>
+		flags.base
+			? contents.replace(
+				"import(`/components/",
+				`import(\`${flags.base}/components/`,
+			)
+			: contents
+	);
 const inline_styles = await Deno.readTextFile(
 	site_dir + "assets" + "/inline.css",
 ).catch(() => "");

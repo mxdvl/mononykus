@@ -150,8 +150,8 @@ const islands = await Deno.readTextFile(
 ).then((contents) =>
 	flags.base
 		? contents.replace(
-			"import(`/components",
-			`import(\`${flags.base}/components)`,
+			"import(`/components/",
+			`import(\`${flags.base}/components/`,
 		)
 		: contents
 );

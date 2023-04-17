@@ -18,11 +18,11 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deno:
+  deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    name: Deno Deploy
+    name: Deploy to all environments
     runs-on: ubuntu-latest
     permissions:
       id-token: write # Needed for auth with Deno Deploy

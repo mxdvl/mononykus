@@ -13,8 +13,6 @@ const flags = parse(Deno.args, {
 const site_dir = flags.site.replace(/\/?$/, "/");
 const build_dir = (flags.build ?? `${site_dir}build/`).replace(/\/?$/, "/");
 
-
-
 // clean out old builds, if they exist
 try {
 	await Deno.remove(build_dir, { recursive: true });
@@ -80,7 +78,7 @@ ${
 	}
 
 /** @type {Record<string, unknown>} */
-export let props;
+export let props = {};
 
 	const islands = /** @type {const} */ ({ ${island_names.join(",")} });
 

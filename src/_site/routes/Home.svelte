@@ -1,7 +1,7 @@
 <script>
   // @ts-check
   import Header from "../components/Header.svelte";
-  import Island from "../build/Island.svelte";
+  import Island from "../Island.svelte";
 </script>
 
 <body>

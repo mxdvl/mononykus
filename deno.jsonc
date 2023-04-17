@@ -2,7 +2,7 @@
 	"tasks": {
 		"build": "deno run -A src/build.ts --site src/_site",
 		"build:watch": "deno run -A src/build.ts --site src/_site --dev",
-		"serve": "deno run --watch -A src/dev-server.ts",
+		"serve": "deno run --allow-read --allow-net https://deno.land/std@0.183.0/http/file_server.ts src/_site/build",
 		"dev": "deno task build:watch & deno task serve "
 	},
 	"compilerOptions": {

@@ -16,5 +16,8 @@
 			"exclude": ["src/_site/build"]
 		}
 	},
-	"fmt": { "options": { "useTabs": true } }
+	"fmt": {
+		"options": { "useTabs": true },
+		"files": { "exclude": ["src/_site/build"] }
+	}
 }

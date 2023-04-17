@@ -22,9 +22,6 @@ permissions:
 
 jobs:
   deno:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     name: Deploy to Deno Deploy
     runs-on: ubuntu-latest
 

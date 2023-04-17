@@ -142,6 +142,16 @@ const copy_assets = async () => {
 	}
 };
 
+const template = await Deno.readTextFile(
+	new URL(import.meta.resolve("./template.html")),
+);
+const islands = await Deno.readTextFile(
+	new URL(import.meta.resolve("./islands.js")),
+);
+const inline_styles = await Deno.readTextFile(
+	site_dir + "assets" + "/inline.css",
+).catch(() => "");
+
 const generate_route = async (route: string) => {
 	const {
 		html,
@@ -150,15 +160,21 @@ const generate_route = async (route: string) => {
 		.default
 		.render();
 
-	return { html, css };
-};
+	const output = template
+		.replace(
+			"<!-- Svelte:css -->",
+			`<style>${inline_styles}</style><style>${css}</style>`,
+		)
+		.replace(
+			"<!-- Svelte:islands -->",
+			`<script type="module">${islands}</script>`,
+		)
+		.replace("<!-- Svelte:html -->", html);
 
-const template = await Deno.readTextFile(
-	new URL(import.meta.resolve("./template.html")),
-);
-const islands = await Deno.readTextFile(
-	new URL(import.meta.resolve("./islands.js")),
-);
+	const filename = build_dir + route + ".html";
+	await Deno.writeTextFile(filename, output);
+	console.info(" ", filename);
+};
 
 const generate_routes = async () => {
 	const start = performance.now();
@@ -171,19 +187,7 @@ const generate_routes = async () => {
 		if (!isFile) continue;
 		const route = path.replace(site_dir + "routes/", "").replace(".svelte", "");
 
-		const { html, css } = await generate_route(route);
-
-		const output = template
-			.replace("<!-- Svelte:css -->", `<style>${css}</style>`)
-			.replace(
-				"<!-- Svelte:islands -->",
-				`<script type="module">${islands}</script>`,
-			)
-			.replace("<!-- Svelte:html -->", html);
-
-		const filename = build_dir + route + ".html";
-		await Deno.writeTextFile(filename, output);
-		console.info(" ", filename);
+		await generate_route(route);
 	}
 
 	console.info(
@@ -192,11 +196,15 @@ const generate_routes = async () => {
 	);
 };
 
+await esbuild.build(server);
+await esbuild.build(client);
+await copy_assets();
+await generate_routes();
+
 if (flags.dev) {
 	const watcher = Deno.watchFs(site_dir + "assets");
 	await esbuild.context(server).then(({ watch }) => watch());
 	await esbuild.context(client).then(({ watch }) => watch());
-	await copy_assets();
 	for await (const { kind, paths: [path] } of watcher) {
 		if (path && (kind === "modify" || kind === "create")) {
 			await Deno.copyFile(
@@ -206,9 +214,5 @@ if (flags.dev) {
 		}
 	}
 } else {
-	await esbuild.build(server);
-	await esbuild.build(client);
 	esbuild.stop();
-	await copy_assets();
-	await generate_routes();
 }

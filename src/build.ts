@@ -1,6 +1,8 @@
 import * as esbuild from "https://deno.land/x/esbuild@v0.17.16/mod.js";
 import sveltePlugin from "https://esm.sh/v115/esbuild-svelte@0.7.3";
-import { get_svelte_internal, internal } from "./plugins.ts";
+import {
+	resolve_svelte_internal,
+} from "./esbuild_plugins/resolve_svelte_internal.ts";
 import { walk } from "https://deno.land/std@0.177.0/fs/walk.ts";
 import { globToRegExp } from "https://deno.land/std@0.177.0/path/glob.ts";
 import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
@@ -106,9 +108,7 @@ export let props = {};
 	);
 };
 
-const internal_filepath = build_dir + "internal.js";
 await create_island_component(svelte_islands);
-await get_svelte_internal(internal_filepath);
 
 const server: esbuild.BuildOptions = {
 	entryPoints: [
@@ -123,7 +123,7 @@ const server: esbuild.BuildOptions = {
 		sveltePlugin({
 			compilerOptions: { generate: "ssr", hydratable: true },
 		}),
-		internal(internal_filepath),
+		resolve_svelte_internal,
 	],
 	...configs,
 };
@@ -137,7 +137,7 @@ const client: esbuild.BuildOptions = {
 		sveltePlugin({
 			compilerOptions: { generate: "dom", hydratable: true },
 		}),
-		internal(internal_filepath),
+		resolve_svelte_internal,
 	],
 	...configs,
 };

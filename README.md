@@ -7,7 +7,7 @@ Head to [mononykus.deno.dev](https://mononykus.deno.dev/) to see it in action.
 
 ---
 
-### Warning
+**Warning**
 
 This is a Work-in-progress. If you want a production framework, look at
 [SvelteKit](https://kit.svelte.dev) or [Astro](https://astro.build/)

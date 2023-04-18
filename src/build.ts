@@ -7,6 +7,11 @@ import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
 import { parse } from "https://deno.land/std@0.177.0/flags/mod.ts";
 import { green } from "https://deno.land/std@0.177.0/fmt/colors.ts";
 import { exists } from "https://deno.land/std@0.183.0/fs/exists.ts";
+import { relative } from "https://deno.land/std@0.177.0/path/mod.ts";
+import {
+	fileURLToPath,
+	pathToFileURL,
+} from "https://deno.land/std@0.177.0/node/url.ts";
 
 const flags = parse(Deno.args, {
 	string: ["site", "build", "base"],
@@ -16,6 +21,7 @@ const flags = parse(Deno.args, {
 
 const site_dir = flags.site.replace(/\/?$/, "/");
 const build_dir = (flags.build ?? `${site_dir}build/`).replace(/\/?$/, "/");
+const current_working_directory = pathToFileURL(Deno.cwd());
 
 // clean out old builds, if they exist
 try {
@@ -170,7 +176,9 @@ const generate_route = async (route: string) => {
 	const {
 		html,
 		css: { code: css },
-	} = (await import(Deno.cwd() + "/" + build_dir + "routes/" + route + ".js"))
+	} = (await import(
+		current_working_directory + "/" + build_dir + "routes/" + route + ".js"
+	))
 		.default
 		.render();
 

@@ -170,9 +170,6 @@ const islands = await Deno.readTextFile(site_dir + "islands.js")
 			)
 			: contents
 	);
-const inline_styles = await Deno.readTextFile(
-	site_dir + "assets" + "/inline.css",
-).catch(() => "");
 
 const get_route_css = async (route: string) => {
 	const path = current_working_directory + "/" + build_dir + "routes/" +

@@ -9,7 +9,10 @@ import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
 import { parse } from "https://deno.land/std@0.177.0/flags/mod.ts";
 import { green } from "https://deno.land/std@0.177.0/fmt/colors.ts";
 import { exists } from "https://deno.land/std@0.183.0/fs/exists.ts";
-import { pathToFileURL } from "https://deno.land/std@0.177.0/node/url.ts";
+import {
+	fileURLToPath,
+	pathToFileURL,
+} from "https://deno.land/std@0.177.0/node/url.ts";
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { create_handler } from "./server.ts";
 import { normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
@@ -60,7 +63,7 @@ export const get_svelte_files = async ({
 const configs = {
 	logLevel: "info",
 	format: "esm",
-	minify: true,
+	minify: !flags.dev,
 } as const satisfies Partial<esbuild.BuildOptions>;
 
 await ensureDir(build_dir);
@@ -171,20 +174,37 @@ const inline_styles = await Deno.readTextFile(
 	site_dir + "assets" + "/inline.css",
 ).catch(() => "");
 
+const get_islands_css = async (route: string) => {
+	const path = current_working_directory + "/" + build_dir + "routes/" +
+		route + ".css";
+
+	try {
+		const css = await Deno.readTextFile(fileURLToPath(path));
+		return css;
+	} catch (error) {
+		if (!(error instanceof Deno.errors.NotFound)) {
+			throw error;
+		} else return undefined;
+	}
+};
+
 const generate_route = async (route: string) => {
-	const {
-		html,
-		css: { code: css },
-	} = (await import(
-		current_working_directory + "/" + build_dir + "routes/" + route + ".js"
-	))
-		.default
-		.render();
+	const [html, css] = await Promise.all([
+		import(
+			current_working_directory + "/" + build_dir + "routes/" + route + ".js"
+		).then((module) => module.default.render().html),
+		get_islands_css(route),
+	]);
+
+	const styles = [inline_styles, css]
+		.filter(Boolean)
+		.map((style) => `<style>${style}</style>`)
+		.join("\n");
 
 	const output = template
 		.replace(
 			"<!-- Svelte:css -->",
-			`<style>${inline_styles}</style><style>${css}</style>`,
+			styles,
 		)
 		.replace(
 			"<!-- Svelte:islands -->",

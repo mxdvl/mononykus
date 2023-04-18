@@ -7,11 +7,7 @@ import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
 import { parse } from "https://deno.land/std@0.177.0/flags/mod.ts";
 import { green } from "https://deno.land/std@0.177.0/fmt/colors.ts";
 import { exists } from "https://deno.land/std@0.183.0/fs/exists.ts";
-import { relative } from "https://deno.land/std@0.177.0/path/mod.ts";
-import {
-	fileURLToPath,
-	pathToFileURL,
-} from "https://deno.land/std@0.177.0/node/url.ts";
+import { pathToFileURL } from "https://deno.land/std@0.177.0/node/url.ts";
 
 const flags = parse(Deno.args, {
 	string: ["site", "build", "base"],

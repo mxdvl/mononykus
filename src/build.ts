@@ -3,26 +3,22 @@ import sveltePlugin from "https://esm.sh/v115/esbuild-svelte@0.7.3";
 import {
 	resolve_svelte_internal,
 } from "./esbuild_plugins/resolve_svelte_internal.ts";
-import { walk } from "https://deno.land/std@0.177.0/fs/walk.ts";
-import { globToRegExp } from "https://deno.land/std@0.177.0/path/glob.ts";
+import { build_routes } from "./esbuild_plugins/build_routes/index.ts";
+
 import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
 import { parse } from "https://deno.land/std@0.177.0/flags/mod.ts";
-import { green } from "https://deno.land/std@0.177.0/fmt/colors.ts";
-import { exists } from "https://deno.land/std@0.183.0/fs/exists.ts";
-import { pathToFileURL } from "https://deno.land/std@0.177.0/node/url.ts";
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { create_handler } from "./server.ts";
-import { normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
 
 const flags = parse(Deno.args, {
 	string: ["site", "build", "base"],
 	boolean: ["dev"],
-	default: { site: "_site/", dev: false },
+	default: { site: "_site/", dev: false, base: "/" },
 });
 
 const site_dir = flags.site.replace(/\/?$/, "/");
 const build_dir = (flags.build ?? `${site_dir}build/`).replace(/\/?$/, "/");
-const current_working_directory = pathToFileURL(Deno.cwd());
+const base_path = flags.base.replace(/\/?$/, "/");
 
 // clean out old builds, if they exist
 try {
@@ -56,12 +52,6 @@ export const get_svelte_files = async ({
 	}
 	return files;
 };
-
-const configs = {
-	logLevel: "info",
-	format: "esm",
-	minify: true,
-} as const satisfies Partial<esbuild.BuildOptions>;
 
 await ensureDir(build_dir);
 
@@ -110,35 +100,44 @@ export let props = {};
 
 await create_island_component(svelte_islands);
 
-const server: esbuild.BuildOptions = {
+const configs = {
+	logLevel: "info",
+	format: "esm",
+	minify: true,
+	bundle: true,
+} as const satisfies Partial<esbuild.BuildOptions>;
+
+const routesConfig: esbuild.BuildOptions = {
 	entryPoints: [
 		await get_svelte_files({ dir: "routes/" }),
-		await get_svelte_files({ dir: "components/" }),
 	]
 		.flat(),
-	outdir: build_dir,
-	bundle: true,
+	write: false,
 	plugins: [
 		// @ts-expect-error -- there’s an issue with ImportKind
 		sveltePlugin({
-			compilerOptions: { generate: "ssr", hydratable: true },
+			compilerOptions: { generate: "ssr", hydratable: true, css: "injected" },
 		}),
 		resolve_svelte_internal,
+		build_routes({ site_dir, base_path }),
 	],
+	outdir: build_dir,
 	...configs,
 };
 
-const client: esbuild.BuildOptions = {
-	entryPoints: svelte_islands,
-	outdir: build_dir + "components/",
-	bundle: true,
+const islandsConfig: esbuild.BuildOptions = {
+	entryPoints: [
+		await get_svelte_files({ dir: "components/", islands: true }),
+	]
+		.flat(),
 	plugins: [
 		// @ts-expect-error -- there’s an issue with ImportKind
 		sveltePlugin({
-			compilerOptions: { generate: "dom", hydratable: true },
+			compilerOptions: { generate: "dom", hydratable: true, css: "injected" },
 		}),
 		resolve_svelte_internal,
 	],
+	outdir: build_dir + "components/",
 	...configs,
 };
 
@@ -148,84 +147,18 @@ const copy_assets = async () => {
 	}
 };
 
-for (const required_file of ["template.html", "islands.js"]) {
-	if (!(await exists(site_dir + required_file))) {
-		const content = await fetch(
-			"https://deno.land/x/mononykus@0.2.1/src/" + required_file,
-		).then((r) => r.text());
-		await Deno.writeTextFile(site_dir + required_file, content);
-	}
-}
-
-const template = await Deno.readTextFile(site_dir + "template.html");
-const islands = await Deno.readTextFile(site_dir + "islands.js")
-	.then((contents) =>
-		flags.base
-			? contents.replace(
-				"import(`/components/",
-				"import(`" + normalize(`/${flags.base}/components/`),
-			)
-			: contents
-	);
 const inline_styles = await Deno.readTextFile(
 	site_dir + "assets" + "/inline.css",
 ).catch(() => "");
 
-const generate_route = async (route: string) => {
-	const {
-		html,
-		css: { code: css },
-	} = (await import(
-		current_working_directory + "/" + build_dir + "routes/" + route + ".js"
-	))
-		.default
-		.render();
-
-	const output = template
-		.replace(
-			"<!-- Svelte:css -->",
-			`<style>${inline_styles}</style><style>${css}</style>`,
-		)
-		.replace(
-			"<!-- Svelte:islands -->",
-			`<script type="module">${islands}</script>`,
-		)
-		.replace("<!-- Svelte:html -->", html);
-
-	const filename = build_dir + route + ".html";
-	await Deno.writeTextFile(filename, output);
-	console.info(" ", filename);
-};
-
-const generate_routes = async () => {
-	const start = performance.now();
-	console.log("");
-	for await (
-		const { isFile, path } of walk(site_dir, {
-			match: [globToRegExp(`${site_dir}routes/**/*.svelte`)],
-		})
-	) {
-		if (!isFile) continue;
-		const route = path.replace(site_dir + "routes/", "").replace(".svelte", "");
-
-		await generate_route(route);
-	}
-
-	console.info(
-		"\n◎ ",
-		green(`Generated routes in ${Math.ceil(performance.now() - start)}ms`),
-	);
-};
-
-await esbuild.build(server);
-await esbuild.build(client);
+await esbuild.build(routesConfig);
+await esbuild.build(islandsConfig);
 await copy_assets();
-await generate_routes();
 
 if (flags.dev) {
 	const watcher = Deno.watchFs(site_dir);
-	await esbuild.context(server).then(({ watch }) => watch());
-	await esbuild.context(client).then(({ watch }) => watch());
+	await esbuild.context(routesConfig).then(({ watch }) => watch());
+	await esbuild.context(islandsConfig).then(({ watch }) => watch());
 	serve(create_handler({ base: flags.base, build_dir }), { port: 4507 });
 	for await (const { kind, paths: [path] } of watcher) {
 		if (path && (kind === "modify" || kind === "create")) {

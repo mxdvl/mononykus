@@ -11,11 +11,11 @@
 	},
 	"lint": {
 		"files": {
-			"exclude": ["src/_site/build"]
+			"exclude": ["src/_site/build", ".cache"]
 		}
 	},
 	"fmt": {
 		"options": { "useTabs": true },
-		"files": { "exclude": ["src/_site/build"] }
+		"files": { "exclude": ["src/_site/build", ".cache"] }
 	}
 }

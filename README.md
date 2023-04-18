@@ -23,7 +23,12 @@ This is a Work-in-progress. If you want a production framework, look at
 - [ ] Add various hydration/foraging strategies
 - [ ] Analyse performance (timings, comparison, web vitals, …)
 - [x] Continuous deployment
-- [ ] Continuous integration
+- [x] Continuous integration
+- [ ] Use `<svete:head>` and a static template
+- [ ] Benchmark building hundreds of pages
+- [ ] Add motivations section (no partial hydration, SvelteKit & Deno, Snel, etc.)
+- [ ] Figure out how to build `Island.svelte` cleanly
+- [ ] Figure out how to serve `islands.js` cleanly
 
 ## About the name Mononykus
 

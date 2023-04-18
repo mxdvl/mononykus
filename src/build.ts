@@ -237,28 +237,25 @@ const generate_routes = async () => {
 	);
 };
 
-await esbuild.build(server);
-await esbuild.build(client);
-await copy_assets();
-await generate_routes();
+const contexts = [await esbuild.context(server), await esbuild.context(client)];
+
+const rebuild = async () => {
+	await Promise.all(contexts.map((context) => context.rebuild()));
+	await copy_assets();
+	await generate_routes();
+};
+
+await rebuild();
 
 if (flags.dev) {
 	const watcher = Deno.watchFs(site_dir);
-	await esbuild.context(server).then(({ watch }) => watch());
-	await esbuild.context(client).then(({ watch }) => watch());
 	serve(create_handler({ base: flags.base, build_dir }), { port: 4507 });
+	let timeout;
 	for await (const { kind, paths: [path] } of watcher) {
 		if (path && (kind === "modify" || kind === "create")) {
 			if (path.includes(build_dir)) continue;
-			console.log({ path, site_dir });
-			if (path.includes(site_dir + "assets/")) {
-				await Deno.copyFile(
-					path,
-					path.replace("/_site/assets/", "/_site/build/"),
-				);
-			} else if (path.includes(site_dir + "routes/")) {
-				console.log(path);
-			}
+			clearTimeout(timeout);
+			timeout = setTimeout(rebuild, 4);
 		}
 	}
 } else {

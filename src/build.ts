@@ -174,7 +174,7 @@ const inline_styles = await Deno.readTextFile(
 	site_dir + "assets" + "/inline.css",
 ).catch(() => "");
 
-const get_islands_css = async (route: string) => {
+const get_route_css = async (route: string) => {
 	const path = current_working_directory + "/" + build_dir + "routes/" +
 		route + ".css";
 
@@ -188,13 +188,17 @@ const get_islands_css = async (route: string) => {
 	}
 };
 
+const get_route_html = async (route: string) => {
+	const { html } = await import(
+		current_working_directory + "/" + build_dir + "routes/" + route +
+			".js?ts=" + Math.floor(performance.now())
+	).then((module) => module.default.render());
+	return html;
+};
+
 const generate_route = async (route: string) => {
-	const [html, css] = await Promise.all([
-		import(
-			current_working_directory + "/" + build_dir + "routes/" + route + ".js"
-		).then((module) => module.default.render().html),
-		get_islands_css(route),
-	]);
+	const html = await get_route_html(route);
+	const css = await get_route_css(route);
 
 	const styles = [inline_styles, css]
 		.filter(Boolean)
@@ -255,7 +259,7 @@ if (flags.dev) {
 		if (path && (kind === "modify" || kind === "create")) {
 			if (path.includes(build_dir)) continue;
 			clearTimeout(timeout);
-			timeout = setTimeout(rebuild, 4);
+			timeout = setTimeout(rebuild, 6);
 		}
 	}
 } else {

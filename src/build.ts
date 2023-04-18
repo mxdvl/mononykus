@@ -8,6 +8,9 @@ import { parse } from "https://deno.land/std@0.177.0/flags/mod.ts";
 import { green } from "https://deno.land/std@0.177.0/fmt/colors.ts";
 import { exists } from "https://deno.land/std@0.183.0/fs/exists.ts";
 import { pathToFileURL } from "https://deno.land/std@0.177.0/node/url.ts";
+import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import { create_handler } from "./server.ts";
+import { normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
 
 const flags = parse(Deno.args, {
 	string: ["site", "build", "base"],
@@ -160,7 +163,7 @@ const islands = await Deno.readTextFile(site_dir + "islands.js")
 		flags.base
 			? contents.replace(
 				"import(`/components/",
-				`import(\`${flags.base}/components/`,
+				"import(`" + normalize(`/${flags.base}/components/`),
 			)
 			: contents
 	);
@@ -220,15 +223,22 @@ await copy_assets();
 await generate_routes();
 
 if (flags.dev) {
-	const watcher = Deno.watchFs(site_dir + "assets");
+	const watcher = Deno.watchFs(site_dir);
 	await esbuild.context(server).then(({ watch }) => watch());
 	await esbuild.context(client).then(({ watch }) => watch());
+	serve(create_handler({ base: flags.base, build_dir }), { port: 4507 });
 	for await (const { kind, paths: [path] } of watcher) {
 		if (path && (kind === "modify" || kind === "create")) {
-			await Deno.copyFile(
-				path,
-				path.replace("/_site/assets/", "/_site/build/"),
-			);
+			if (path.includes(build_dir)) continue;
+			console.log({ path, site_dir });
+			if (path.includes(site_dir + "assets/")) {
+				await Deno.copyFile(
+					path,
+					path.replace("/_site/assets/", "/_site/build/"),
+				);
+			} else if (path.includes(site_dir + "routes/")) {
+				console.log(path);
+			}
 		}
 	}
 } else {

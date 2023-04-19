@@ -6,7 +6,7 @@ import { CssResult } from "https://esm.sh/v115/svelte@3.58.0/types/compiler/inte
 import { get_route_html } from "./get_route_html.ts";
 
 export const build_routes = (
-	{ site_dir, base_path }: { site_dir: string; base_path: string },
+	{ base_path }: { base_path: string },
 ): Plugin => ({
 	name: "mononykus/build-routes",
 	setup(build) {
@@ -33,7 +33,7 @@ export const build_routes = (
 
 				await Deno.writeTextFile(
 					dist_path,
-					await get_route_html({ html, css, base_path, site_dir }),
+					get_route_html({ html, css, base_path }),
 				);
 			}
 

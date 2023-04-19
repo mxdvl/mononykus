@@ -63,7 +63,7 @@ await ensureDir(build_dir);
 const baseESBuildConfig = {
 	logLevel: "info",
 	format: "esm",
-	minify: true,
+	minify: !flags.dev,
 	bundle: true,
 } as const satisfies Partial<esbuild.BuildOptions>;
 

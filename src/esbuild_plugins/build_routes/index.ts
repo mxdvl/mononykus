@@ -39,7 +39,7 @@ export const build_routes = (
 				);
 			}
 
-			console.group(
+			console.log(
 				`Built ${routes.length} routes in ${
 					Math.ceil(performance.now() - start)
 				}ms`,

@@ -7,7 +7,9 @@ import { build_routes } from "./esbuild_plugins/build_routes/index.ts";
 import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
 import { parse } from "https://deno.land/std@0.177.0/flags/mod.ts";
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import { walk } from "https://deno.land/std@0.177.0/fs/walk.ts";
 import { create_handler } from "./server.ts";
+import { globToRegExp } from "https://deno.land/std@0.182.0/path/glob.ts";
 
 const flags = parse(Deno.args, {
 	string: ["site", "build", "base"],
@@ -33,19 +35,23 @@ export const get_svelte_files = async ({
 	dir: "routes/" | "components/";
 	islands?: boolean;
 }) => {
-	const files = [];
-	for await (const { name, isFile } of Deno.readDir(site_dir + dir)) {
+	const files: string[] = [];
+	for await (
+		const { path, name, isFile } of walk(site_dir + dir, {
+			match: [globToRegExp("**/*.svelte")],
+		})
+	) {
+		if (!isFile) continue;
+
 		if (islands) {
-			if (isFile && name.endsWith(".island.svelte")) {
-				files.push(site_dir + dir + name);
+			if (name.endsWith(".island.svelte")) {
+				files.push(path);
 			}
 		} else {
 			if (
-				isFile &&
-				name.endsWith(".svelte") &&
 				!name.endsWith(".island.svelte")
 			) {
-				files.push(site_dir + dir + name);
+				files.push(path);
 			}
 		}
 	}

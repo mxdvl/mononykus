@@ -5,6 +5,8 @@
   import Body from "../components/Body.svelte";
 </script>
 
+<svelte:head><title>Mononykus – Deno + Svelte</title></svelte:head>
+
 <Body>
   <Header />
   <main>

@@ -7,7 +7,7 @@ Head to [mononykus.deno.dev](https://mononykus.deno.dev/) to see it in action.
 
 ---
 
-### Warning
+**Warning**
 
 This is a Work-in-progress. If you want a production framework, look at
 [SvelteKit](https://kit.svelte.dev) or [Astro](https://astro.build/)
@@ -23,7 +23,13 @@ This is a Work-in-progress. If you want a production framework, look at
 - [ ] Add various hydration/foraging strategies
 - [ ] Analyse performance (timings, comparison, web vitals, …)
 - [x] Continuous deployment
-- [ ] Continuous integration
+- [x] Continuous integration
+- [ ] Use `<svete:head>` and a static template
+- [ ] Benchmark building hundreds of pages
+- [ ] Add motivations section (no partial hydration, SvelteKit & Deno, Snel,
+      etc.)
+- [ ] Figure out how to build `Island.svelte` cleanly
+- [ ] Figure out how to serve `islands.js` cleanly
 
 ## About the name Mononykus
 

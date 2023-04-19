@@ -100,14 +100,14 @@ export let props = {};
 
 await create_island_component(svelte_islands);
 
-const configs = {
+const baseESBuildConfig = {
 	logLevel: "info",
 	format: "esm",
 	minify: true,
 	bundle: true,
 } as const satisfies Partial<esbuild.BuildOptions>;
 
-const routesConfig: esbuild.BuildOptions = {
+const routesESBuildConfig: esbuild.BuildOptions = {
 	entryPoints: [
 		await get_svelte_files({ dir: "routes/" }),
 	]
@@ -122,10 +122,10 @@ const routesConfig: esbuild.BuildOptions = {
 		build_routes({ site_dir, base_path }),
 	],
 	outdir: build_dir,
-	...configs,
+	...baseESBuildConfig,
 };
 
-const islandsConfig: esbuild.BuildOptions = {
+const islandsESBuildConfig: esbuild.BuildOptions = {
 	entryPoints: [
 		await get_svelte_files({ dir: "components/", islands: true }),
 	]
@@ -138,7 +138,7 @@ const islandsConfig: esbuild.BuildOptions = {
 		resolve_svelte_internal,
 	],
 	outdir: build_dir + "components/",
-	...configs,
+	...baseESBuildConfig,
 };
 
 const copy_assets = async () => {
@@ -147,31 +147,29 @@ const copy_assets = async () => {
 	}
 };
 
-const inline_styles = await Deno.readTextFile(
-	site_dir + "assets" + "/inline.css",
-).catch(() => "");
+const contexts = [
+	await esbuild.context(routesESBuildConfig),
+	await esbuild.context(islandsESBuildConfig),
+];
 
-await esbuild.build(routesConfig);
-await esbuild.build(islandsConfig);
-await copy_assets();
+const rebuild = async () => {
+	await Promise.all([
+		...contexts.map((context) => context.rebuild()),
+		copy_assets(),
+	]);
+};
+
+await rebuild();
 
 if (flags.dev) {
 	const watcher = Deno.watchFs(site_dir);
-	await esbuild.context(routesConfig).then(({ watch }) => watch());
-	await esbuild.context(islandsConfig).then(({ watch }) => watch());
 	serve(create_handler({ base: flags.base, build_dir }), { port: 4507 });
+	let timeout;
 	for await (const { kind, paths: [path] } of watcher) {
 		if (path && (kind === "modify" || kind === "create")) {
 			if (path.includes(build_dir)) continue;
-			console.log({ path, site_dir });
-			if (path.includes(site_dir + "assets/")) {
-				await Deno.copyFile(
-					path,
-					path.replace("/_site/assets/", "/_site/build/"),
-				);
-			} else if (path.includes(site_dir + "routes/")) {
-				console.log(path);
-			}
+			clearTimeout(timeout);
+			timeout = setTimeout(rebuild, 6);
 		}
 	}
 } else {

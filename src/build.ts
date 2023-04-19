@@ -197,7 +197,7 @@ const generate_route = async (route: string) => {
 	const html = await get_route_html(route);
 	const css = await get_route_css(route);
 
-	const styles = [inline_styles, css]
+	const styles = [css]
 		.filter(Boolean)
 		.map((style) => `<style>${style}</style>`)
 		.join("\n");

@@ -28,32 +28,24 @@ try {
 	// do nothing
 }
 
+const globstar = true;
+
 export const get_svelte_files = async ({
 	dir,
-	islands = false,
 }: {
 	dir: "routes/" | "components/";
-	islands?: boolean;
 }) => {
 	const files: string[] = [];
 	for await (
-		const { path, name, isFile } of walk(site_dir + dir, {
-			match: [globToRegExp("**/*.svelte")],
+		const { path } of walk(site_dir + dir, {
+			match: [
+				globToRegExp(site_dir + "/routes/**/*.svelte", { globstar }),
+				globToRegExp(site_dir + "/components/**/*.island.svelte", { globstar }),
+			],
+			includeDirs: false,
 		})
 	) {
-		if (!isFile) continue;
-
-		if (islands) {
-			if (name.endsWith(".island.svelte")) {
-				files.push(path);
-			}
-		} else {
-			if (
-				!name.endsWith(".island.svelte")
-			) {
-				files.push(path);
-			}
-		}
+		files.push(path);
 	}
 	return files;
 };

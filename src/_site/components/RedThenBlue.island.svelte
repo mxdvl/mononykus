@@ -13,7 +13,6 @@
 </script>
 
 <p class:red class:blue>red then blue</p>
-imported by routes/colours.svelte
 
 <GreenThenPink />
 

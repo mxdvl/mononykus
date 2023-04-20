@@ -11,7 +11,6 @@
 </script>
 
 <p class:green class:pink>green then pink</p>
-imported by components/RedThenBlue.island.svelte
 
 <style>
 	.green {

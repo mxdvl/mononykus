@@ -10,6 +10,7 @@ import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { walk } from "https://deno.land/std@0.177.0/fs/walk.ts";
 import { create_handler } from "./server.ts";
 import { globToRegExp } from "https://deno.land/std@0.182.0/path/glob.ts";
+import { copy } from "https://deno.land/std@0.179.0/fs/copy.ts";
 
 const flags = parse(Deno.args, {
 	string: ["site", "build", "base"],
@@ -87,11 +88,8 @@ const islandsESBuildConfig: esbuild.BuildOptions = {
 	...baseESBuildConfig,
 };
 
-const copy_assets = async () => {
-	for await (const { name } of Deno.readDir(site_dir + "assets")) {
-		await Deno.copyFile(site_dir + "assets/" + name, build_dir + name);
-	}
-};
+const copy_assets = async () =>
+	await copy(site_dir + "assets", build_dir + "assets");
 
 const contexts = [
 	await esbuild.context(routesESBuildConfig),

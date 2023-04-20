@@ -30,6 +30,7 @@ This is a Work-in-progress. If you want a production framework, look at
       etc.)
 - [x] Figure out how to build `Island.svelte` cleanly
 - [x] Figure out how to serve `islands.js` cleanly
+- [ ] Handle nested islands
 
 ## About the name Mononykus
 

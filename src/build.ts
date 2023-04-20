@@ -83,6 +83,7 @@ const islandsESBuildConfig: esbuild.BuildOptions = {
 		resolve_svelte_internal,
 	],
 	outdir: build_dir + "components/",
+	splitting: true,
 	...baseESBuildConfig,
 };
 

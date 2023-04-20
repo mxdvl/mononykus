@@ -37,6 +37,7 @@
     "https://deno.land/std@0.177.0/fs/_util.ts": "65381f341af1ff7f40198cee15c20f59951ac26e51ddc651c5293e24f9ce6f32",
     "https://deno.land/std@0.177.0/fs/ensure_dir.ts": "724209875497a6b4628dfb256116e5651c4f7816741368d6c44aab2531a1e603",
     "https://deno.land/std@0.177.0/fs/exists.ts": "b8c8a457b71e9d7f29b9d2f87aad8dba2739cbe637e8926d6ba6e92567875f8e",
+    "https://deno.land/std@0.177.0/fs/walk.ts": "ea95ffa6500c1eda6b365be488c056edc7c883a1db41ef46ec3bf057b1c0fe32",
     "https://deno.land/std@0.177.0/http/file_server.ts": "86d624c0c908a4a377090668ee872cf5c064245da71b3e8f8f7df888cac869d5",
     "https://deno.land/std@0.177.0/http/http_status.ts": "8a7bcfe3ac025199ad804075385e57f63d055b2aed539d943ccc277616d6f932",
     "https://deno.land/std@0.177.0/http/server.ts": "cbb17b594651215ba95c01a395700684e569c165a567e4e04bba327f41197433",
@@ -255,11 +256,17 @@
   },
   "npm": {
     "specifiers": {
-      "prettier": "prettier@2.8.7"
+      "prettier": "prettier@2.8.7",
+      "svelte": "svelte@3.58.0",
+      "svelte@3.58.0": "svelte@3.58.0"
     },
     "packages": {
       "prettier@2.8.7": {
         "integrity": "sha512-yPngTo3aXUUmyuTjeTUT75txrf+aMh9FiD7q9ZE/i6r0bPb22g4FsE6Y338PQX1bmfy08i9QQCB7/rcUAVntfw==",
+        "dependencies": {}
+      },
+      "svelte@3.58.0": {
+        "integrity": "sha512-brIBNNB76mXFmU/Kerm4wFnkskBbluBDCjx/8TcpYRb298Yh2dztS2kQ6bhtjMcvUhd5ynClfwpz5h2gnzdQ1A==",
         "dependencies": {}
       }
     }

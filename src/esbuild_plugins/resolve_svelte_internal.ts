@@ -1,7 +1,7 @@
 import type { Plugin } from "https://deno.land/x/esbuild@v0.17.16/mod.js";
 
 const svelte_internal = await fetch(
-	"https://esm.sh/v108/svelte@3.58.0/es2020/internal.js",
+	"https://cdn.jsdelivr.net/npm/svelte@3.58.0/internal/index.mjs",
 );
 const svelte_internal_src = await svelte_internal.text();
 

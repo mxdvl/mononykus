@@ -1,45 +1,48 @@
 import type { Plugin } from "https://deno.land/x/esbuild@v0.17.16/mod.js";
 import { dirname } from "https://deno.land/std@0.182.0/path/mod.ts";
 import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
-import { green } from "https://deno.land/std@0.177.0/fmt/colors.ts";
-import { CssResult } from "https://esm.sh/v115/svelte@3.58.0/types/compiler/interfaces.d.ts";
 import { get_route_html } from "./get_route_html.ts";
 
+interface SSROutput {
+	html: string;
+	head: string;
+	css: { code: string };
+}
+
 export const build_routes = (
-	{ site_dir, base_path }: { site_dir: string; base_path: string },
+	{ base_path }: { base_path: string },
 ): Plugin => ({
 	name: "mononykus/build-routes",
 	setup(build) {
 		build.onEnd(async (result) => {
 			const start = performance.now();
 
-			for (const route of result.outputFiles ?? []) {
-				const module = await import(
-					URL.createObjectURL(
-						new Blob([route.text], {
-							type: "text/javascript",
-						}),
-					)
-				);
+			const routes = result.outputFiles ?? [];
 
-				const { html, css: { code: css } } = module.default
-					.render() as {
-						html: string;
-						css: CssResult;
+			for (const route of routes) {
+				const module = await import(
+					"data:application/javascript," + encodeURIComponent(route.text)
+				) as {
+					default: {
+						render(): SSROutput;
 					};
+				};
+
+				const { html, css: { code: css }, head } = module.default.render();
 
 				const dist_path = route.path.replace(".js", ".html");
 				await ensureDir(dirname(dist_path));
 
 				await Deno.writeTextFile(
 					dist_path,
-					await get_route_html({ html, css, base_path, site_dir }),
+					get_route_html({ html, css, head, base_path }),
 				);
 			}
 
-			console.info(
-				"\n◎ ",
-				green(`Generated routes in ${Math.ceil(performance.now() - start)}ms`),
+			console.log(
+				`Built ${routes.length} routes in ${
+					Math.ceil(performance.now() - start)
+				}ms`,
 			);
 		});
 	},

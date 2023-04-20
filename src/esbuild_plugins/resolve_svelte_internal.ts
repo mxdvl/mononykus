@@ -5,20 +5,18 @@ const svelte_internal = await fetch(
 );
 const svelte_internal_src = await svelte_internal.text();
 
-const filter = /^svelte\/internal$/;
-
 export const resolve_svelte_internal: Plugin = {
 	name: "svelte/internal",
 	setup(build) {
-		build.onResolve({ filter }, () => {
+		build.onResolve({ filter: /^svelte(\/internal)?$/ }, () => {
 			return {
 				path: "svelte/internal",
-				namespace: "fs-virtual",
+				namespace: "svelte",
 				external: false,
 			};
 		});
 
-		build.onLoad({ filter }, () => {
+		build.onLoad({ filter: /.*/, namespace: "svelte" }, () => {
 			return {
 				contents: svelte_internal_src,
 			};

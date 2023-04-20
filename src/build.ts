@@ -76,7 +76,7 @@ const routesESBuildConfig: esbuild.BuildOptions = {
 
 const islandsESBuildConfig: esbuild.BuildOptions = {
 	entryPoints: [
-		await get_svelte_files({ dir: "components/", islands: true }),
+		await get_svelte_files({ dir: "components/" }),
 	]
 		.flat(),
 	plugins: [

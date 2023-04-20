@@ -6,6 +6,8 @@
 		green = false
 		pink = true
 	}, 1000)
+
+	console.log('hello from GreenThenPink.island.svelte')
 </script>
 
 <p class:green class:pink>green then pink</p>

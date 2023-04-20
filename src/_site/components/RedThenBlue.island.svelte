@@ -8,6 +8,8 @@
 		red = false
 		blue = true
 	}, 1000)
+
+	console.log('hello from RedThenBlue.island.svelte')
 </script>
 
 <p class:red class:blue>red then blue</p>

@@ -28,7 +28,7 @@ try {
 	// do nothing
 }
 
-const globstar = true;
+const glob = (glob: string) => globToRegExp(glob, { globstar: true });
 
 export const get_svelte_files = async ({
 	dir,
@@ -39,8 +39,8 @@ export const get_svelte_files = async ({
 	for await (
 		const { path } of walk(site_dir + dir, {
 			match: [
-				globToRegExp(site_dir + "/routes/**/*.svelte", { globstar }),
-				globToRegExp(site_dir + "/components/**/*.island.svelte", { globstar }),
+				glob(site_dir + "/routes/**/*.svelte"),
+				glob(site_dir + "/components/**/*.island.svelte"),
 			],
 			includeDirs: false,
 		})

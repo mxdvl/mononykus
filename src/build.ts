@@ -28,13 +28,12 @@ try {
 	// do nothing
 }
 
-const glob = (glob: string) => globToRegExp(glob, { globstar: true });
-
 export const get_svelte_files = async ({
 	dir,
 }: {
 	dir: "routes/" | "components/";
 }) => {
+	const glob = (glob: string) => globToRegExp(glob, { globstar: true });
 	const files: string[] = [];
 	for await (
 		const { path } of walk(site_dir + dir, {

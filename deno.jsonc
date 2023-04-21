@@ -1,7 +1,8 @@
 {
 	"tasks": {
-		"build": "deno run -A src/build.ts --site src/_site",
-		"dev": "deno run -A src/build.ts --site src/_site --dev --base=mononykus"
+		"build": "deno run -A src/build.ts --site src/_site --base=mononykus",
+		"dev": "deno run -A src/build.ts --site src/_site --dev --base=mononykus",
+		"dev:watch": "deno run -A --watch src/build.ts --site src/_site --dev --base=mononykus"
 	},
 	"compilerOptions": {
 		"strict": true,

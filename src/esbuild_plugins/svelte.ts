@@ -1,18 +1,34 @@
+import { basename } from "https://deno.land/std@0.177.0/path/mod.ts";
 import type { Plugin } from "https://deno.land/x/esbuild@v0.17.16/mod.js";
 import { compile, preprocess } from "npm:svelte/compiler";
+import { name } from "./mononykus.ts";
 
 const filter = /\.svelte$/;
-const name = "mononykus/svelte-islands";
 
-export const island_wrapper = (mode: "ssr" | "dom", dir: string): Plugin => ({
-	name,
+interface SvelteOptions {
+	site_dir: string;
+	base_path: string;
+}
+
+export const svelte = (
+	{ site_dir, base_path }: SvelteOptions,
+): Plugin => ({
+	name: "mononykus/svelte",
 	setup(build) {
-		build.onLoad({ filter }, async ({ path }) => {
-			const filename = path.split(dir).at(-1) ?? "Undefined.svelte";
-			const source = await Deno.readTextFile(path);
-			const island = filename.match(/\/(\w+).island.svelte/);
+		// const map = new Map<string, string>();
 
-			const processed = island && mode === "ssr"
+		build.onLoad({ filter }, async ({ path, suffix }) => {
+			const filename = basename(path);
+			const source = await Deno.readTextFile(path);
+			const is_island = filename.endsWith(".island.svelte");
+			const generate = suffix === "?island" ? "dom" : "ssr";
+
+			// const found = map.get(path + suffix);
+			// if (found) {
+			// 	return { contents: found };
+			// }
+
+			const processed = is_island && generate === "ssr"
 				? (await preprocess(source, {
 					markup: ({ content }) => {
 						let processed = content;
@@ -26,8 +42,11 @@ export const island_wrapper = (mode: "ssr" | "dom", dir: string): Plugin => ({
 								html = html.replace(el, "");
 							}
 							processed = non_html.join("") +
-								`<one-claw name="${
-									island[1]
+								`<one-claw file="/${
+									base_path +
+									path.split(site_dir).at(-1)?.replace("components/", "")
+								}" name="${
+									name(filename)
 								}" props={JSON.stringify($$props)} style="display:contents;">${html.trim()}</one-claw>`;
 						}
 						return ({
@@ -38,10 +57,10 @@ export const island_wrapper = (mode: "ssr" | "dom", dir: string): Plugin => ({
 				: source;
 
 			const { js: { code } } = compile(processed, {
-				generate: mode,
+				generate,
 				css: "injected",
 				cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
-				hydratable: mode === "dom",
+				hydratable: generate === "dom",
 				enableSourcemap: false,
 				filename,
 			});

@@ -12,6 +12,7 @@
 		"editor.defaultFormatter": "denoland.vscode-deno"
 	},
 	"cSpell.words": [
+		"hydrator",
 		"mononykus"
 	]
 }

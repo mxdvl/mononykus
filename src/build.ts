@@ -89,7 +89,7 @@ const islandsESBuildConfig: esbuild.BuildOptions = {
 };
 
 const copy_assets = async () =>
-	await copy(site_dir + "assets", build_dir + "assets");
+	await copy(site_dir + "assets", build_dir + "assets", { overwrite: true });
 
 const contexts = [
 	await esbuild.context(routesESBuildConfig),

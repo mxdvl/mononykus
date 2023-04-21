@@ -1,19 +1,13 @@
-import { normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
 import { format } from "npm:prettier";
 
-// dummy value to put the var name in scope
-const component_path = "";
-
-// this function is stringified inline in the page
-// putting it here gives us type safety etc
-export const hydrate_island = async (target: Element) => {
+const hydrate_island = async (target: Element) => {
 	try {
+		const file = target.getAttribute("file");
+		if (!file) return;
 		const name = target.getAttribute("name");
 		const props = JSON.parse(target.getAttribute("props") ?? "{}");
 		const load = performance.now();
-
-		const Component =
-			(await import(component_path + name + ".island.js")).default;
+		const Component = (await import(file)).default;
 		console.group(name);
 		console.info(
 			`Loaded in %c${Math.round((performance.now() - load) * 1000) / 1000}ms`,
@@ -37,7 +31,6 @@ export const hydrate_island = async (target: Element) => {
 		console.error(_);
 	}
 };
-
 interface TemplateOptions {
 	css: string;
 	head: string;
@@ -61,23 +54,19 @@ const template = ({ css, head, html, hydrator }: TemplateOptions) => `
 	</html>
 `;
 
-const island_hydrator = (base = "") => `
-	const component_path = "${base}";
-	const hydrate_island = ${hydrate_island.toString()};
-	document.querySelectorAll("one-claw[name]").forEach(hydrate_island);
-`;
-
-export const get_route_html = ({ html, css, head, base_path }: {
+export const get_route_html = ({ html, css, head }: {
 	html: string;
 	css: string;
 	head: string;
-	base_path?: string;
 }) => {
+	const hydrator =
+		`document.querySelectorAll("one-claw[file]").forEach(${hydrate_island.toString()});`;
+
 	const page = template({
 		css,
 		head,
 		html,
-		hydrator: island_hydrator(normalize(`/${base_path}/components/`)),
+		hydrator,
 	});
 
 	try {

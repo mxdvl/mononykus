@@ -14,22 +14,23 @@ export const island_wrapper = (mode: "ssr" | "dom", dir: string): Plugin => ({
 
 			const { js: { code } } = compile(source, {
 				generate: mode,
-				css: "external",
+				css: "injected",
 				cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
 				hydratable: mode === "dom",
 				preserveWhitespace: false,
 				filename,
+				enableSourcemap: false,
 			});
 
-						const contents = island
-							? code.replace(
-								/return `([\s\S]+?)`;\s\}\);/m,
-								`return \`<one-claw name="${
-									island[1]
-								}" props='\${JSON.stringify($$$$props)}' style="display:contents;">$1</one-claw>\`;
+			const contents = island && mode === "ssr"
+				? code.replace(
+					/return `([\s\S]+?)`;\s\}\);/m,
+					`return \`<one-claw name="${
+						island[1]
+					}" props='\${JSON.stringify($$$$props)}' style="display:contents;">$1</one-claw>\`;
 			});`,
-							)
-							: code;
+				)
+				: code;
 
 			return ({ contents });
 		});

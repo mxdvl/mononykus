@@ -44,7 +44,6 @@ export const island_wrapper = (mode: "ssr" | "dom", dir: string): Plugin => ({
 				hydratable: mode === "dom",
 				enableSourcemap: false,
 				filename,
-				enableSourcemap: false,
 			});
 
 			return ({ contents: code });

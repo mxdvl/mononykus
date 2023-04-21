@@ -3,15 +3,13 @@
   export let value;
 </script>
 
-<div>
-  <p>
-    Well, hello there, {value}!
-  </p>
+<p>
+  Well, hello there, {value}!
+</p>
 
-  <input type="text" bind:value />
+<input type="text" bind:value />
 
-  <em>(try changing this name)</em>
-</div>
+<em>(try changing this name)</em>
 
 <style>
   input {

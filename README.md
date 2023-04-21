@@ -36,5 +36,5 @@ This is a Work-in-progress. If you want a production framework, look at
 
 [Mononykus](https://en.wikipedia.org/wiki/Mononykus) is a svelte dinosaur of the
 late Cretaceous. The show “Prehistoric Planet” has a scene demonstrating the use
-of its large, singular claw to eat forage termite mounds. Mononykus was probably
+of its large, singular claw to forage termite mounds. Mononykus was probably
 covered in majestic feathers.

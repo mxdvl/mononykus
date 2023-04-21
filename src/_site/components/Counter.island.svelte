@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte'
 
 	export let count = 3
-	let mounted = true
+	let mounted = false
 	onMount(async () => {
 		mounted = true
 	})

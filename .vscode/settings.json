@@ -11,6 +11,9 @@
 	"[jsonc]": {
 		"editor.defaultFormatter": "denoland.vscode-deno"
 	},
+	"[svelte]": {
+		"editor.defaultFormatter": "svelte.svelte-vscode"
+	},
 	"cSpell.words": [
 		"mononykus"
 	]

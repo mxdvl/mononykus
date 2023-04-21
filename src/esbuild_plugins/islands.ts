@@ -1,5 +1,5 @@
 import type { Plugin } from "https://deno.land/x/esbuild@v0.17.16/mod.js";
-import { compile } from "npm:svelte/compiler";
+import { compile, preprocess } from "npm:svelte/compiler";
 
 const filter = /\.svelte$/;
 const name = "mononykus/svelte-islands";
@@ -12,27 +12,42 @@ export const island_wrapper = (mode: "ssr" | "dom", dir: string): Plugin => ({
 			const source = await Deno.readTextFile(path);
 			const island = filename.match(/\/(\w+).island.svelte/);
 
-			const { js: { code } } = compile(source, {
+			const processed = island && mode === "ssr"
+				? (await preprocess(source, {
+					markup: ({ content }) => {
+						let processed = content;
+						const non_html = content.match(
+							/(<style.*>[\s\S]*?<\/style>|<script.*>[\s\S]*?<\/script>)/gm,
+						);
+
+						if (non_html) {
+							let html = content;
+							for (const el of non_html) {
+								html = html.replace(el, "");
+							}
+							processed = non_html.join("") +
+								`<one-claw name="${
+									island[1]
+								}" props={JSON.stringify($$props)} style="display:contents;">${html.trim()}</one-claw>`;
+						}
+						return ({
+							code: processed,
+						});
+					},
+				})).code
+				: source;
+
+			const { js: { code } } = compile(processed, {
 				generate: mode,
 				css: "injected",
 				cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
 				hydratable: mode === "dom",
-				preserveWhitespace: false,
+				enableSourcemap: false,
 				filename,
 				enableSourcemap: false,
 			});
 
-			const contents = island && mode === "ssr"
-				? code.replace(
-					/return `([\s\S]+?)`;\s\}\);/m,
-					`return \`<one-claw name="${
-						island[1]
-					}" props='\${JSON.stringify($$$$props)}' style="display:contents;">$1</one-claw>\`;
-			});`,
-				)
-				: code;
-
-			return ({ contents });
+			return ({ contents: code });
 		});
 	},
 });

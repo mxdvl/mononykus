@@ -12,7 +12,7 @@ export const island_wrapper = (mode: "ssr" | "dom", dir: string): Plugin => ({
 			const source = await Deno.readTextFile(path);
 			const island = filename.match(/\/(\w+).island.svelte/);
 
-			const processed = island
+			const processed = island && mode === "ssr"
 				? (await preprocess(source, {
 					markup: ({ content }) => {
 						let processed = content;

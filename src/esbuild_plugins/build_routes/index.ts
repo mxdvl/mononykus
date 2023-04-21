@@ -6,7 +6,7 @@ import { get_route_html } from "./get_route_html.ts";
 interface SSROutput {
 	html: string;
 	head: string;
-	css: { code: string };
+	css?: { code: string };
 }
 
 export const build_routes = (
@@ -28,7 +28,8 @@ export const build_routes = (
 					};
 				};
 
-				const { html, css: { code: css }, head } = module.default.render();
+				const { html, css: _css, head } = module.default.render();
+				const css = _css?.code ?? "";
 
 				const dist_path = route.path.replace(".js", ".html");
 				await ensureDir(dirname(dist_path));

@@ -17,7 +17,7 @@ export const island_wrapper = (mode: "ssr" | "dom", dir: string): Plugin => ({
 					markup: ({ content }) => {
 						let processed = content;
 						const non_html = content.match(
-							/(<style>[\s\S]*<\/style>|<script>[\s\S]*<\/script>)/gm,
+							/(<style.*>[\s\S]*?<\/style>|<script.*>[\s\S]*?<\/script>)/gm,
 						);
 
 						if (non_html) {

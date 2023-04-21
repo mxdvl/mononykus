@@ -57,13 +57,18 @@ export const get_route_html = ({ html, css, head, base_path }: {
 }) => {
 	const page = template({ css, head, html, hydrate: islands(base_path) });
 
-	return format(
-		page,
-		{
-			parser: "html",
-			useTabs: true,
-			htmlWhitespaceSensitivity: "css",
-			bracketSameLine: true,
-		},
-	);
+	try {
+		return format(
+			page,
+			{
+				parser: "html",
+				useTabs: true,
+				htmlWhitespaceSensitivity: "css",
+				bracketSameLine: true,
+			},
+		);
+	} catch (_) {
+		console.warn("Could not format the html");
+		return page;
+	}
 };

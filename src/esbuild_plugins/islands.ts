@@ -15,17 +15,27 @@ export const island_wrapper = (mode: "ssr" | "dom", dir: string): Plugin => ({
 			const processed = island
 				? (await preprocess(source, {
 					markup: ({ content }) => {
-						// const script = content.matchAll(/<script>[\s\S]+<\/script>/g);
+						let processed = content;
+						const non_html = content.match(
+							/(<style>[\s\S]*<\/style>|<script>[\s\S]*<\/script>)/gm,
+						);
+
+						if (non_html) {
+							let html = content;
+							for (const el of non_html) {
+								html = html.replace(el, "");
+							}
+							processed = non_html.join("") +
+								`<one-claw name="${
+									island[1]
+								}" props={JSON.stringify($$props)} style="display:contents;">${html.trim()}</one-claw>`;
+						}
 						return ({
-							code: `<one-claw name="${
-								island[1]
-							}" props={JSON.stringify($$props)} style="display:contents;">${"boo"}</one-claw>`,
+							code: processed,
 						});
 					},
 				})).code
 				: source;
-
-			console.log(processed);
 
 			const { js: { code } } = compile(processed, {
 				generate: mode,

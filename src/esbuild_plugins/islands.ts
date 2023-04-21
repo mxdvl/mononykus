@@ -21,14 +21,15 @@ export const island_wrapper = (mode: "ssr" | "dom", dir: string): Plugin => ({
 				filename,
 			});
 
-			const contents = island
-				? code.replace(
-					/return `([\s\S]+?)`;/m,
-					`return \`<one-claw name="${
-						island[1]
-					}" props='\${JSON.stringify($$$$props)}' style="display:contents;">$1</one-claw>\`;`,
-				)
-				: code;
+						const contents = island
+							? code.replace(
+								/return `([\s\S]+?)`;\s\}\);/m,
+								`return \`<one-claw name="${
+									island[1]
+								}" props='\${JSON.stringify($$$$props)}' style="display:contents;">$1</one-claw>\`;
+			});`,
+							)
+							: code;
 
 			return ({ contents });
 		});

@@ -39,11 +39,12 @@ export const island_wrapper = (mode: "ssr" | "dom", dir: string): Plugin => ({
 
 			const { js: { code } } = compile(processed, {
 				generate: mode,
-				css: "external",
+				css: "injected",
 				cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
 				hydratable: mode === "dom",
 				enableSourcemap: false,
 				filename,
+				enableSourcemap: false,
 			});
 
 			return ({ contents: code });

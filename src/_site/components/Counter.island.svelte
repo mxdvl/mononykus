@@ -1,12 +1,16 @@
 <script>
-  import Nested from "./Nested.svelte";
+	import Nested from './Nested.svelte'
+	import { onMount } from 'svelte'
 
-  export let count = 3;
-  const SSR = typeof document === "undefined";
+	export let count = 3
+	let mounted = false
+	onMount(async () => {
+		mounted = true
+	})
 </script>
 
-<button disabled={SSR} on:click={() => count--}> -1 </button>
+<button disabled={!mounted} on:click={() => count--}> -1 </button>
 {count}
-<button disabled={SSR} on:click={() => count++}> +1 </button>
+<button disabled={!mounted} on:click={() => count++}> +1 </button>
 
 <Nested {count} />

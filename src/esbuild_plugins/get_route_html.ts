@@ -60,7 +60,7 @@ export const get_route_html = ({ html, css, head }: {
 	head: string;
 }) => {
 	const hydrator =
-		`document.querySelectorAll("one-claw[file]").forEach(${hydrate_island.toString()});`;
+		`document.querySelectorAll("one-claw[file]:not(one-claw one-claw)").forEach(${hydrate_island.toString()});`;
 
 	const page = template({
 		css,

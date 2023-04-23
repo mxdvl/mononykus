@@ -14,7 +14,10 @@
 
 <p class:red class:blue>red then blue</p>
 
-<GreenThenPink />
+<blockquote>
+	<GreenThenPink />
+</blockquote>
+
 
 <style>
 	.red {

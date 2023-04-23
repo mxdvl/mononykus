@@ -66,7 +66,7 @@ const ESBuildConfig: esbuild.BuildOptions = {
 };
 
 const copy_assets = async () =>
-	await copy(site_dir + "assets", build_dir + "assets", { overwrite: true });
+	await copy(site_dir + "assets", build_dir, { overwrite: true });
 
 const rebuild = async (routes: string[], islands: string[]) => {
 	await Promise.all([
@@ -79,6 +79,7 @@ const rebuild = async (routes: string[], islands: string[]) => {
 			...ESBuildConfig,
 			write: true,
 			splitting: true,
+			// splitting: true,
 			entryPoints: islands,
 		}),
 		copy_assets(),

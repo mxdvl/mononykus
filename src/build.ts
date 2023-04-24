@@ -61,7 +61,7 @@ const routesESBuildConfig: esbuild.BuildOptions = {
 	entryPoints: await get_svelte_files({ dir: "routes/" }),
 	write: false,
 	plugins: [
-		svelte_components(site_dir),
+		svelte_components,
 		svelte_internal,
 		build_routes({ base_path }),
 	],
@@ -73,7 +73,7 @@ const islandsESBuildConfig: esbuild.BuildOptions = {
 	entryPoints: await get_svelte_files({ dir: "components/" }),
 	write: true,
 	plugins: [
-		svelte_components(site_dir),
+		svelte_components,
 		svelte_internal,
 	],
 	outdir: build_dir + "components/",

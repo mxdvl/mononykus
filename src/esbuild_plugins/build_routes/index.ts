@@ -19,7 +19,7 @@ export const build_routes = (
 
 			const routes = result.outputFiles ?? [];
 
-			for (const route of routes) {
+			await Promise.all(routes.map(async (route) => {
 				const module = await import(
 					"data:application/javascript," + encodeURIComponent(route.text)
 				) as {
@@ -38,7 +38,7 @@ export const build_routes = (
 					dist_path,
 					get_route_html({ html, css, head, base_path }),
 				);
-			}
+			}));
 
 			console.log(
 				`Built ${routes.length} routes in ${

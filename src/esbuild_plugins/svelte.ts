@@ -1,8 +1,12 @@
-import { basename } from "https://deno.land/std@0.177.0/path/mod.ts";
+import {
+	basename,
+	dirname,
+	resolve,
+} from "https://deno.land/std@0.177.0/path/mod.ts";
 import type { Plugin } from "https://deno.land/x/esbuild@v0.17.16/mod.js";
 import { compile, preprocess } from "npm:svelte/compiler";
 
-const filter = /\.svelte$/;
+const filter = /\.svelte(\?\w+)?$/;
 
 interface SvelteOptions {
 	site_dir: string;
@@ -21,7 +25,15 @@ export const svelte = (
 	setup(build) {
 		const generate = build.initialOptions.write ? "dom" : "ssr";
 
-		build.onResolve({ filter }, ({ path, kind }) => {
+		build.onResolve({ filter }, ({ path, kind, importer }) => {
+			if (generate === "ssr") {
+				console.log("this item", {
+					path,
+					importer,
+					absolute: resolve(dirname(importer)),
+				});
+			}
+
 			const is_island_entry_point = generate === "dom" &&
 				kind === "import-statement" &&
 				// matches our `components/**/*.island.svelte`,
@@ -41,7 +53,7 @@ export const svelte = (
 			const source = await Deno.readTextFile(path);
 			const is_island = filename.endsWith(".island.svelte");
 
-			const processed = is_island && generate === "ssr"
+			const processed = is_island && generate === "ssr" && suffix !== "?clawed"
 				? (await preprocess(source, {
 					markup: ({ content }) => {
 						let processed = content;
@@ -57,8 +69,7 @@ export const svelte = (
 							processed = non_html.join("") +
 								`<one-claw file="/${
 									base_path +
-									path.split(site_dir).at(-1)?.replace("components/", "")
-										.replace(/\.svelte$/, ".js")
+									basename(path).replace(/\.svelte$/, ".js")
 								}" name="${
 									name(filename)
 								}" props={JSON.stringify($$props)} style="display:contents;">${html.trim()}</one-claw>`;
@@ -74,7 +85,7 @@ export const svelte = (
 				generate,
 				css: "injected",
 				cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
-				hydratable: generate === "dom",
+				hydratable: generate === "dom" || is_island,
 				enableSourcemap: false,
 				filename,
 			});

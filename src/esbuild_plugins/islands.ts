@@ -4,15 +4,32 @@ import { compile, preprocess } from "npm:svelte/compiler";
 const filter = /\.svelte$/;
 const name = "mononykus/svelte-islands";
 
-export const island_wrapper = (mode: "ssr" | "dom", dir: string): Plugin => ({
+export const island_wrapper = (dir: string): Plugin => ({
 	name,
 	setup(build) {
+		const generate = build.initialOptions.write ? "dom" : "ssr";
+
+		build.onResolve({ filter }, ({ path, kind }) => {
+			const is_island_entry_point = generate === "dom" &&
+				kind === "import-statement" &&
+				// matches our `components/**/*.island.svelte`,
+				// perfect proxy of checking `build.initialOptions.entryPoints`
+				path.endsWith(".island.svelte");
+
+			return is_island_entry_point
+				? {
+					path: path.replace(/\.svelte$/, ".js"),
+					external: true,
+				}
+				: undefined;
+		});
+
 		build.onLoad({ filter }, async ({ path }) => {
 			const filename = path.split(dir).at(-1) ?? "Undefined.svelte";
 			const source = await Deno.readTextFile(path);
 			const island = filename.match(/\/(\w+).island.svelte/);
 
-			const processed = island && mode === "ssr"
+			const processed = island && generate === "ssr"
 				? (await preprocess(source, {
 					markup: ({ content }) => {
 						let processed = content;
@@ -38,10 +55,10 @@ export const island_wrapper = (mode: "ssr" | "dom", dir: string): Plugin => ({
 				: source;
 
 			const { js: { code } } = compile(processed, {
-				generate: mode,
+				generate,
 				css: "injected",
 				cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
-				hydratable: mode === "dom",
+				hydratable: generate === "dom",
 				enableSourcemap: false,
 				filename,
 			});

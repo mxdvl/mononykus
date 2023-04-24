@@ -2,9 +2,9 @@ import type { Plugin } from "https://deno.land/x/esbuild@v0.17.16/mod.js";
 import { compile, preprocess } from "npm:svelte/compiler";
 
 const filter = /\.svelte$/;
-const name = "mononykus/svelte-islands";
+const name = "mononykus/svelte";
 
-export const island_wrapper = (dir: string): Plugin => ({
+export const svelte_components = (dir: string): Plugin => ({
 	name,
 	setup(build) {
 		const generate = build.initialOptions.write ? "dom" : "ssr";

@@ -60,10 +60,7 @@ const baseESBuildConfig = {
 } as const satisfies Partial<esbuild.BuildOptions>;
 
 const routesESBuildConfig: esbuild.BuildOptions = {
-	entryPoints: [
-		await get_svelte_files({ dir: "routes/" }),
-	]
-		.flat(),
+	entryPoints: await get_svelte_files({ dir: "routes/" }),
 	write: false,
 	plugins: [
 		island_wrapper("ssr", site_dir),
@@ -75,10 +72,7 @@ const routesESBuildConfig: esbuild.BuildOptions = {
 };
 
 const islandsESBuildConfig: esbuild.BuildOptions = {
-	entryPoints: [
-		await get_svelte_files({ dir: "components/" }),
-	]
-		.flat(),
+	entryPoints: await get_svelte_files({ dir: "components/" }),
 	plugins: [
 		island_wrapper("dom", site_dir),
 		resolve_svelte_internal,

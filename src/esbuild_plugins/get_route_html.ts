@@ -64,7 +64,7 @@ const template = ({ css, head, html, hydrator }: TemplateOptions) => `
 const island_hydrator = (base = "") => `
 	const component_path = "${base}";
 	const hydrate_island = ${hydrate_island.toString()};
-	document.querySelectorAll("one-claw[name]").forEach(hydrate_island);
+	document.querySelectorAll("one-claw[name]:not(one-claw one-claw)").forEach(hydrate_island);
 `;
 
 export const get_route_html = ({ html, css, head, base_path }: {

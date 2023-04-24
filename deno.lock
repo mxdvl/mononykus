@@ -1,6 +1,7 @@
 {
   "version": "2",
   "remote": {
+    "https://cdn.jsdelivr.net/npm/svelte@3.58.0/internal/index.mjs": "665e505def2e112363f88da8ac77ffcbbe1328dd2f0c490e39b0283e948a30c9",
     "https://deno.land/std@0.177.0/_util/asserts.ts": "178dfc49a464aee693a7e285567b3d0b555dc805ff490505a8aae34f9cfb1462",
     "https://deno.land/std@0.177.0/_util/os.ts": "d932f56d41e4f6a6093d56044e29ce637f8dcc43c5a90af43504a889cf1775e3",
     "https://deno.land/std@0.177.0/async/abortable.ts": "73acfb3ed7261ce0d930dbe89e43db8d34e017b063cf0eaa7d215477bf53442e",

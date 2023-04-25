@@ -1,7 +1,7 @@
 import * as esbuild from "https://deno.land/x/esbuild@v0.17.16/mod.js";
 import { svelte_components } from "./esbuild_plugins/svelte_components.ts";
 import { svelte_internal } from "./esbuild_plugins/svelte_internal.ts";
-import { build_routes } from "./esbuild_plugins/routes.ts";
+import { build_routes } from "./esbuild_plugins/build_routes.ts";
 import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
 import { parse } from "https://deno.land/std@0.177.0/flags/mod.ts";
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";

@@ -9,10 +9,13 @@ import { compile } from "npm:svelte/compiler";
 const filter = /\.svelte$/;
 const name = "mononykus/svelte";
 
+/** force wrapping the actual component in a synthetic one */
+const one_claw_synthetic = "?one-claw-synthetic";
+
 const OneClaw = ({ path, name }: { path: string; name: string }) =>
-	`<!-- magical wrapper -->
+	`<!-- synthetic component -->
 <script>
-	import Island from "${path}?nested";
+	import Island from "${path}";
 </script>
 <one-claw props={JSON.stringify($$props)} name="${name}">
 	<Island {...$$props} />
@@ -27,31 +30,29 @@ export const svelte_components: Plugin = {
 		const generate = build.initialOptions.write ? "dom" : "ssr";
 
 		build.onResolve({ filter }, ({ path, kind, importer }) => {
-			// pattern matching for the rest of us
-			switch (true) {
-				case generate === "dom" &&
+			if (generate === "dom") {
+				if (
 					kind === "import-statement" &&
 					// matches our `components/**/*.island.svelte`,
 					// perfect proxy of checking `build.initialOptions.entryPoints`
-					path.endsWith(".island.svelte"): {
+					path.endsWith(".island.svelte")
+				) {
 					return {
 						path: path.replace(/\.svelte$/, ".js"),
 						external: true,
 					};
 				}
-				case generate === "ssr" && path.endsWith(".island.svelte?nested"): {
+			} else {
+				if (
+					// ensure this is not imported from a synthetic component
+					path !== importer &&
+					path.endsWith(".island.svelte")
+				) {
 					return {
 						path: resolve(dirname(importer), path),
+						suffix: one_claw_synthetic,
 					};
 				}
-				case generate === "ssr" && path.endsWith(".island.svelte"): {
-					return {
-						path: resolve(dirname(importer), path),
-						suffix: "?claw",
-					};
-				}
-				default:
-					return undefined;
 			}
 		});
 
@@ -60,18 +61,9 @@ export const svelte_components: Plugin = {
 				.replace(/(\.island)?\.svelte$/, "")
 				.replaceAll(/(\.|\W)/g, "_");
 
-			if (suffix === "?claw") {
-				const contents = compile(OneClaw({ path, name }), {
-					generate,
-					css: "injected",
-					cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
-					enableSourcemap: false,
-				}).js.code;
-
-				return { contents };
-			}
-
-			const source = await Deno.readTextFile(path);
+			const source = suffix === one_claw_synthetic
+				? OneClaw({ path, name })
+				: await Deno.readTextFile(path);
 
 			const { js: { code } } = compile(source, {
 				generate,

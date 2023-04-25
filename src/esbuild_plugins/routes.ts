@@ -9,9 +9,7 @@ interface SSROutput {
 	css?: { code: string };
 }
 
-export const build_routes = (
-	{ base_path }: { base_path: string },
-): Plugin => ({
+export const build_routes: Plugin = {
 	name: "mononykus/build-routes",
 	setup(build) {
 		build.onEnd(async (result) => {
@@ -36,7 +34,7 @@ export const build_routes = (
 
 				await Deno.writeTextFile(
 					dist_path,
-					get_route_html({ html, css, head, base_path }),
+					get_route_html({ html, css, head }),
 				);
 			}));
 
@@ -47,4 +45,4 @@ export const build_routes = (
 			);
 		});
 	},
-});
+};

@@ -84,14 +84,10 @@ const islandsESBuildConfig: esbuild.BuildOptions = {
 const copy_assets = async () =>
 	await copy(site_dir + "assets", build_dir + "assets", { overwrite: true });
 
-const contexts = [
-	await esbuild.context(routesESBuildConfig),
-	await esbuild.context(islandsESBuildConfig),
-];
-
 const rebuild = async () => {
 	await Promise.all([
-		...contexts.map((context) => context.rebuild()),
+		esbuild.build(routesESBuildConfig),
+		esbuild.build(islandsESBuildConfig),
 		copy_assets(),
 	]);
 };
@@ -110,5 +106,5 @@ if (flags.dev) {
 		}
 	}
 } else {
-	esbuild.stop();
+	Deno.exit(0);
 }

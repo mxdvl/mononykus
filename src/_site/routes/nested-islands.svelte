@@ -8,4 +8,5 @@ Example of nested islands.
 
 <RedThenBlue />
 <GreenThenPink />
+<GreenThenPink />
 <SubDir />

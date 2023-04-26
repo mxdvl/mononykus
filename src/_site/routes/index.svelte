@@ -3,11 +3,17 @@
   import HelloFriend from "../components/HelloFriend.island.svelte";
   import Counter from "../components/Counter.island.svelte";
   import Body from "../components/Body.svelte";
+
+  export let base_path = "/";
 </script>
 
 <svelte:head>
   <title>Mononykus – Deno + Svelte</title>
-  <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+  <link
+    rel="icon"
+    href={`${base_path}assets/favicon.ico`}
+    type="image/x-icon"
+  />
 </svelte:head>
 
 <Body>

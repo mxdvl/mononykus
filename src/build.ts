@@ -21,7 +21,7 @@ const flags = parse(Deno.args, {
 
 const site_dir = resolve(flags.site);
 const build_dir = resolve(flags.build ?? "build");
-const base_path = normalise(flags.base + "/");
+const base_path = normalise("/" + flags.base + "/");
 
 console.info("🪶", " – ", bold("Mononykus"));
 

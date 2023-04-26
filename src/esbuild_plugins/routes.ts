@@ -24,11 +24,11 @@ export const build_routes = (
 					"data:application/javascript," + encodeURIComponent(route.text)
 				) as {
 					default: {
-						render(): SSROutput;
+						render(props: { base_path: string }): SSROutput;
 					};
 				};
 
-				const { html, css: _css, head } = module.default.render();
+				const { html, css: _css, head } = module.default.render({ base_path });
 				const css = _css?.code ?? "";
 
 				const dist_path = route.path.replace(".js", ".html");

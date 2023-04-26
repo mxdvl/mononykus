@@ -5,7 +5,13 @@
   import Body from "../components/Body.svelte";
 </script>
 
-<svelte:head><title>Mononykus – Deno + Svelte</title></svelte:head>
+<svelte:head>
+  <title>Mononykus – Deno + Svelte</title>
+  <meta
+    name="description"
+    content="Deploy small websites built with Svelte with islands of interactivity."
+  />
+</svelte:head>
 
 <Body>
   <Header />

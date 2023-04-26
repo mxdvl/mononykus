@@ -11,6 +11,7 @@ import { globToRegExp } from "https://deno.land/std@0.182.0/path/glob.ts";
 import { copy } from "https://deno.land/std@0.179.0/fs/copy.ts";
 import { resolve } from "https://deno.land/std@0.177.0/path/mod.ts";
 import { normalize as normalise } from "https://deno.land/std@0.177.0/path/posix.ts"; // the web is posix
+import { bold, underline } from "https://deno.land/std@0.177.0/fmt/colors.ts";
 
 const flags = parse(Deno.args, {
 	string: ["site", "build", "base"],
@@ -22,12 +23,7 @@ const site_dir = resolve(flags.site);
 const build_dir = resolve(flags.build ?? "build");
 const base_path = normalise(flags.base + "/");
 
-// clean out old builds, if they exist
-try {
-	await Deno.remove(build_dir, { recursive: true });
-} catch (_error) {
-	// do nothing
-}
+console.info("🪶", " – ", bold("Mononykus"));
 
 export const get_svelte_files = async ({
 	dir,
@@ -50,10 +46,8 @@ export const get_svelte_files = async ({
 	return files;
 };
 
-await ensureDir(build_dir);
-
 const baseESBuildConfig = {
-	logLevel: "info",
+	logLevel: "silent",
 	format: "esm",
 	minify: !flags.dev,
 	bundle: true,
@@ -83,6 +77,16 @@ const islandsESBuildConfig: esbuild.BuildOptions = {
 	...baseESBuildConfig,
 };
 
+const prepare = async () => {
+	try {
+		await Deno.remove(build_dir, { recursive: true });
+	} catch (_error) {
+		// do nothing
+	}
+
+	await ensureDir(build_dir);
+};
+
 const copy_assets = async () =>
 	await copy(
 		resolve(site_dir, "assets"),
@@ -92,7 +96,7 @@ const copy_assets = async () =>
 		},
 	);
 
-const rebuild = async () => {
+const build = async () => {
 	await Promise.all([
 		esbuild.build(routesESBuildConfig),
 		esbuild.build(islandsESBuildConfig),
@@ -100,7 +104,8 @@ const rebuild = async () => {
 	]);
 };
 
-await rebuild();
+await prepare();
+await build();
 
 if (flags.dev) {
 	const watcher = Deno.watchFs(site_dir);
@@ -110,9 +115,14 @@ if (flags.dev) {
 		if (path && (kind === "modify" || kind === "create")) {
 			if (path.includes(build_dir)) continue;
 			clearTimeout(timeout);
-			timeout = setTimeout(rebuild, 6);
+			timeout = setTimeout(build, 6);
 		}
 	}
-} else {
-	Deno.exit(0);
 }
+
+console.info("\nServe the following directory:");
+console.info(underline(build_dir));
+
+// Ensure that we exit promptly,
+// without waiting for any async code in SSR islands
+Deno.exit(0);

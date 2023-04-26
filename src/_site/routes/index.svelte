@@ -5,7 +5,10 @@
   import Body from "../components/Body.svelte";
 </script>
 
-<svelte:head><title>Mononykus – Deno + Svelte</title></svelte:head>
+<svelte:head>
+  <title>Mononykus – Deno + Svelte</title>
+  <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+</svelte:head>
 
 <Body>
   <Header />

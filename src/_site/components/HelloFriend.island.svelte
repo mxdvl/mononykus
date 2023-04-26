@@ -3,17 +3,21 @@
   export let value;
 </script>
 
-<p>
-  Well, hello there, {value}!
-</p>
+Well, hello there, {value}!
 
-<input type="text" bind:value />
-
-<em>(try changing this name)</em>
+<label>
+  Your name:
+  <input type="text" bind:value />
+</label>
 
 <style>
   input {
     border: 2px solid maroon;
     border-radius: 4px;
+  }
+
+  label {
+    margin-top: 0.5rem;
+    display: block;
   }
 </style>

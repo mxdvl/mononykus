@@ -35,9 +35,13 @@
       have JavaScript enabled.
     </p>
 
-    <HelloFriend value="late Cretaceous friend" />
+    <div class="island">
+      <HelloFriend value="late Cretaceous friend" />
+    </div>
 
-    <Counter />
+    <div class="island">
+      <Counter />
+    </div>
   </main>
 </Body>
 
@@ -46,5 +50,12 @@
     padding: 0 3rem;
     max-width: 30em;
     margin: auto;
+  }
+
+  .island {
+    border: 2px solid antiquewhite;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    margin: 1rem -0.5rem;
   }
 </style>

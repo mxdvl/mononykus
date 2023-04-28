@@ -5,7 +5,13 @@
   import Body from "../components/Body.svelte";
 </script>
 
-<svelte:head><title>Mononykus – Deno + Svelte</title></svelte:head>
+<svelte:head>
+  <title>Mononykus – Deno + Svelte</title>
+  <meta
+    name="description"
+    content="Deploy small websites built with Svelte with islands of interactivity."
+  />
+</svelte:head>
 
 <Body>
   <Header />
@@ -35,9 +41,13 @@
       have JavaScript enabled.
     </p>
 
-    <HelloFriend value="late Cretaceous friend" />
+    <div class="island">
+      <HelloFriend value="late Cretaceous friend" />
+    </div>
 
-    <Counter />
+    <div class="island">
+      <Counter />
+    </div>
   </main>
 </Body>
 
@@ -46,5 +56,12 @@
     padding: 0 3rem;
     max-width: 30em;
     margin: auto;
+  }
+
+  .island {
+    border: 2px solid antiquewhite;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    margin: 1rem -0.5rem;
   }
 </style>

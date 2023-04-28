@@ -29,11 +29,17 @@ export const build_routes: Plugin = {
 				const { html, css: _css, head } = module.default.render();
 
 				// remove any duplicate module imports (in cases where a page uses an island more than once)
-				const deduped_head = Array.from(
-					new Set(
-						head.match(/<script type="module">[\s\S]*?<\/script>/g),
-					),
-				).join("\n");
+				const modules = new Set();
+				const deduped_head = head.replace(
+					/<script[\s\S]*?<\/script>/g,
+					(module) => {
+						if (modules.has(module)) {
+							return "";
+						}
+						modules.add(module);
+						return module;
+					},
+				);
 
 				const css = _css?.code ?? "";
 

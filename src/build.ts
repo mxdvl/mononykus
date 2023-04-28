@@ -11,7 +11,7 @@ import { globToRegExp } from "https://deno.land/std@0.182.0/path/glob.ts";
 import { copy } from "https://deno.land/std@0.179.0/fs/copy.ts";
 import { normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
 
-const slashify = (path: string) => normalize(path.replace(/\/?$/, "/"));
+const slashify = (path: string) => normalize(path + "/");
 
 type Options = {
 	base: string;

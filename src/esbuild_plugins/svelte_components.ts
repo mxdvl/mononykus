@@ -100,10 +100,10 @@ export const svelte_components = (
 					try {
 						document.querySelectorAll(
 							`one-claw[name='${name}']:not(one-claw one-claw)`,
-						).forEach((target, i) => {
+						).forEach((target) => {
 							const load = performance.now();
-							console.group(
-								`Hydrating %c${name}%c (instance #${(i + 1)})`,
+							console.groupCollapsed(
+								`Hydrating %c${name}%c`,
 								"color: orange",
 								"color: reset",
 							);

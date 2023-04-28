@@ -1,5 +1,4 @@
 import { format } from "npm:prettier";
-// import type { SvelteComponent } from "https://esm.sh/v115/svelte@3.58.0/types/runtime/index.d.ts";
 
 interface TemplateOptions {
 	css: string;

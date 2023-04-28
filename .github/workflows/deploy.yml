@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-  pull_request: 
+  pull_request:
   workflow_dispatch:
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
@@ -47,7 +47,7 @@ jobs:
         with:
           project: mononykus
           entrypoint: https://deno.land/std@0.183.0/http/file_server.ts
-          root: src/_site/build
+          root: build
 
   gh:
     if: github.ref_name == 'main'

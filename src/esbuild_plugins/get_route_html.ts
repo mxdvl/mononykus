@@ -7,33 +7,6 @@ interface TemplateOptions {
 	html: string;
 }
 
-// // this function is stringified inline in the page
-// // putting it here gives us type safety etc
-// export const hydrate_island = (component: SvelteComponent, name: string) => {
-// 	try {
-// 		document.querySelectorAll(
-// 			`one-claw[name='${name}']:not(one-claw one-claw)`,
-// 		).forEach((target, i) => {
-// 			const load = performance.now();
-// 			console.group(
-// 				`Hydrating %c${name}%c (instance #${(i + 1)})`,
-// 				"color: orange",
-// 				"color: reset",
-// 			);
-// 			console.log(target);
-// 			const props = JSON.parse(target.getAttribute("props") ?? "{}");
-// 			new component({ target, props, hydrate: true });
-// 			console.log(
-// 				`Done in %c${Math.round((performance.now() - load) * 1000) / 1000}ms`,
-// 				"color: orange",
-// 			);
-// 			console.groupEnd();
-// 		});
-// 	} catch (_) {
-// 		console.error(_);
-// 	}
-// };
-
 const template = ({ css, head, html }: TemplateOptions) => `
 	<!DOCTYPE html>
 	<html lang="en">

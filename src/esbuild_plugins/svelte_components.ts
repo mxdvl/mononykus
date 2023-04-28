@@ -6,12 +6,13 @@ import {
 import type { Plugin } from "https://deno.land/x/esbuild@v0.17.16/mod.js";
 import { normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
 import { compile } from "npm:svelte/compiler";
+import type { ComponentType } from "npm:svelte";
 
 const filter = /\.svelte$/;
 const name = "mononykus/svelte";
 
 /** force wrapping the actual component in a synthetic one */
-const one_claw_synthetic = "?one-claw-synthetic";
+const ssr_island = "?ssr_island";
 
 const OneClaw = (
 	{ path, name, module_src }: {
@@ -64,7 +65,7 @@ export const svelte_components = (
 				) {
 					return {
 						path: resolve(dirname(importer), path),
-						suffix: one_claw_synthetic,
+						suffix: ssr_island,
 					};
 				}
 			}
@@ -81,7 +82,7 @@ export const svelte_components = (
 					"js",
 				);
 
-			const source = suffix === one_claw_synthetic
+			const source = suffix === ssr_island
 				? OneClaw({ path, name, module_src })
 				: await Deno.readTextFile(path);
 
@@ -94,8 +95,8 @@ export const svelte_components = (
 				filename: basename(path),
 			});
 
-			if (suffix === one_claw_synthetic) {
-				const x = () => {
+			if (generate === "dom" && path.endsWith(".island.svelte")) {
+				const hydrator = (name: string, Component: ComponentType) => {
 					try {
 						document.querySelectorAll(
 							`one-claw[name='${name}']:not(one-claw one-claw)`,
@@ -108,7 +109,7 @@ export const svelte_components = (
 							);
 							console.log(target);
 							const props = JSON.parse(target.getAttribute("props") ?? "{}");
-							// new component({ target, props, hydrate: true });
+							new Component({ target, props, hydrate: true });
 							console.log(
 								`Done in %c${
 									Math.round((performance.now() - load) * 1000) / 1000
@@ -122,7 +123,10 @@ export const svelte_components = (
 					}
 				};
 
-				return ({ contents: code + x.toString() });
+				return ({
+					contents:
+						`${code};(${hydrator.toString()})("${name}", ${name}_island)`,
+				});
 			}
 
 			return ({ contents: code });

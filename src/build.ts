@@ -9,27 +9,52 @@ import { walk } from "https://deno.land/std@0.177.0/fs/walk.ts";
 import { create_handler } from "./server.ts";
 import { globToRegExp } from "https://deno.land/std@0.182.0/path/glob.ts";
 import { copy } from "https://deno.land/std@0.179.0/fs/copy.ts";
+import { normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
+
+const slashify = (path: string) => normalize(path + "/");
+
+type Options = {
+	base: string;
+	out_dir: string;
+	site_dir: string;
+	minify: boolean;
+};
 
 const flags = parse(Deno.args, {
-	string: ["site", "build", "base"],
-	boolean: ["dev"],
-	default: { site: "_site/", dev: false, base: "/" },
+	string: ["site_dir", "out_dir", "base"],
+	boolean: ["minify", "watch"],
+	default: {
+		site_dir: "_site",
+		out_dir: "build",
+		base: "/",
+		minify: false,
+		watch: false,
+	},
 });
 
-const site_dir = flags.site.replace(/\/?$/, "/");
-const build_dir = (flags.build ?? `${site_dir}build/`).replace(/\/?$/, "/");
-const base_path = flags.base.replace(/\/?$/, "/");
+const options: Options = {
+	site_dir: slashify(flags.site_dir),
+	out_dir: slashify(flags.out_dir),
+	base: slashify(flags.base),
+	minify: !flags.watch || flags.minify,
+};
 
 // clean out old builds, if they exist
-try {
-	await Deno.remove(build_dir, { recursive: true });
-} catch (_error) {
-	// do nothing
-}
+const clean = async (out_dir: Options["out_dir"]) => {
+	try {
+		await Deno.remove(out_dir, { recursive: true });
+	} catch (_error) {
+		// do nothing
+	}
+
+	await ensureDir(out_dir);
+};
 
 export const get_svelte_files = async ({
+	site_dir,
 	dir,
 }: {
+	site_dir: Options["site_dir"];
 	dir: "routes/" | "components/";
 }) => {
 	const glob = (glob: string) => globToRegExp(glob, { globstar: true });
@@ -48,63 +73,108 @@ export const get_svelte_files = async ({
 	return files;
 };
 
-await ensureDir(build_dir);
+const copy_assets = (
+	{ site_dir, out_dir }: Partial<Options>,
+) => copy(site_dir + "assets", out_dir + "assets", { overwrite: true });
 
-const baseESBuildConfig = {
-	logLevel: "info",
-	format: "esm",
-	minify: !flags.dev,
-	bundle: true,
-} as const satisfies Partial<esbuild.BuildOptions>;
+const rebuild = async ({
+	base,
+	out_dir,
+	site_dir,
+	minify,
+}: Options) => {
+	const baseESBuildConfig = {
+		logLevel: "info",
+		format: "esm",
+		minify: minify,
+		bundle: true,
+	} as const satisfies Partial<esbuild.BuildOptions>;
 
-const routesESBuildConfig: esbuild.BuildOptions = {
-	entryPoints: await get_svelte_files({ dir: "routes/" }),
-	write: false,
-	plugins: [
-		svelte_components(site_dir, base_path),
-		svelte_internal,
-		build_routes,
-	],
-	outdir: build_dir,
-	...baseESBuildConfig,
-};
+	const routesESBuildConfig: esbuild.BuildOptions = {
+		entryPoints: await get_svelte_files({ site_dir, dir: "routes/" }),
+		write: false,
+		plugins: [
+			svelte_components(site_dir, base),
+			svelte_internal,
+			build_routes,
+		],
+		outdir: out_dir,
+		...baseESBuildConfig,
+	};
 
-const islandsESBuildConfig: esbuild.BuildOptions = {
-	entryPoints: await get_svelte_files({ dir: "components/" }),
-	write: true,
-	plugins: [
-		svelte_components(site_dir, base_path),
-		svelte_internal,
-	],
-	outdir: build_dir + "components/",
-	splitting: true,
-	...baseESBuildConfig,
-};
+	const islandsESBuildConfig: esbuild.BuildOptions = {
+		entryPoints: await get_svelte_files({ site_dir, dir: "components/" }),
+		write: true,
+		plugins: [
+			svelte_components(site_dir, base),
+			svelte_internal,
+		],
+		outdir: out_dir + "components/",
+		splitting: true,
+		...baseESBuildConfig,
+	};
 
-const copy_assets = async () =>
-	await copy(site_dir + "assets", build_dir + "assets", { overwrite: true });
-
-const rebuild = async () => {
-	await Promise.all([
+	return Promise.all([
 		esbuild.build(routesESBuildConfig),
 		esbuild.build(islandsESBuildConfig),
-		copy_assets(),
+		copy_assets({ site_dir, out_dir }),
 	]);
 };
 
-await rebuild();
+export const build = async (
+	{
+		base: _base = options.base,
+		out_dir: _out_dir = options.out_dir,
+		site_dir: _site_dir = options.site_dir,
+		minify = options.minify,
+	}: Partial<Options> = {},
+) => {
+	const base = slashify(_base);
+	const out_dir = slashify(_out_dir);
+	const site_dir = slashify(_site_dir);
 
-if (flags.dev) {
+	clean(out_dir);
+
+	await rebuild({ base, out_dir, site_dir, minify });
+
+	esbuild.stop();
+};
+
+export const watch = async (
+	{
+		base: _base = options.base,
+		out_dir: _out_dir = options.out_dir,
+		site_dir: _site_dir = options.site_dir,
+		minify = options.minify,
+	}: Partial<Options> = {},
+) => {
+	const base = slashify(_base);
+	const out_dir = slashify(_out_dir);
+	const site_dir = slashify(_site_dir);
+
+	clean(out_dir);
+
+	const _rebuild = () => rebuild({ base, out_dir, site_dir, minify });
+
+	await _rebuild();
+
+	serve(create_handler({ base, out_dir }), { port: 4507 });
+
 	const watcher = Deno.watchFs(site_dir);
-	serve(create_handler({ base: flags.base, build_dir }), { port: 4507 });
 	let timeout;
 	for await (const { kind, paths: [path] } of watcher) {
 		if (path && (kind === "modify" || kind === "create")) {
-			if (path.includes(build_dir)) continue;
+			if (path.includes(out_dir)) continue;
 			clearTimeout(timeout);
-			timeout = setTimeout(rebuild, 6);
+			timeout = setTimeout(_rebuild, 6);
 		}
 	}
-} else {
-	Deno.exit(0);
+};
+
+if (import.meta.main) {
+	if (flags.watch) {
+		await watch(options);
+	} else {
+		await build(options);
+	}
 }

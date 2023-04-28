@@ -158,7 +158,7 @@ export const watch = async (
 
 	await _rebuild();
 
-	serve(create_handler({ base: base, out_dir }), { port: 4507 });
+	serve(create_handler({ base, out_dir }), { port: 4507 });
 
 	const watcher = Deno.watchFs(site_dir);
 	let timeout;

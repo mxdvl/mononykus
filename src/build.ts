@@ -1,7 +1,7 @@
 import * as esbuild from "https://deno.land/x/esbuild@v0.17.16/mod.js";
 import { svelte_components } from "./esbuild_plugins/svelte_components.ts";
 import { svelte_internal } from "./esbuild_plugins/svelte_internal.ts";
-import { build_routes } from "./esbuild_plugins/routes.ts";
+import { build_routes } from "./esbuild_plugins/build_routes.ts";
 import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
 import { parse } from "https://deno.land/std@0.177.0/flags/mod.ts";
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
@@ -61,9 +61,9 @@ const routesESBuildConfig: esbuild.BuildOptions = {
 	entryPoints: await get_svelte_files({ dir: "routes/" }),
 	write: false,
 	plugins: [
-		svelte_components,
+		svelte_components(site_dir, base_path),
 		svelte_internal,
-		build_routes({ base_path }),
+		build_routes,
 	],
 	outdir: build_dir,
 	...baseESBuildConfig,
@@ -73,7 +73,7 @@ const islandsESBuildConfig: esbuild.BuildOptions = {
 	entryPoints: await get_svelte_files({ dir: "components/" }),
 	write: true,
 	plugins: [
-		svelte_components,
+		svelte_components(site_dir, base_path),
 		svelte_internal,
 	],
 	outdir: build_dir + "components/",

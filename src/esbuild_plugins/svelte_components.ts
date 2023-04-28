@@ -4,27 +4,42 @@ import {
 	resolve,
 } from "https://deno.land/std@0.177.0/path/mod.ts";
 import type { Plugin } from "https://deno.land/x/esbuild@v0.17.16/mod.js";
+import { normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
 import { compile } from "npm:svelte/compiler";
+import type { ComponentType } from "npm:svelte";
 
 const filter = /\.svelte$/;
 const name = "mononykus/svelte";
 
 /** force wrapping the actual component in a synthetic one */
-const one_claw_synthetic = "?one-claw-synthetic";
+const ssr_island = "?ssr_island";
 
-const OneClaw = ({ path, name }: { path: string; name: string }) =>
+const OneClaw = (
+	{ path, name, module_src }: {
+		path: string;
+		name: string;
+		module_src: string;
+	},
+) =>
 	`<!-- synthetic component -->
-<script>
-	import Island from "${path}";
-</script>
-<one-claw props={JSON.stringify($$props)} name="${name}">
-	<Island {...$$props} />
-</one-claw>
-<style>
-	one-claw { display: contents }
-</style>`;
+	<script>
+		import Island from "${path}";
+	</script>
+	<svelte:head>
+		<script type="module" src="${module_src}"></script>
+	</svelte:head>
+	<one-claw props={JSON.stringify($$props)} name="${name}">
+		<Island {...$$props} />
+	</one-claw>
+	<style>
+		one-claw { display: contents }
+	</style>
+`;
 
-export const svelte_components: Plugin = {
+export const svelte_components = (
+	site_dir: string,
+	base_path: string,
+): Plugin => ({
 	name,
 	setup(build) {
 		const generate = build.initialOptions.write ? "dom" : "ssr";
@@ -50,7 +65,7 @@ export const svelte_components: Plugin = {
 				) {
 					return {
 						path: resolve(dirname(importer), path),
-						suffix: one_claw_synthetic,
+						suffix: ssr_island,
 					};
 				}
 			}
@@ -61,8 +76,14 @@ export const svelte_components: Plugin = {
 				.replace(/(\.island)?\.svelte$/, "")
 				.replaceAll(/(\.|\W)/g, "_");
 
-			const source = suffix === one_claw_synthetic
-				? OneClaw({ path, name })
+			const module_src = normalize("/" + base_path + path.split(site_dir)[1])
+				.replace(
+					/svelte$/,
+					"js",
+				);
+
+			const source = suffix === ssr_island
+				? OneClaw({ path, name, module_src })
 				: await Deno.readTextFile(path);
 
 			const { js: { code } } = compile(source, {
@@ -74,7 +95,41 @@ export const svelte_components: Plugin = {
 				filename: basename(path),
 			});
 
+			if (generate === "dom" && path.endsWith(".island.svelte")) {
+				const hydrator = (name: string, Component: ComponentType) => {
+					try {
+						document.querySelectorAll(
+							`one-claw[name='${name}']:not(one-claw one-claw)`,
+						).forEach((target) => {
+							const load = performance.now();
+							console.groupCollapsed(
+								`Hydrating %c${name}%c`,
+								"color: orange",
+								"color: reset",
+							);
+							console.log(target);
+							const props = JSON.parse(target.getAttribute("props") ?? "{}");
+							new Component({ target, props, hydrate: true });
+							console.log(
+								`Done in %c${
+									Math.round((performance.now() - load) * 1000) / 1000
+								}ms`,
+								"color: orange",
+							);
+							console.groupEnd();
+						});
+					} catch (_) {
+						console.error(_);
+					}
+				};
+
+				return ({
+					contents:
+						`${code};(${hydrator.toString()})("${name}", ${name}_island)`,
+				});
+			}
+
 			return ({ contents: code });
 		});
 	},
-};
+});

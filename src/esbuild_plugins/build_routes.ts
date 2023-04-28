@@ -9,9 +9,7 @@ interface SSROutput {
 	css?: { code: string };
 }
 
-export const build_routes = (
-	{ base_path }: { base_path: string },
-): Plugin => ({
+export const build_routes: Plugin = {
 	name: "mononykus/build-routes",
 	setup(build) {
 		build.onEnd(async (result) => {
@@ -29,6 +27,20 @@ export const build_routes = (
 				};
 
 				const { html, css: _css, head } = module.default.render();
+
+				// remove any duplicate module imports (in cases where a page uses an island more than once)
+				const modules = new Set();
+				const deduped_head = head.replace(
+					/<script[\s\S]*?<\/script>/g,
+					(module) => {
+						if (modules.has(module)) {
+							return "";
+						}
+						modules.add(module);
+						return module;
+					},
+				);
+
 				const css = _css?.code ?? "";
 
 				const dist_path = route.path.replace(".js", ".html");
@@ -36,7 +48,7 @@ export const build_routes = (
 
 				await Deno.writeTextFile(
 					dist_path,
-					get_route_html({ html, css, head, base_path }),
+					get_route_html({ html, css, head: deduped_head }),
 				);
 			}));
 
@@ -47,4 +59,4 @@ export const build_routes = (
 			);
 		});
 	},
-});
+};

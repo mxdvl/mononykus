@@ -133,7 +133,7 @@ export const build = async (
 	const out_dir = slashify(_out_dir);
 	const site_dir = slashify(_site_dir);
 
-	clean(out_dir);
+	await clean(out_dir);
 
 	await rebuild({ base, out_dir, site_dir, minify });
 
@@ -152,7 +152,7 @@ export const watch = async (
 	const out_dir = slashify(_out_dir);
 	const site_dir = slashify(_site_dir);
 
-	clean(out_dir);
+	await clean(out_dir);
 
 	const _rebuild = () => rebuild({ base, out_dir, site_dir, minify });
 

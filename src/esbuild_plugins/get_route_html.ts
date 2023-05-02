@@ -1,3 +1,4 @@
+// @ts-expect-error -- the package is untyped
 import { format } from "npm:prettier";
 
 interface TemplateOptions {

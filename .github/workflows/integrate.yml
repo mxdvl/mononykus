@@ -32,4 +32,7 @@ jobs:
         run: deno lint
       
       - name: Test
-        run: deno test -A
+        run: deno test -A --no-check
+
+      - name: Check
+        run: deno check src/**.ts

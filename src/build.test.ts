@@ -1,39 +1,25 @@
 import { assert } from "https://deno.land/std@0.177.0/testing/asserts.ts";
+import { build } from "./build.ts";
 
-const site = "--site=src/_site";
-const build = "src/build.ts";
+const base = "mononykus/";
+const site_dir = "src/_site";
 
 Deno.test({
 	name: "Able to build the current project",
 	fn: async () => {
-		const command = new Deno.Command(
-			Deno.execPath(),
-			{
-				args: ["run", "-A", build, site],
-				stdout: "null",
-				stderr: "null",
-			},
-		);
-
-		const { success } = await command.output();
-		assert(success);
+		await build({ base, site_dir });
 	},
 });
 
 Deno.test({
 	name: "Able to develop the current project",
-	permissions: { read: true, run: true, net: true },
 	fn: async () => {
 		const command = new Deno.Command(
 			Deno.execPath(),
 			{
 				args: [
-					"run",
-					"-A",
-					build,
-					site,
-					"--dev",
-					"--base=mononykus",
+					"task",
+					"dev",
 				],
 				stdout: "null",
 				stderr: "null",

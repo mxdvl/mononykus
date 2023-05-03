@@ -9,7 +9,7 @@ import { walk } from "https://deno.land/std@0.177.0/fs/walk.ts";
 import { create_handler } from "./server.ts";
 import { globToRegExp } from "https://deno.land/std@0.182.0/path/glob.ts";
 import { copy } from "https://deno.land/std@0.179.0/fs/copy.ts";
-import { expandGlob } from "https://deno.land/std@0.179.0/fs/mod.ts";
+import { expandGlob } from "https://deno.land/std@0.177.0/fs/mod.ts";
 import { dirname, normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
 
 const slashify = (path: string) => normalize(path + "/");

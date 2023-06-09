@@ -2,23 +2,19 @@
   import { onMount } from "svelte";
   import Column from "./Column.svelte";
 
+  const IS_BROWSER = typeof document !== "undefined";
+
   /** @type {string} */
-  export let input = "";
+  export let input = IS_BROWSER
+    ? new URLSearchParams(window.location.search)
+        .get("paths")
+        ?.replaceAll(",", "\n")
+    : undefined ?? "";
 
   $: urls = input
     .split("\n")
     .filter(Boolean)
-    .map(
-      (path) =>
-        new URL(`/img/media${path}`, "https://fastly-io-code.guim.co.uk")
-    );
-
-  onMount(() => {
-    input =
-      new URLSearchParams(window.location.search)
-        .get("paths")
-        ?.replaceAll(",", "\n") ?? "";
-  });
+    .map((path) => new URL(path, "https://fastly-io-code.guim.co.uk"));
 
   let width = 320;
 
@@ -45,7 +41,18 @@
 
 <label>
   Enter i.guim.co.uk URLs crops below, each on its own line:<br />
-  <textarea cols="120" rows="12" bind:value={input} />
+  <textarea
+    cols="120"
+    rows="12"
+    bind:value={input}
+    on:change={() => {
+      console.log("TEST");
+      console.log(urls.length);
+      window.location.search = new URLSearchParams({
+        paths: input.replaceAll("\n", ","),
+      });
+    }}
+  />
 </label>
 
 <hr />

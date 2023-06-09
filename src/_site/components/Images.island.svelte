@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from "svelte";
   import Column from "./Column.svelte";
 
   const IS_BROWSER = typeof document !== "undefined";
@@ -64,7 +63,7 @@
 
 <hr />
 
-<ul style:--count={urls.length + 1}>
+<ul style:--count={urls.length + 2}>
   {#each configs as { format, dpr, quality }}
     <Column {format} {dpr} {quality} {width} {urls} {baseline} />
   {/each}

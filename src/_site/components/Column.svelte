@@ -19,6 +19,7 @@
     return height / width;
   };
 
+  /** @param {Blob} blob */
   const blobToDataUri = (blob) =>
     new Promise((resolve) => {
       let reader = new FileReader();
@@ -31,6 +32,38 @@
   const IS_BROWSER = typeof document !== "undefined";
 
   $: getDiff = (baseline, size) => Math.round((size / baseline) * 100 - 100);
+
+  const format_size = (size) => `${(size / 1000).toFixed(1)} kB`;
+
+  const unwrap = async (url) => {
+    const searchParams = new URLSearchParams({
+      format,
+      dpr,
+      quality,
+      width,
+      s: "none",
+    });
+    const src = new URL(`${url.href}?${searchParams}`);
+
+    const blob = await fetch(src, {
+      headers: {
+        // TODO: get headers from actual browsing session!
+        Accept: [
+          "image/avif",
+          "image/webp",
+          "image/png",
+          "image/svg+xml",
+          "image/*",
+        ].join(","),
+      },
+    }).then((r) => r.blob());
+
+    const { size, type } = blob;
+
+    const dataUri = await blobToDataUri(blob);
+
+    return { size, type, dataUri, src };
+  };
 </script>
 
 <li class="config">
@@ -56,51 +89,32 @@
     </select>
   </label>
 </li>
-{#each urls.map((url) => {
-  const searchParams = new URLSearchParams( { format, dpr, quality, width, s: "none" } );
-  return new URL(`${url.href}?${searchParams}`);
-}) as src (src.href)}
+{#await Promise.all(urls.map(unwrap))}
+  <li>…loading</li>
+{:then sources}
   <li>
-    <figure>
-      {#if IS_BROWSER}
-        {#await fetch( src, { headers: { // TODO: get headers from actual browsing session!
-                Accept: ["image/avif", "image/webp", "image/png", "image/svg+xml", "image/*"].join(",") } } )
-          .then((r) => r.blob())
-          .then(async (blob) => {
-            const { size, type } = blob;
-
-            const dataUri = await blobToDataUri(blob);
-
-            return { size, type, dataUri };
-          })}
-          <div
-            style={`
-            width: ${width}px;
-            height: ${Math.round(ratio(src) * width)}px;`}
-          />
-          <figcaption>
-            <span>image/</span>
-            <span>kB</span>
-          </figcaption>
-        {:then { size, type, dataUri }}
-          <img
-            src={dataUri}
-            {width}
-            height={Math.round(ratio(src) * width)}
-            alt=""
-          />
-          <figcaption>
-            <span>{type}</span>
-
-            <span>
-              {(size / 1000).toFixed(1)} kB
-            </span>
-          </figcaption>
-        {/await}
-      {/if}
-    </figure>
+    Total: {format_size(sources.reduce((acc, { size }) => acc + size, 0))}
   </li>
-{/each}
+  {#each sources as { src, dataUri, size, type } (src.href)}
+    <li>
+      <figure>
+        <img
+          src={dataUri}
+          {width}
+          height={Math.round(ratio(src) * width)}
+          alt=""
+        />
+        <figcaption>
+          <span>{type}</span>
+
+          <span>
+            {format_size(size)}
+          </span>
+        </figcaption>
+      </figure>
+    </li>
+  {/each}
+{/await}
 
 <style>
   li {

@@ -5,6 +5,8 @@
   export let quality;
   /** @type {number} */
   export let width;
+  /** @type {'avif' | 'webp' | 'jpg'} */
+  export let format;
 
   /** @type {Array<URL>}*/
   export let urls;
@@ -41,11 +43,23 @@
     Quality
     <input type="number" min="45" max="85" step="1" bind:value={quality} />
   </label>
+
+  <label>
+    Format
+
+    <select bind:value={format}>
+      {#each ["avif", "webp", "jpg"] as image_format}
+        <option value={image_format} selected={image_format === format}>
+          {image_format}
+        </option>
+      {/each}
+    </select>
+  </label>
 </li>
 {#each urls.map((url) => {
-  const searchParams = new URLSearchParams({ dpr, quality, width, s: "none" });
+  const searchParams = new URLSearchParams( { format, dpr, quality, width, s: "none" } );
   return new URL(`${url.href}?${searchParams}`);
-}) as src, index}
+}) as src (src.href)}
   <li>
     <figure>
       {#if IS_BROWSER}

@@ -8,7 +8,10 @@
   $: urls = input
     .split("\n")
     .filter(Boolean)
-    .map((path) => new URL(`/img/media${path}`, "https://i.guim.co.uk"));
+    .map(
+      (path) =>
+        new URL(`/img/media${path}`, "https://fastly-io-code.guim.co.uk")
+    );
 
   onMount(() => {
     input =
@@ -23,14 +26,17 @@
     {
       dpr: 1,
       quality: 85,
+      format: "jpg",
     },
     {
       dpr: 2,
       quality: 45,
+      format: "webp",
     },
     {
       dpr: 2,
-      quality: 50,
+      quality: 60,
+      format: "avif",
     },
   ]);
 
@@ -52,8 +58,8 @@
 <hr />
 
 <ul style:--count={urls.length + 1}>
-  {#each configs as { dpr, quality }}
-    <Column {dpr} {quality} {width} {urls} {baseline} />
+  {#each configs as { format, dpr, quality }}
+    <Column {format} {dpr} {quality} {width} {urls} {baseline} />
   {/each}
 </ul>
 

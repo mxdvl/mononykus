@@ -4,11 +4,12 @@
   const IS_BROWSER = typeof document !== "undefined";
 
   /** @type {string} */
-  export let input = IS_BROWSER
-    ? new URLSearchParams(window.location.search)
-        .get("paths")
-        ?.replaceAll(",", "\n")
-    : undefined ?? "";
+  let input =
+    (IS_BROWSER
+      ? new URLSearchParams(window.location.search)
+          .get("paths")
+          ?.replaceAll(",", "\n")
+      : undefined) ?? "";
 
   $: urls = input
     .split("\n")

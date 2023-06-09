@@ -64,6 +64,8 @@
 
     return { size, type, dataUri, src };
   };
+
+  $: width, dpr, quality, format, (urls = urls);
 </script>
 
 <li class="config">
@@ -74,7 +76,7 @@
 
   <label>
     Quality
-    <input type="number" min="45" max="85" step="1" bind:value={quality} />
+    <input type="number" min="0" max="120" step="1" bind:value={quality} />
   </label>
 
   <label>
@@ -90,7 +92,9 @@
   </label>
 </li>
 {#await Promise.all(urls.map(unwrap))}
-  <li>…loading</li>
+  <li style={`grid-row-end: span ${urls.length + 1}; width: ${width}px;`}>
+    …loading
+  </li>
 {:then sources}
   <li>
     Total: {format_size(sources.reduce((acc, { size }) => acc + size, 0))}
@@ -105,7 +109,7 @@
           alt=""
         />
         <figcaption>
-          <span>{type}</span>
+          <span><a href={src.href}>{type}</a></span>
 
           <span>
             {format_size(size)}

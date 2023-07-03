@@ -5,7 +5,7 @@
   export let quality;
   /** @type {number} */
   export let width;
-  /** @type {'avif' | 'webp' | 'jpg'} */
+  /** @type {'avif' | 'webp' | 'png8' | 'pjpg'} */
   export let format;
 
   /** @type {Array<URL>}*/
@@ -83,7 +83,7 @@
     Format
 
     <select bind:value={format}>
-      {#each ["avif", "webp", "jpg"] as image_format}
+      {#each ["avif", "webp", "png8", "pjpg"] as image_format}
         <option value={image_format} selected={image_format === format}>
           {image_format}
         </option>

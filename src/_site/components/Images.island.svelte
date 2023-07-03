@@ -22,16 +22,21 @@
     {
       dpr: 1,
       quality: 85,
-      format: "jpg",
+      format: "pjpg",
+    },
+    {
+      dpr: 1,
+      quality: 80,
+      format: "png8",
     },
     {
       dpr: 2,
-      quality: 45,
+      quality: 25,
       format: "webp",
     },
     {
       dpr: 2,
-      quality: 60,
+      quality: 55,
       format: "avif",
     },
   ]);

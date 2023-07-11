@@ -5,8 +5,8 @@ import {
 } from "https://deno.land/std@0.177.0/path/mod.ts";
 import type { Plugin } from "https://deno.land/x/esbuild@v0.17.16/mod.js";
 import { normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
-import { compile } from "npm:svelte/compiler";
-import type { ComponentType } from "npm:svelte";
+import { compile } from "npm:svelte@3.58/compiler";
+import type { ComponentType } from "npm:svelte@3.58";
 
 const filter = /\.svelte$/;
 const name = "mononykus/svelte";

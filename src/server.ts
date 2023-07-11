@@ -12,8 +12,13 @@ export const create_handler = (
 ): Handler => ((req) => {
 	const url = new URL(req.url);
 
-	if (url.pathname.startsWith(normalise("/" + base))) {
-		return serveDir(req, { fsRoot: out_dir, urlRoot: base });
+	const normalised_base = normalise("/" + base);
+
+	if (url.pathname.startsWith(normalised_base)) {
+		return serveDir(req, {
+			fsRoot: out_dir,
+			urlRoot: normalised_base.slice(1),
+		});
 	} else {
 		return Response.redirect(
 			new URL(normalise(base + url.pathname), url.origin),

@@ -46,7 +46,7 @@ jobs:
         uses: denoland/deployctl@v1
         with:
           project: mononykus
-          entrypoint: https://deno.land/std@0.183.0/http/file_server.ts
+          entrypoint: https://deno.land/std@0.193.0/http/file_server.ts
           root: build
 
   gh:

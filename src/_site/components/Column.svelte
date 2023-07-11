@@ -1,12 +1,12 @@
 <script>
-  /** @type {number} */
-  export let dpr;
-  /** @type {number} */
-  export let quality;
+  /** @type {{ format: 'avif' | 'webp' | 'png8' | 'pjpg', dpr: 1 | 2, quality: number }} */
+  export let config;
+
   /** @type {number} */
   export let width;
-  /** @type {'avif' | 'webp' | 'png8' | 'pjpg'} */
-  export let format;
+
+  /** @type {() => void} */
+  export let updateQueryParam;
 
   /** @type {Array<URL>}*/
   export let urls;
@@ -37,9 +37,9 @@
 
   const unwrap = async (url) => {
     const searchParams = new URLSearchParams({
-      format,
-      dpr,
-      quality,
+      format: config.format,
+      dpr: String(config.dpr),
+      quality: String(config.quality),
       width,
       s: "none",
     });
@@ -64,27 +64,39 @@
 
     return { size, type, dataUri, src };
   };
-
-  $: width, dpr, quality, format, (urls = urls);
 </script>
 
 <li class="config">
   <label>
     DPR
-    <input type="number" min="1" max="2" step="1" bind:value={dpr} />
+    <input
+      type="number"
+      min="1"
+      max="2"
+      step="1"
+      bind:value={config.dpr}
+      on:change={updateQueryParam}
+    />
   </label>
 
   <label>
     Quality
-    <input type="number" min="0" max="120" step="1" bind:value={quality} />
+    <input
+      type="number"
+      min="0"
+      max="120"
+      step="1"
+      bind:value={config.quality}
+      on:change={updateQueryParam}
+    />
   </label>
 
   <label>
     Format
 
-    <select bind:value={format}>
+    <select bind:value={config.format} on:change={updateQueryParam}>
       {#each ["avif", "webp", "png8", "pjpg"] as image_format}
-        <option value={image_format} selected={image_format === format}>
+        <option value={image_format} selected={image_format === config.format}>
           {image_format}
         </option>
       {/each}

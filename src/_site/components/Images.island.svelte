@@ -18,7 +18,9 @@
 
   let width = 320;
 
-  const configs = /** @type {const} */ ([
+  let configs = (IS_BROWSER
+    ? JSON.parse(new URLSearchParams(window.location.search).get("configs"))
+    : undefined) ?? [
     {
       dpr: 1,
       quality: 85,
@@ -39,7 +41,20 @@
       quality: 55,
       format: "avif",
     },
-  ]);
+  ];
+  const updateQueryParam = () => {
+    console.log(configs);
+    configs = configs;
+    window.history.replaceState(
+      {},
+      "",
+      "?" +
+        new URLSearchParams({
+          configs: JSON.stringify(configs),
+          paths: input.replaceAll("\n", ","),
+        })
+    );
+  };
 
   let baseline = [];
 </script>
@@ -50,13 +65,7 @@
     cols="120"
     rows="12"
     bind:value={input}
-    on:change={() => {
-      console.log("TEST");
-      console.log(urls.length);
-      window.location.search = new URLSearchParams({
-        paths: input.replaceAll("\n", ","),
-      });
-    }}
+    on:input={updateQueryParam}
   />
 </label>
 
@@ -70,8 +79,8 @@
 <hr />
 
 <ul style:--count={urls.length + 2}>
-  {#each configs as { format, dpr, quality }}
-    <Column {format} {dpr} {quality} {width} {urls} {baseline} />
+  {#each configs as config}
+    <Column {config} {width} {urls} {baseline} {updateQueryParam} />
   {/each}
 </ul>
 

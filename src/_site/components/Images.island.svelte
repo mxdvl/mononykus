@@ -55,8 +55,6 @@
         })
     );
   };
-
-  let baseline = [];
 </script>
 
 <label>
@@ -80,7 +78,7 @@
 
 <ul style:--count={urls.length + 2}>
   {#each configs as config}
-    <Column {config} {width} {urls} {baseline} {updateQueryParam} />
+    <Column {config} {width} {urls} {updateQueryParam} />
   {/each}
 </ul>
 

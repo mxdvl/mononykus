@@ -29,10 +29,6 @@
       reader.readAsDataURL(blob);
     });
 
-  const IS_BROWSER = typeof document !== "undefined";
-
-  $: getDiff = (baseline, size) => Math.round((size / baseline) * 100 - 100);
-
   const format_size = (size) => `${(size / 1000).toFixed(1)} kB`;
 
   const unwrap = async (url) => {

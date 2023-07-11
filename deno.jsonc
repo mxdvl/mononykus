@@ -10,12 +10,10 @@
 		"noUncheckedIndexedAccess": true
 	},
 	"lint": {
-		"files": {
-			"exclude": ["src/_site/build", ".cache"]
-		}
+		"exclude": ["build", "src/_site/build", ".cache"]
 	},
 	"fmt": {
-		"options": { "useTabs": true },
-		"files": { "exclude": ["src/_site/build", ".cache"] }
+		"useTabs": true,
+		"exclude": ["build", "src/_site/build", ".cache"]
 	}
 }

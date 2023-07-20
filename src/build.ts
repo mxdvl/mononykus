@@ -9,7 +9,8 @@ import { walk } from "https://deno.land/std@0.177.0/fs/walk.ts";
 import { create_handler } from "./server.ts";
 import { globToRegExp } from "https://deno.land/std@0.182.0/path/glob.ts";
 import { copy } from "https://deno.land/std@0.179.0/fs/copy.ts";
-import { normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
+import { expandGlob } from "https://deno.land/std@0.177.0/fs/mod.ts";
+import { dirname, normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
 
 const slashify = (path: string) => normalize(path + "/");
 
@@ -73,9 +74,20 @@ export const get_svelte_files = async ({
 	return files;
 };
 
-const copy_assets = (
-	{ site_dir, out_dir }: Partial<Options>,
-) => copy(site_dir + "assets", out_dir + "assets", { overwrite: true });
+const copy_assets = async (
+	{ site_dir, out_dir }: Pick<Options, "site_dir" | "out_dir">,
+) => {
+	for await (
+		const file of expandGlob("**/*.!(svelte)", { root: site_dir })
+	) {
+		const out_file = file.path.replace(site_dir, out_dir);
+
+		await ensureDir(dirname(out_file));
+		await copy(file.path, out_file, {
+			overwrite: true,
+		});
+	}
+};
 
 const rebuild = async ({
 	base,

@@ -2,3 +2,5 @@ build
 
 components/Island.svelte
 .DS_Store
+
+.cache

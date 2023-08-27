@@ -9,7 +9,7 @@ import { create_handler } from "./server.ts";
 import { globToRegExp } from "https://deno.land/std@0.182.0/path/glob.ts";
 import { copy } from "https://deno.land/std@0.179.0/fs/copy.ts";
 import { normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
-import { denoPlugins } from "https://deno.land/x/esbuild_deno_loader@0.8.1/mod.ts";
+import { denoPlugins } from "https://raw.githubusercontent.com/mxdvl/esbuild_deno_loader/patch-1/mod.ts";
 
 const slashify = (path: string) => normalize(path + "/");
 

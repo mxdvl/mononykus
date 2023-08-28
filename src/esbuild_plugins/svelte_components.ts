@@ -3,10 +3,10 @@ import {
 	dirname,
 	resolve,
 } from "https://deno.land/std@0.177.0/path/mod.ts";
-import type { Plugin } from "https://deno.land/x/esbuild@v0.17.16/mod.js";
+import type { Plugin } from "https://deno.land/x/esbuild@v0.17.19/mod.js";
 import { normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
-import { compile } from "npm:svelte@3.58/compiler";
-import type { ComponentType } from "npm:svelte@3.58";
+import { compile, VERSION } from "npm:svelte@4.2.0/compiler";
+import type { ComponentType } from "npm:svelte@4.2.0";
 
 const filter = /\.svelte$/;
 const name = "mononykus/svelte";
@@ -44,7 +44,7 @@ export const svelte_components = (
 	setup(build) {
 		const generate = build.initialOptions.write ? "dom" : "ssr";
 
-		build.onResolve({ filter }, ({ path, kind, importer }) => {
+		build.onResolve({ filter }, ({ path, kind, importer, resolveDir }) => {
 			if (generate === "dom") {
 				if (
 					kind === "import-statement" &&
@@ -56,6 +56,10 @@ export const svelte_components = (
 						path: path.replace(/\.svelte$/, ".js"),
 						external: true,
 					};
+				} else {
+					return {
+						path: resolve(resolveDir, path),
+					};
 				}
 			} else {
 				if (
@@ -66,6 +70,10 @@ export const svelte_components = (
 					return {
 						path: resolve(dirname(importer), path),
 						suffix: ssr_island,
+					};
+				} else {
+					return {
+						path: resolve(resolveDir, path),
 					};
 				}
 			}
@@ -88,7 +96,7 @@ export const svelte_components = (
 
 			const { js: { code } } = compile(source, {
 				generate,
-				css: "injected",
+				css: "external",
 				cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
 				hydratable: generate === "dom",
 				enableSourcemap: false,
@@ -133,3 +141,5 @@ export const svelte_components = (
 		});
 	},
 });
+
+export { VERSION };

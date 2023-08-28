@@ -1,4 +1,4 @@
-import type { Plugin } from "https://deno.land/x/esbuild@v0.17.16/mod.js";
+import type { Plugin } from "https://deno.land/x/esbuild@v0.17.19/mod.js";
 import { dirname } from "https://deno.land/std@0.182.0/path/mod.ts";
 import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
 import { get_route_html } from "./get_route_html.ts";
@@ -48,7 +48,7 @@ export const build_routes: Plugin = {
 
 				await Deno.writeTextFile(
 					dist_path,
-					get_route_html({ html, css, head: deduped_head }),
+					await get_route_html({ html, css, head: deduped_head }),
 				);
 			}));
 

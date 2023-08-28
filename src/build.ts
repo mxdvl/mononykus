@@ -1,6 +1,8 @@
-import * as esbuild from "https://deno.land/x/esbuild@v0.17.16/mod.js";
-import { svelte_components } from "./esbuild_plugins/svelte_components.ts";
-import { svelte_internal } from "./esbuild_plugins/svelte_internal.ts";
+import * as esbuild from "https://deno.land/x/esbuild@v0.17.19/mod.js";
+import {
+	svelte_components,
+	VERSION,
+} from "./esbuild_plugins/svelte_components.ts";
 import { build_routes } from "./esbuild_plugins/build_routes.ts";
 import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
 import { parse } from "https://deno.land/std@0.177.0/flags/mod.ts";
@@ -10,6 +12,7 @@ import { create_handler } from "./server.ts";
 import { globToRegExp } from "https://deno.land/std@0.182.0/path/glob.ts";
 import { copy } from "https://deno.land/std@0.179.0/fs/copy.ts";
 import { normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
+import { denoPlugins } from "https://raw.githubusercontent.com/mxdvl/esbuild_deno_loader/patch-1/mod.ts";
 
 const slashify = (path: string) => normalize(path + "/");
 
@@ -38,6 +41,21 @@ const options: Options = {
 	base: slashify(flags.base),
 	minify: !flags.watch || flags.minify,
 };
+
+const importMap = {
+	imports: {
+		"svelte": `npm:svelte@${VERSION}`,
+		"svelte/internal": `npm:svelte@${VERSION}/internal`,
+		"svelte/internal/disclose-version":
+			`npm:svelte@${VERSION}/internal/disclose-version`,
+		"svelte/easing": `npm:svelte@${VERSION}/easing`,
+		"svelte/motion": `npm:svelte@${VERSION}/motion`,
+		"svelte/register": `npm:svelte@${VERSION}/register`,
+		"svelte/store": `npm:svelte@${VERSION}/store`,
+		"svelte/transition": `npm:svelte@${VERSION}/transition`,
+	},
+};
+const importMapURL = `data:application/json,${JSON.stringify(importMap)}`;
 
 // clean out old builds, if they exist
 const clean = async (out_dir: Options["out_dir"]) => {
@@ -86,7 +104,7 @@ const rebuild = async ({
 	const baseESBuildConfig = {
 		logLevel: "info",
 		format: "esm",
-		minify: minify,
+		minify,
 		bundle: true,
 	} as const satisfies Partial<esbuild.BuildOptions>;
 
@@ -95,7 +113,7 @@ const rebuild = async ({
 		write: false,
 		plugins: [
 			svelte_components(site_dir, base),
-			svelte_internal,
+			...denoPlugins({ importMapURL }),
 			build_routes,
 		],
 		outdir: out_dir,
@@ -107,7 +125,7 @@ const rebuild = async ({
 		write: true,
 		plugins: [
 			svelte_components(site_dir, base),
-			svelte_internal,
+			...denoPlugins({ importMapURL }),
 		],
 		outdir: out_dir + "components/",
 		splitting: true,

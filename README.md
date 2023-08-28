@@ -31,7 +31,7 @@ This is a Work-in-progress. If you want a production framework, look at
 - [x] Figure out how to build `Island.svelte` cleanly
 - [x] Figure out how to serve `islands.js` cleanly
 - [x] Handle nested islands
-- [ ] Allow imports of `svelte/store`, `svelte/motion`, `svelte/transition`,
+- [x] Allow imports of `svelte/store`, `svelte/motion`, `svelte/transition`,
       `svelte/animate` and `svelte/easing`, but not `svelte/register`.
 
 ## About the name Mononykus

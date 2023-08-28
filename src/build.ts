@@ -42,9 +42,15 @@ const options: Options = {
 const importMap = {
 	imports: {
 		"svelte": "npm:svelte@4.2.0",
+		"svelte/animate": "npm:svelte@4.2.0/animate",
 		"svelte/internal": "npm:svelte@4.2.0/internal",
 		"svelte/internal/disclose-version":
 			"npm:svelte@4.2.0/internal/disclose-version",
+		"svelte/easing": "npm:svelte@4.2.0/easing",
+		"svelte/motion": "npm:svelte@4.2.0/motion",
+		"svelte/register": "npm:svelte@4.2.0/register",
+		"svelte/store": "npm:svelte@4.2.0/store",
+		"svelte/transition": "npm:svelte@4.2.0/transition",
 	},
 };
 const importMapURL = `data:application/json,${JSON.stringify(importMap)}`;

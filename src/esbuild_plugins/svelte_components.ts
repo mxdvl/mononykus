@@ -96,7 +96,7 @@ export const svelte_components = (
 
 			const { js: { code } } = compile(source, {
 				generate,
-				css: "injected",
+				css: "external",
 				cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
 				hydratable: generate === "dom",
 				enableSourcemap: false,

@@ -5,7 +5,7 @@ import {
 } from "https://deno.land/std@0.177.0/path/mod.ts";
 import type { Plugin } from "https://deno.land/x/esbuild@v0.17.19/mod.js";
 import { normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
-import { compile } from "npm:svelte@4.2.0/compiler";
+import { compile, VERSION } from "npm:svelte@4.2.0/compiler";
 import type { ComponentType } from "npm:svelte@4.2.0";
 
 const filter = /\.svelte$/;
@@ -141,3 +141,5 @@ export const svelte_components = (
 		});
 	},
 });
+
+export { VERSION };

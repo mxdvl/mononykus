@@ -1,5 +1,8 @@
 import * as esbuild from "https://deno.land/x/esbuild@v0.17.19/mod.js";
-import { svelte_components } from "./esbuild_plugins/svelte_components.ts";
+import {
+	svelte_components,
+	VERSION,
+} from "./esbuild_plugins/svelte_components.ts";
 import { build_routes } from "./esbuild_plugins/build_routes.ts";
 import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
 import { parse } from "https://deno.land/std@0.177.0/flags/mod.ts";
@@ -41,16 +44,15 @@ const options: Options = {
 
 const importMap = {
 	imports: {
-		"svelte": "npm:svelte@4.2.0",
-		"svelte/animate": "npm:svelte@4.2.0/animate",
-		"svelte/internal": "npm:svelte@4.2.0/internal",
+		"svelte": `npm:svelte@${VERSION}`,
+		"svelte/internal": `npm:svelte@${VERSION}/internal`,
 		"svelte/internal/disclose-version":
-			"npm:svelte@4.2.0/internal/disclose-version",
-		"svelte/easing": "npm:svelte@4.2.0/easing",
-		"svelte/motion": "npm:svelte@4.2.0/motion",
-		"svelte/register": "npm:svelte@4.2.0/register",
-		"svelte/store": "npm:svelte@4.2.0/store",
-		"svelte/transition": "npm:svelte@4.2.0/transition",
+			`npm:svelte@${VERSION}/internal/disclose-version`,
+		"svelte/easing": `npm:svelte@${VERSION}/easing`,
+		"svelte/motion": `npm:svelte@${VERSION}/motion`,
+		"svelte/register": `npm:svelte@${VERSION}/register`,
+		"svelte/store": `npm:svelte@${VERSION}/store`,
+		"svelte/transition": `npm:svelte@${VERSION}/transition`,
 	},
 };
 const importMapURL = `data:application/json,${JSON.stringify(importMap)}`;

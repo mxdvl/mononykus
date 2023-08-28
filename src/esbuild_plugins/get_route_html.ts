@@ -1,5 +1,4 @@
-// @ts-expect-error -- the package is untyped
-import { format } from "npm:prettier";
+import { format } from "npm:prettier@3.0.2";
 
 interface TemplateOptions {
 	css: string;
@@ -27,7 +26,7 @@ export const get_route_html = ({ html, css, head }: {
 	html: string;
 	css: string;
 	head: string;
-}) => {
+}): Promise<string> => {
 	const page = template({
 		css,
 		head,
@@ -46,6 +45,6 @@ export const get_route_html = ({ html, css, head }: {
 		);
 	} catch (_) {
 		console.warn("Could not format the html");
-		return page;
+		return Promise.resolve(page);
 	}
 };

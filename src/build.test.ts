@@ -50,7 +50,7 @@ Deno.test({
 		await process.output();
 
 		assert(html.startsWith(
-			"<!DOCTYPE html>",
+			"<!doctype html>",
 		));
 		assert(html.includes(
 			"<title>Mononykus – Deno + Svelte</title>",

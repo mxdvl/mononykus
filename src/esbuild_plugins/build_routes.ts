@@ -48,7 +48,7 @@ export const build_routes: Plugin = {
 
 				await Deno.writeTextFile(
 					dist_path,
-					get_route_html({ html, css, head: deduped_head }),
+					await get_route_html({ html, css, head: deduped_head }),
 				);
 			}));
 

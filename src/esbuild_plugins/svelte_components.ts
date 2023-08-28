@@ -36,6 +36,11 @@ const OneClaw = (
 	</style>
 `;
 
+const SVELTE_IMPORTS = /(from|import) ['"](?:svelte)(\/?[\w\/-]*)['"]/g;
+
+const specifiers = (code: string) =>
+	code.replaceAll(SVELTE_IMPORTS, `$1 'npm:svelte@${VERSION}$2'`);
+
 export const svelte_components = (
 	site_dir: string,
 	base_path: string,
@@ -132,12 +137,13 @@ export const svelte_components = (
 				};
 
 				return ({
-					contents:
-						`${code};(${hydrator.toString()})("${name}", ${name}_island)`,
+					contents: `${
+						specifiers(code)
+					};(${hydrator.toString()})("${name}", ${name}_island)`,
 				});
 			}
 
-			return ({ contents: code });
+			return ({ contents: specifiers(code) });
 		});
 	},
 });

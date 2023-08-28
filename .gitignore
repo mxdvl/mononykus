@@ -4,3 +4,4 @@ components/Island.svelte
 .DS_Store
 
 .cache
+node_modules

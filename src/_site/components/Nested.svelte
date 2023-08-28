@@ -1,11 +1,22 @@
 <script>
+  import { flip } from "svelte/animate";
+  import { scale } from "svelte/transition";
+
   /** @type {number} */
   export let count;
+
+  const duration = 120;
 </script>
 
 <ul>
-  {#each Array.from({ length: count }, (_, index) => index + 1) as index}
-    <li>{index}</li>
+  {#each Array.from({ length: count }, (_, index) => index + 1) as index (index)}
+    <li
+      animate:flip={{ duration }}
+      in:scale={{ duration }}
+      out:scale={{ duration }}
+    >
+      {index}
+    </li>
   {/each}
 </ul>
 
@@ -22,17 +33,5 @@
 
   li {
     padding: 0.25rem;
-    animation: fadein 120ms;
-  }
-
-  @keyframes fadein {
-    from {
-      transform: scale(0.6);
-      opacity: 0;
-    }
-    to {
-      transform: scale(1);
-      opacity: 1;
-    }
   }
 </style>

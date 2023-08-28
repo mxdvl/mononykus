@@ -3,7 +3,6 @@
   import HelloFriend from "../components/HelloFriend.island.svelte";
   import Counter from "../components/Counter.island.svelte";
   import Body from "../components/Body.svelte";
-  import Bee from "../components/Bee.island.svelte";
 </script>
 
 <svelte:head>
@@ -49,8 +48,6 @@
     <div class="island">
       <Counter />
     </div>
-
-    <Bee />
   </main>
 </Body>
 

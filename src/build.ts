@@ -77,7 +77,7 @@ const copy_assets = (
 	{ site_dir, out_dir }: Partial<Options>,
 ) => copy(site_dir + "assets", out_dir + "assets", { overwrite: true });
 
-const rebuild = async ({
+export const rebuild = async ({
 	base,
 	out_dir,
 	site_dir,

@@ -137,7 +137,7 @@ export const build = async (
 
 	await rebuild({ base, out_dir, site_dir, minify });
 
-	esbuild.stop();
+	await esbuild.stop();
 };
 
 export const watch = async (
@@ -173,6 +173,11 @@ export const watch = async (
 
 if (import.meta.main) {
 	if (flags.watch) {
+		Deno.addSignalListener("SIGINT", async () => {
+			console.log("\nShutting down gracefully…")
+			await esbuild.stop();
+		});
+
 		await watch(options);
 	} else {
 		await build(options);

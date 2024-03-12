@@ -46,7 +46,7 @@ Deno.test({
 
 		const html = await response.text();
 
-		process.kill();
+		process.kill("SIGINT");
 		await process.output();
 
 		assert(html.startsWith(

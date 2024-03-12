@@ -3,7 +3,7 @@
   "packages": {
     "specifiers": {
       "npm:prettier@3.0.2": "npm:prettier@3.0.2",
-      "npm:svelte@4.2.0": "npm:svelte@4.2.0"
+      "npm:svelte@4.2.12": "npm:svelte@4.2.12"
     },
     "npm": {
       "@ampproject/remapping@2.2.1": {
@@ -60,6 +60,12 @@
           "dequal": "dequal@2.0.3"
         }
       },
+      "axobject-query@4.0.0": {
+        "integrity": "sha512-+60uv1hiVFhHZeO+Lz0RYzsVHy5Wr1ayX0mwda9KPDVLNJgZ1T9Ny7VmFbLDzxsH0D87I86vgj3gFrjTJUYznw==",
+        "dependencies": {
+          "dequal": "dequal@2.0.3"
+        }
+      },
       "code-red@1.0.4": {
         "integrity": "sha512-7qJWqItLA8/VPVlKJlFXU+NBlo/qyfs39aJcuMT/2ere32ZqvF5OSxgdM5xOfJJ7O429gg2HM47y8v9P+9wrNw==",
         "dependencies": {
@@ -103,6 +109,12 @@
           "@jridgewell/sourcemap-codec": "@jridgewell/sourcemap-codec@1.4.15"
         }
       },
+      "magic-string@0.30.8": {
+        "integrity": "sha512-ISQTe55T2ao7XtlAStud6qwYPZjE4GK1S/BeVPus4jrq6JuOnQ00YKQC581RWhR122W7msZV263KzVeLoqidyQ==",
+        "dependencies": {
+          "@jridgewell/sourcemap-codec": "@jridgewell/sourcemap-codec@1.4.15"
+        }
+      },
       "mdn-data@2.0.30": {
         "integrity": "sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==",
         "dependencies": {}
@@ -138,6 +150,25 @@
           "is-reference": "is-reference@3.0.1",
           "locate-character": "locate-character@3.0.0",
           "magic-string": "magic-string@0.30.3",
+          "periscopic": "periscopic@3.1.0"
+        }
+      },
+      "svelte@4.2.12": {
+        "integrity": "sha512-d8+wsh5TfPwqVzbm4/HCXC783/KPHV60NvwitJnyTA5lWn1elhXMNWhXGCJ7PwPa8qFUnyJNIyuIRt2mT0WMug==",
+        "dependencies": {
+          "@ampproject/remapping": "@ampproject/remapping@2.2.1",
+          "@jridgewell/sourcemap-codec": "@jridgewell/sourcemap-codec@1.4.15",
+          "@jridgewell/trace-mapping": "@jridgewell/trace-mapping@0.3.19",
+          "@types/estree": "@types/estree@1.0.1",
+          "acorn": "acorn@8.10.0",
+          "aria-query": "aria-query@5.3.0",
+          "axobject-query": "axobject-query@4.0.0",
+          "code-red": "code-red@1.0.4",
+          "css-tree": "css-tree@2.3.1",
+          "estree-walker": "estree-walker@3.0.3",
+          "is-reference": "is-reference@3.0.1",
+          "locate-character": "locate-character@3.0.0",
+          "magic-string": "magic-string@0.30.8",
           "periscopic": "periscopic@3.1.0"
         }
       }

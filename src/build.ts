@@ -174,7 +174,7 @@ export const watch = async (
 if (import.meta.main) {
 	if (flags.watch) {
 		Deno.addSignalListener("SIGINT", async () => {
-			console.log("\nShutting down gracefully…")
+			console.log("\nShutting down gracefully…");
 			await esbuild.stop();
 		});
 

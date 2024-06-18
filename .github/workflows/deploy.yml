@@ -12,9 +12,6 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
-env:
-  DENO_DIR: ./.cache
-
 permissions:
   contents: read # Needed to clone the repository
   id-token: write # Needed for authentication

@@ -6,9 +6,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-env:
-  DENO_DIR: ./.cache
-
 jobs:
   health:
     runs-on: ubuntu-latest

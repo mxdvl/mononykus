@@ -160,6 +160,10 @@ export const watch = async (
 	const watcher = Deno.watchFs(site_dir);
 	let timeout;
 	for await (const { kind, paths: [path] } of watcher) {
+		if(signal.aborted) {
+			watcher.close();
+			return;
+		}
 		if (path && (kind === "modify" || kind === "create")) {
 			if (path.includes(out_dir)) continue;
 			clearTimeout(timeout);
@@ -176,6 +180,7 @@ if (import.meta.main) {
 			console.log("\nShutting down gracefully, light as a feather…");
 			controller.abort();
 			void esbuild.stop();
+			Deno.exit();
 		});
 		await watch(options, controller.signal);
 	} else {

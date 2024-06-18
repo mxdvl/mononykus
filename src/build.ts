@@ -171,14 +171,13 @@ export const watch = async (
 if (import.meta.main) {
 	if (flags.watch) {
 		const controller = new AbortController();
-		const shutdown = async () => {
+
+		Deno.addSignalListener("SIGINT", () => {
 			console.log("\nShutting down gracefully, light as a feather…");
 			controller.abort();
-			await esbuild.stop();
-		};
-
-		Deno.addSignalListener("SIGINT", shutdown);
-		await watch(options, controller.signal).catch(shutdown);
+			void esbuild.stop();
+		});
+		await watch(options, controller.signal);
 	} else {
 		await build(options);
 	}

@@ -17,7 +17,7 @@ jobs:
 
       - uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.x
+          deno-version: v1.44
 
       - name: Cache Deno dependencies
         uses: actions/cache@v3

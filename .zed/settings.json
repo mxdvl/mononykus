@@ -1,0 +1,38 @@
+{
+  "languages": {
+    "JavaScript": {
+      "language_servers": [
+        "deno",
+        "!typescript-language-server",
+        "!eslint",
+        "..."
+      ],
+      "format_on_save": {
+        "external": {
+          "command": "deno",
+          "arguments": [
+            "fmt",
+            "-"
+          ]
+        }
+      }
+    },
+    "TypeScript": {
+      "language_servers": [
+        "deno",
+        "!typescript-language-server",
+        "!eslint",
+        "..."
+      ],
+      "format_on_save": {
+        "external": {
+          "command": "deno",
+          "arguments": [
+            "fmt",
+            "-"
+          ]
+        }
+      }
+    }
+  }
+}

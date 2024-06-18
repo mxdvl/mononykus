@@ -1,10 +1,10 @@
 import {
 	basename,
 	dirname,
+	normalize as normalise,
 	resolve,
-} from "https://deno.land/std@0.177.0/path/mod.ts";
-import type { Plugin } from "https://deno.land/x/esbuild@v0.20.1/mod.js";
-import { normalize } from "https://deno.land/std@0.177.0/path/mod.ts";
+} from "jsr:@std/path@0.224";
+import type { Plugin } from "npm:esbuild@0.20.2";
 import { compile, VERSION } from "npm:svelte@4.2.12/compiler";
 import type { ComponentType } from "npm:svelte@4.2.12";
 
@@ -89,7 +89,7 @@ export const svelte_components = (
 				.replace(/(\.island)?\.svelte$/, "")
 				.replaceAll(/(\.|\W)/g, "_");
 
-			const module_src = normalize("/" + base_path + path.split(site_dir)[1])
+			const module_src = normalise("/" + base_path + path.split(site_dir)[1])
 				.replace(
 					/svelte$/,
 					"js",

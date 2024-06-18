@@ -1,4 +1,4 @@
-import { assert } from "https://deno.land/std@0.177.0/testing/asserts.ts";
+import { assert } from "jsr:@std/testing/asserts";
 import { build } from "./build.ts";
 
 const base = "mononykus/";

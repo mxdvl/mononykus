@@ -1,6 +1,6 @@
-import type { Plugin } from "https://deno.land/x/esbuild@v0.20.1/mod.js";
-import { dirname } from "https://deno.land/std@0.182.0/path/mod.ts";
-import { ensureDir } from "https://deno.land/std@0.177.0/fs/ensure_dir.ts";
+import type { Plugin } from "npm:esbuild@0.20.2";
+import { dirname } from "jsr:@std/path@0.224/dirname";
+import { ensureDir } from "jsr:@std/fs@0.224/ensure-dir";
 import { get_route_html } from "./get_route_html.ts";
 
 interface SSROutput {

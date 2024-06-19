@@ -160,7 +160,7 @@ export const watch = async (
 	const watcher = Deno.watchFs(site_dir);
 	let timeout;
 	for await (const { kind, paths: [path] } of watcher) {
-		if(signal.aborted) {
+		if (signal.aborted) {
 			watcher.close();
 			return;
 		}

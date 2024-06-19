@@ -1,12 +1,7 @@
-import {
-	basename,
-	dirname,
-	normalize as normalise,
-	resolve,
-} from "jsr:@std/path@0.224";
-import type { Plugin } from "npm:esbuild@0.20.2";
-import { compile, VERSION } from "npm:svelte@4.2.12/compiler";
-import type { ComponentType } from "npm:svelte@4.2.12";
+import { basename, dirname, normalize as normalise, resolve } from "@std/path";
+import type { Plugin } from "esbuild";
+import { compile, VERSION } from "svelte/compiler";
+import type { ComponentType } from "svelte";
 
 const filter = /\.svelte$/;
 const name = "mononykus/svelte";

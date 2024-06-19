@@ -1,4 +1,4 @@
-import { assert } from "jsr:@std/testing/asserts";
+import { assert } from "@std/testing/asserts";
 import { build } from "./build.ts";
 
 const base = "mononykus/";
@@ -21,8 +21,8 @@ Deno.test({
 					"task",
 					"dev",
 				],
-				stdout: "null",
-				stderr: "null",
+				stdout: "inherit",
+				stderr: "inherit",
 			},
 		);
 

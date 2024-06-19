@@ -18,5 +18,16 @@
 	"fmt": {
 		"useTabs": true,
 		"exclude": ["build", "src/_site/build", ".cache"]
+	},
+	"imports": {
+		"@luca/esbuild-deno-loader": "jsr:@luca/esbuild-deno-loader@^0.10.3",
+		"@std/cli": "jsr:@std/cli@^0.224.7",
+		"@std/fs": "jsr:@std/fs@^0.229.3",
+		"@std/http": "jsr:@std/http@^0.224.5",
+		"@std/path": "jsr:@std/path@^0.225.2",
+		"@std/testing": "jsr:@std/testing@^0.225.2",
+		"esbuild": "npm:esbuild@0.20.2",
+		"prettier": "npm:prettier@3.0.2",
+		"svelte": "npm:svelte@4.2.12"
 	}
 }

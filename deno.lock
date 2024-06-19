@@ -16,8 +16,10 @@
       "jsr:@std/fmt@^0.225.4": "jsr:@std/fmt@0.225.4",
       "jsr:@std/fs": "jsr:@std/fs@0.229.3",
       "jsr:@std/fs@0.224": "jsr:@std/fs@0.224.0",
+      "jsr:@std/fs@^0.229.3": "jsr:@std/fs@0.229.3",
       "jsr:@std/http": "jsr:@std/http@0.224.5",
       "jsr:@std/http@0.224": "jsr:@std/http@0.224.5",
+      "jsr:@std/http@^0.224.5": "jsr:@std/http@0.224.5",
       "jsr:@std/internal@^1.0.0": "jsr:@std/internal@1.0.0",
       "jsr:@std/json@^0.213.1": "jsr:@std/json@0.213.1",
       "jsr:@std/jsonc@0.213": "jsr:@std/jsonc@0.213.1",
@@ -29,8 +31,10 @@
       "jsr:@std/path@1.0.0-rc.1": "jsr:@std/path@1.0.0-rc.1",
       "jsr:@std/path@1.0.0-rc.2": "jsr:@std/path@1.0.0-rc.2",
       "jsr:@std/path@^0.224.0": "jsr:@std/path@0.224.0",
+      "jsr:@std/path@^0.225.2": "jsr:@std/path@0.225.2",
       "jsr:@std/streams@^0.224.5": "jsr:@std/streams@0.224.5",
       "jsr:@std/testing": "jsr:@std/testing@0.225.2",
+      "jsr:@std/testing@^0.225.2": "jsr:@std/testing@0.225.2",
       "npm:esbuild@0.20.2": "npm:esbuild@0.20.2",
       "npm:esbuild@0.21.5": "npm:esbuild@0.21.5",
       "npm:prettier@3.0.2": "npm:prettier@3.0.2",
@@ -865,5 +869,18 @@
     "https://raw.githubusercontent.com/mxdvl/esbuild_deno_loader/patch-1/src/plugin_deno_loader.ts": "166356133ee63d80e5559a10c18e10b625da96e39a4518b8c7adfef718bb4e32",
     "https://raw.githubusercontent.com/mxdvl/esbuild_deno_loader/patch-1/src/plugin_deno_resolver.ts": "0449ed23ae93db1ec74d015a46934aefd7ba7a8f719f7a4980b616cb3f5bbee4",
     "https://raw.githubusercontent.com/mxdvl/esbuild_deno_loader/patch-1/src/shared.ts": "33052684aeb542ebd24da372816bbbf885cd090a7ab0fde7770801f7f5b49572"
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@luca/esbuild-deno-loader@^0.10.3",
+      "jsr:@std/cli@^0.224.7",
+      "jsr:@std/fs@^0.229.3",
+      "jsr:@std/http@^0.224.5",
+      "jsr:@std/path@^0.225.2",
+      "jsr:@std/testing@^0.225.2",
+      "npm:esbuild@0.20.2",
+      "npm:prettier@3.0.2",
+      "npm:svelte@4.2.12"
+    ]
   }
 }

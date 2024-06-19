@@ -1,6 +1,6 @@
-import type { Plugin } from "npm:esbuild@0.20.2";
-import { dirname } from "jsr:@std/path@0.224/dirname";
-import { ensureDir } from "jsr:@std/fs@0.224/ensure-dir";
+import type { Plugin } from "esbuild";
+import { dirname } from "@std/path/dirname";
+import { ensureDir } from "@std/fs/ensure-dir";
 import { get_route_html } from "./get_route_html.ts";
 
 interface SSROutput {

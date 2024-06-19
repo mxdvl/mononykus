@@ -1,8 +1,8 @@
-import { denoPlugins } from "jsr:@luca/esbuild-deno-loader@^0.10.3";
-import { parseArgs } from "jsr:@std/cli@0.224/parse-args";
-import { copy, ensureDir, walk } from "jsr:@std/fs@0.224";
-import { globToRegExp, normalize } from "jsr:@std/path@0.224";
-import * as esbuild from "npm:esbuild@0.20.2";
+import { denoPlugins } from "@luca/esbuild-deno-loader";
+import { parseArgs } from "@std/cli/parse-args";
+import { copy, ensureDir, walk } from "@std/fs";
+import { globToRegExp, normalize } from "@std/path";
+import * as esbuild from "esbuild";
 import { build_routes } from "./esbuild_plugins/build_routes.ts";
 import { svelte_components } from "./esbuild_plugins/svelte_components.ts";
 import { create_handler } from "./server.ts";

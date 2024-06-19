@@ -1,5 +1,6 @@
-import { assert } from "jsr:@std/testing/asserts";
+import { assert } from "@std/assert";
 import { build } from "./build.ts";
+import { watch } from "./build.ts";
 
 const base = "mononykus/";
 const site_dir = "src/_site";
@@ -14,19 +15,12 @@ Deno.test({
 Deno.test({
 	name: "Able to develop the current project",
 	fn: async () => {
-		const command = new Deno.Command(
-			Deno.execPath(),
-			{
-				args: [
-					"task",
-					"dev",
-				],
-				stdout: "null",
-				stderr: "null",
-			},
-		);
+		const controller = new AbortController();
 
-		const process = command.spawn();
+		const watcher = watch({
+			site_dir: "src/_site",
+			base: "mononykus",
+		}, controller.signal);
 
 		await new Promise<void>((resolve) => {
 			const check_if_port_is_open = async () => {
@@ -46,8 +40,9 @@ Deno.test({
 
 		const html = await response.text();
 
-		process.kill("SIGINT");
-		await process.output();
+		controller.abort();
+		await watcher;
+		console.log(watcher);
 
 		assert(html.startsWith(
 			"<!doctype html>",

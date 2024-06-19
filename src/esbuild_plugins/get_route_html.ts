@@ -1,4 +1,4 @@
-import { format } from "npm:prettier@3.0.2";
+import { format } from "prettier";
 
 interface TemplateOptions {
 	css: string;

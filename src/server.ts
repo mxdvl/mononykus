@@ -1,5 +1,5 @@
-import { serveDir } from "jsr:@std/http@0.224/file-server";
-import { normalize as normalise } from "jsr:@std/path@0.224";
+import { serveDir } from "@std/http/file-server";
+import { normalize as normalise } from "@std/path";
 
 interface ServerOptions {
 	base: string;

@@ -1,8 +1,8 @@
-import { denoPlugins } from "jsr:@luca/esbuild-deno-loader@^0.10.3";
-import { parseArgs } from "jsr:@std/cli@0.224/parse-args";
-import { copy, ensureDir, walk } from "jsr:@std/fs@0.224";
-import { globToRegExp, normalize } from "jsr:@std/path@0.224";
-import * as esbuild from "npm:esbuild@0.20.2";
+import { denoPlugins } from "@luca/esbuild-deno-loader";
+import { parseArgs } from "@std/cli/parse-args";
+import { copy, ensureDir, walk } from "@std/fs";
+import { globToRegExp, normalize } from "@std/path";
+import * as esbuild from "esbuild";
 import { build_routes } from "./esbuild_plugins/build_routes.ts";
 import { svelte_components } from "./esbuild_plugins/svelte_components.ts";
 import { create_handler } from "./server.ts";
@@ -158,18 +158,21 @@ export const watch = async (
 	Deno.serve({ port: 4507, signal }, create_handler({ base, out_dir }));
 
 	const watcher = Deno.watchFs(site_dir);
+	signal.addEventListener("abort", () => {
+		watcher.close();
+	});
+
 	let timeout;
 	for await (const { kind, paths: [path] } of watcher) {
-		if (signal.aborted) {
-			watcher.close();
-			return;
-		}
 		if (path && (kind === "modify" || kind === "create")) {
 			if (path.includes(out_dir)) continue;
 			clearTimeout(timeout);
 			timeout = setTimeout(_rebuild, 6);
 		}
 	}
+
+	console.log("\nShutting down gracefully, light as a feather…");
+	await esbuild.stop();
 };
 
 if (import.meta.main) {
@@ -177,11 +180,9 @@ if (import.meta.main) {
 		const controller = new AbortController();
 
 		Deno.addSignalListener("SIGINT", () => {
-			console.log("\nShutting down gracefully, light as a feather…");
 			controller.abort();
-			void esbuild.stop();
-			Deno.exit();
 		});
+
 		await watch(options, controller.signal);
 	} else {
 		await build(options);

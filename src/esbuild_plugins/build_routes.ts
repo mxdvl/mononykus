@@ -17,7 +17,7 @@ export const build_routes: Plugin = {
 
 			const routes = result.outputFiles ?? [];
 
-			await Promise.all(routes.map(async (route) => {
+			await Promise.allSettled(routes.map(async (route) => {
 				const module = await import(
 					"data:application/javascript," + encodeURIComponent(route.text)
 				) as {
@@ -50,7 +50,12 @@ export const build_routes: Plugin = {
 					dist_path,
 					await get_route_html({ html, css, head: deduped_head }),
 				);
-			}));
+			})).then((results) => {
+				const { length } = results.filter(({ status }) =>
+					status === "rejected"
+				);
+				if (length > 0) console.log(`Failed to build ${length} routes.`);
+			});
 
 			console.log(
 				`Built ${routes.length} routes in ${

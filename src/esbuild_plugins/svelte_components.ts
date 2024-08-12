@@ -38,6 +38,25 @@ const SVELTE_IMPORTS = /(from|import) ['"](?:svelte)(\/?[\w\/-]*)['"]/g;
 const specifiers = (code: string) =>
 	code.replaceAll(SVELTE_IMPORTS, `$1 'npm:svelte@${VERSION}$2'`);
 
+const convertMessage = (
+	source: string,
+	{ message, start, end }: ReturnType<typeof compile>["warnings"][number],
+) => {
+	let location;
+	if (start && end) {
+		let lineText = source.split(/\r\n|\r|\n/g)[start.line - 1];
+		let lineEnd = start.line === end.line ? end.column : lineText.length;
+		location = {
+			file: filename,
+			line: start.line,
+			column: start.column,
+			length: lineEnd - start.column,
+			lineText,
+		};
+	}
+	return { text: message, location };
+};
+
 export const svelte_components = (
 	site_dir: string,
 	base_path: string,
@@ -96,52 +115,59 @@ export const svelte_components = (
 				? OneClaw({ path, name, module_src })
 				: await Deno.readTextFile(path);
 
-			const { js: { code } } = compile(source, {
-				generate,
-				css: "external",
-				cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
-				hydratable: generate === "dom",
-				enableSourcemap: false,
-				filename: basename(path),
-			});
-
-			if (generate === "dom" && path.endsWith(".island.svelte")) {
-				/** Dynamic function to be inlined in the output. */
-				const hydrator = (name: string, Component: ComponentType) => {
-					try {
-						document.querySelectorAll(
-							`one-claw[name='${name}']:not(one-claw one-claw)`,
-						).forEach((target) => {
-							const load = performance.now();
-							console.groupCollapsed(
-								`Hydrating %c${name}%c`,
-								"color: orange",
-								"color: reset",
-							);
-							console.log(target);
-							const props = JSON.parse(target.getAttribute("props") ?? "{}");
-							new Component({ target, props, hydrate: true });
-							console.log(
-								`Done in %c${
-									Math.round((performance.now() - load) * 1000) / 1000
-								}ms`,
-								"color: orange",
-							);
-							console.groupEnd();
-						});
-					} catch (error) {
-						console.error(error);
-					}
-				};
-
-				return ({
-					contents: `${
-						specifiers(code)
-					};(${hydrator.toString()})("${name}", ${name}_island)`,
+			try {
+				const { js: { code }, warnings } = compile(source, {
+					generate,
+					css: "external",
+					cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
+					hydratable: generate === "dom",
+					enableSourcemap: false,
+					filename: basename(path),
 				});
-			}
 
-			return ({ contents: specifiers(code) });
+				if (generate === "dom" && path.endsWith(".island.svelte")) {
+					/** Dynamic function to be inlined in the output. */
+					const hydrator = (name: string, Component: ComponentType) => {
+						try {
+							document.querySelectorAll(
+								`one-claw[name='${name}']:not(one-claw one-claw)`,
+							).forEach((target) => {
+								const load = performance.now();
+								console.groupCollapsed(
+									`Hydrating %c${name}%c`,
+									"color: orange",
+									"color: reset",
+								);
+								console.log(target);
+								const props = JSON.parse(target.getAttribute("props") ?? "{}");
+								new Component({ target, props, hydrate: true });
+								console.log(
+									`Done in %c${
+										Math.round((performance.now() - load) * 1000) / 1000
+									}ms`,
+									"color: orange",
+								);
+								console.groupEnd();
+							});
+						} catch (error) {
+							console.error(error);
+						}
+					};
+
+					return ({
+						contents: `${
+							specifiers(code)
+						};(${hydrator.toString()})("${name}", ${name}_island)`,
+						warnings: warnings.map(
+							(warning) => convertMessage(source, warning),
+						),
+					});
+				}
+
+				return ({ contents: specifiers(code) });
+			} catch (error) {
+				return { errors: [convertMessage(source, error)] };
+			}
 		});
 	},
 });

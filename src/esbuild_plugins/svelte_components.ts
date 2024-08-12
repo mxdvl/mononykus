@@ -53,7 +53,7 @@ export const svelte_components = (
 					path.endsWith(".island.svelte")
 				) {
 					return {
-						path: path.replace(/\.svelte$/, ".js"),
+						path: path.replace(filter, ".js"),
 						external: true,
 					};
 				} else {
@@ -126,8 +126,8 @@ export const svelte_components = (
 							);
 							console.groupEnd();
 						});
-					} catch (_) {
-						console.error(_);
+					} catch (error) {
+						console.error(error);
 					}
 				};
 

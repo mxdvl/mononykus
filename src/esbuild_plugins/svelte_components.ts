@@ -9,6 +9,7 @@ const name = "mononykus/svelte";
 /** force wrapping the actual component in a synthetic one */
 const ssr_island = "?ssr_island";
 
+/** Wrapper component for islands to be hydrated, which serialises props. */
 const OneClaw = (
 	{ path, name, module_src }: {
 		path: string;
@@ -33,6 +34,7 @@ const OneClaw = (
 
 const SVELTE_IMPORTS = /(from|import) ['"](?:svelte)(\/?[\w\/-]*)['"]/g;
 
+/** Convert `svelte/*` imports to `npm:svelte@x.y.z/*` */
 const specifiers = (code: string) =>
 	code.replaceAll(SVELTE_IMPORTS, `$1 'npm:svelte@${VERSION}$2'`);
 
@@ -104,6 +106,7 @@ export const svelte_components = (
 			});
 
 			if (generate === "dom" && path.endsWith(".island.svelte")) {
+				/** Dynamic function to be inlined in the output. */
 				const hydrator = (name: string, Component: ComponentType) => {
 					try {
 						document.querySelectorAll(

@@ -38,23 +38,27 @@ const SVELTE_IMPORTS = /(from|import) ['"](?:svelte)(\/?[\w\/-]*)['"]/g;
 const specifiers = (code: string) =>
 	code.replaceAll(SVELTE_IMPORTS, `$1 'npm:svelte@${VERSION}$2'`);
 
+/** From https://esbuild.github.io/plugins/#svelte-plugin */
 const convertMessage = (
+	path: string,
 	source: string,
 	{ message, start, end }: ReturnType<typeof compile>["warnings"][number],
 ) => {
-	let location;
-	if (start && end) {
-		let lineText = source.split(/\r\n|\r|\n/g)[start.line - 1];
-		let lineEnd = start.line === end.line ? end.column : lineText.length;
-		location = {
-			file: filename,
+	if (!start || !end) {
+		return { text: message };
+	}
+	const lineText = source.split(/\r\n|\r|\n/g)[start.line - 1];
+	const lineEnd = start.line === end.line ? end.column : lineText?.length ?? 0;
+	return {
+		text: message,
+		location: {
+			file: path,
 			line: start.line,
 			column: start.column,
 			length: lineEnd - start.column,
 			lineText,
-		};
-	}
-	return { text: message, location };
+		},
+	};
 };
 
 export const svelte_components = (
@@ -159,14 +163,14 @@ export const svelte_components = (
 							specifiers(code)
 						};(${hydrator.toString()})("${name}", ${name}_island)`,
 						warnings: warnings.map(
-							(warning) => convertMessage(source, warning),
+							(warning) => convertMessage(path, source, warning),
 						),
 					});
 				}
 
 				return ({ contents: specifiers(code) });
 			} catch (error) {
-				return { errors: [convertMessage(source, error)] };
+				return { errors: [convertMessage(path, source, error)] };
 			}
 		});
 	},

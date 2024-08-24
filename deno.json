@@ -1,6 +1,6 @@
 {
 	"name": "@mxdvl/mononykus",
-	"version": "0.7.6",
+	"version": "0.7.7",
 	"exports": "./src/build.ts",
 	"tasks": {
 		"build": "deno run -A src/build.ts --site_dir src/_site",

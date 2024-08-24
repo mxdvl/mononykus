@@ -170,7 +170,14 @@ export const svelte_components = (
 
 				return ({ contents: specifiers(code) });
 			} catch (error) {
-				return { errors: [convertMessage(path, source, error)] };
+				return {
+					errors: [
+						convertMessage(path, source, {
+							message: String(error),
+							code: "???",
+						}),
+					],
+				};
 			}
 		});
 	},

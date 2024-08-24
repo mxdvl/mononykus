@@ -110,11 +110,13 @@ export const rebuild = async ({
 		...baseESBuildConfig,
 	};
 
-	await Promise.all([
+	const results = await Promise.allSettled([
 		esbuild.build(routesESBuildConfig),
 		esbuild.build(islandsESBuildConfig),
 		copy_assets({ site_dir, out_dir }),
 	]);
+	const issues = results.filter(({ status }) => status === "rejected").length;
+	if (issues > 0) console.warn(`Encoutered ${issues} issues`);
 };
 
 export const build = async (

@@ -6,18 +6,23 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  DENO_DIR: /var/cache/deno
+
 jobs:
   health:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
 
-      - uses: denoland/setup-deno@v1
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v1
         with:
           deno-version: v1.44
 
       - name: Cache Deno dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ env.DENO_DIR }}
           key: ${{ hashFiles('deno.lock') }}
@@ -27,7 +32,7 @@ jobs:
 
       - name: Lint
         run: deno lint
-      
+
       - name: Test
         run: deno test -A --no-check
 

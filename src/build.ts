@@ -33,7 +33,7 @@ const options = {
 	out_dir: slashify(flags.out_dir),
 	base: slashify(flags.base),
 	minify: !flags.watch || flags.minify,
-} satisfies Options;
+} as const satisfies Options;
 
 // clean out old builds, if they exist
 const clean = async (out_dir: Options["out_dir"]) => {

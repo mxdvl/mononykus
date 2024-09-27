@@ -28,12 +28,12 @@ const flags = parseArgs(Deno.args, {
 	},
 });
 
-const options: Options = {
+const options = {
 	site_dir: slashify(flags.site_dir),
 	out_dir: slashify(flags.out_dir),
 	base: slashify(flags.base),
 	minify: !flags.watch || flags.minify,
-};
+} satisfies Options;
 
 // clean out old builds, if they exist
 const clean = async (out_dir: Options["out_dir"]) => {
@@ -78,7 +78,7 @@ export const rebuild = async ({
 	out_dir,
 	site_dir,
 	minify,
-}: Options): Promise<void> => {
+} = options): Promise<void> => {
 	const baseESBuildConfig = {
 		logLevel: "info",
 		format: "esm",

@@ -17,7 +17,7 @@ const FAILURE_FLAG = "<!--mononykus:failed-->";
 async function render(
 	{ text }: OutputFile,
 ): Promise<{ html: string; css: string; head: string }> {
-	console.log("OUTPUT\n\n", text, "\n\n\n\n");
+	// console.log("OUTPUT\n\n", text, "\n\n\n\n");
 	try {
 		const { default: Component } = await import(
 			"data:application/javascript," + encodeURIComponent(text)
@@ -27,7 +27,7 @@ async function render(
 
 		const { body: html, head: raw_head } = renderSSR(Component);
 
-		const css = raw_css?.code ?? "";
+		// const css = raw_css?.code ?? "";
 
 		// remove any duplicate module imports (in cases where a page uses an island more than once)
 		const modules = new Set();

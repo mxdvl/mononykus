@@ -28,8 +28,8 @@
 		"@std/http": "jsr:@std/http@^0.224.5",
 		"@std/path": "jsr:@std/path@^0.225.2",
 		"@std/testing": "jsr:@std/testing@^0.225.2",
-		"esbuild": "npm:esbuild@0.20.2",
-		"prettier": "npm:prettier@3.0.2",
-		"svelte": "npm:svelte@4.2.12"
+		"esbuild": "npm:esbuild@~0.24.0",
+		"prettier": "npm:prettier@^3.0.2",
+		"svelte": "npm:svelte@5.4.0"
 	}
 }

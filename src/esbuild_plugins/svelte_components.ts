@@ -67,10 +67,10 @@ export const svelte_components = (
 ): Plugin => ({
 	name,
 	setup(build) {
-		const generate = build.initialOptions.write ? "dom" : "ssr";
+		const generate = build.initialOptions.write ? "client" : "server";
 
 		build.onResolve({ filter }, ({ path, kind, importer, resolveDir }) => {
-			if (generate === "dom") {
+			if (generate === "client") {
 				if (
 					kind === "import-statement" &&
 					// matches our `components/**/*.island.svelte`,
@@ -120,16 +120,17 @@ export const svelte_components = (
 				: await Deno.readTextFile(path);
 
 			try {
-				const { js: { code }, warnings } = compile(source, {
-					generate,
-					css: "external",
-					cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
-					hydratable: generate === "dom",
-					enableSourcemap: false,
-					filename: basename(path),
-				});
+				const { js, css, warnings } = compile(
+					source,
+					{
+						generate,
+						css: "external",
+						cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
+						filename: basename(path),
+					},
+				);
 
-				if (generate === "dom" && path.endsWith(".island.svelte")) {
+				if (generate === "client" && path.endsWith(".island.svelte")) {
 					/** Dynamic function to be inlined in the output. */
 					const hydrator = (name: string, Component: ComponentType) => {
 						try {
@@ -160,7 +161,7 @@ export const svelte_components = (
 
 					return ({
 						contents: `${
-							specifiers(code)
+							specifiers(js.code)
 						};(${hydrator.toString()})("${name}", ${name}_island)`,
 						warnings: warnings.map(
 							(warning) => convertMessage(path, source, warning),
@@ -168,7 +169,10 @@ export const svelte_components = (
 					});
 				}
 
-				return ({ contents: specifiers(code) });
+				// fixme: add export for js
+				console.debug(css?.code);
+
+				return ({ contents: specifiers(js.code) });
 			} catch (error) {
 				return {
 					errors: [

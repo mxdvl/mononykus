@@ -1,7 +1,8 @@
 import { basename, dirname, normalize as normalise, resolve } from "@std/path";
 import type { Plugin } from "esbuild";
 import { compile, VERSION } from "svelte/compiler";
-import type { ComponentType } from "svelte";
+import type { Component } from "svelte";
+import { hydrate } from "svelte";
 
 const filter = /\.svelte$/;
 const name = "mononykus/svelte";
@@ -124,7 +125,7 @@ export const svelte_components = (
 					source,
 					{
 						generate,
-						css: "external",
+						css: generate === "server" ? "injected" : "external",
 						cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
 						filename: basename(path),
 					},
@@ -132,7 +133,7 @@ export const svelte_components = (
 
 				if (generate === "client" && path.endsWith(".island.svelte")) {
 					/** Dynamic function to be inlined in the output. */
-					const hydrator = (name: string, Component: ComponentType) => {
+					const hydrator = (name: string, Component: Component) => {
 						try {
 							document.querySelectorAll(
 								`one-claw[name='${name}']:not(one-claw one-claw)`,
@@ -145,7 +146,7 @@ export const svelte_components = (
 								);
 								console.log(target);
 								const props = JSON.parse(target.getAttribute("props") ?? "{}");
-								new Component({ target, props, hydrate: true });
+								hydrate(Component, { target, props });
 								console.log(
 									`Done in %c${
 										Math.round((performance.now() - load) * 1000) / 1000

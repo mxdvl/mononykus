@@ -2,27 +2,21 @@ import type { OutputFile, Plugin } from "esbuild";
 import { dirname } from "@std/path/dirname";
 import { ensureDir } from "@std/fs/ensure-dir";
 import { get_route_html } from "./get_route_html.ts";
-import type { SvelteComponent } from "svelte";
+import type { Component } from "svelte";
 import { render as renderSSR } from "svelte/server";
-
-interface SSROutput {
-	html: string;
-	head: string;
-	css?: { code: string };
-}
 
 const FAILURE_FLAG = "<!--mononykus:failed-->";
 
 /** safely render Svelte components */
 async function render(
 	{ text }: OutputFile,
-): Promise<{ html: string; css: string; head: string }> {
+): Promise<{ html: string; head: string }> {
 	// console.log("OUTPUT\n\n", text, "\n\n\n\n");
 	try {
 		const { default: Component } = await import(
 			"data:application/javascript," + encodeURIComponent(text)
 		) as {
-			default: SvelteComponent;
+			default: Component;
 		};
 
 		const { body: html, head: raw_head } = renderSSR(Component);
@@ -42,12 +36,11 @@ async function render(
 			},
 		);
 
-		return { html, css, head };
+		return { html, head };
 	} catch (error) {
 		return {
 			html: `${FAILURE_FLAG}<h1>ERROR</h1><pre>${String(error)}</pre>`,
 			head: "",
-			css: "",
 		};
 	}
 }

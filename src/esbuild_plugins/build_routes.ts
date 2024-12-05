@@ -2,31 +2,25 @@ import type { OutputFile, Plugin } from "esbuild";
 import { dirname } from "@std/path/dirname";
 import { ensureDir } from "@std/fs/ensure-dir";
 import { get_route_html } from "./get_route_html.ts";
-
-interface SSROutput {
-	html: string;
-	head: string;
-	css?: { code: string };
-}
+import type { Component } from "svelte";
+import { render as renderSSR } from "svelte/server";
 
 const FAILURE_FLAG = "<!--mononykus:failed-->";
 
 /** safely render Svelte components */
 async function render(
 	{ text }: OutputFile,
-): Promise<{ html: string; css: string; head: string }> {
+): Promise<{ html: string; head: string }> {
 	try {
-		const module = await import(
+		const { default: Component } = await import(
 			"data:application/javascript," + encodeURIComponent(text)
 		) as {
-			default: {
-				render(): SSROutput;
-			};
+			default: Component;
 		};
 
-		const { html, css: raw_css, head: raw_head } = module.default.render();
+		const { body: html, head: raw_head } = renderSSR(Component);
 
-		const css = raw_css?.code ?? "";
+		// const css = raw_css?.code ?? "";
 
 		// remove any duplicate module imports (in cases where a page uses an island more than once)
 		const modules = new Set();
@@ -41,12 +35,11 @@ async function render(
 			},
 		);
 
-		return { html, css, head };
+		return { html, head };
 	} catch (error) {
 		return {
 			html: `${FAILURE_FLAG}<h1>ERROR</h1><pre>${String(error)}</pre>`,
 			head: "",
-			css: "",
 		};
 	}
 }

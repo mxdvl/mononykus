@@ -1,7 +1,8 @@
 import { basename, dirname, normalize as normalise, resolve } from "@std/path";
 import type { Plugin } from "esbuild";
-import { compile, VERSION } from "svelte/compiler";
-import type { ComponentType } from "svelte";
+import { compile, VERSION, type Warning } from "svelte/compiler";
+import type { Component } from "svelte";
+import type {} from "esbuild";
 
 const filter = /\.svelte$/;
 const name = "mononykus/svelte";
@@ -42,7 +43,7 @@ const specifiers = (code: string) =>
 const convertMessage = (
 	path: string,
 	source: string,
-	{ message, start, end }: ReturnType<typeof compile>["warnings"][number],
+	{ message, start, end }: Warning,
 ) => {
 	if (!start || !end) {
 		return { text: message };
@@ -64,13 +65,12 @@ const convertMessage = (
 export const svelte_components = (
 	site_dir: string,
 	base_path: string,
+	generate: "client" | "server",
 ): Plugin => ({
 	name,
 	setup(build) {
-		const generate = build.initialOptions.write ? "dom" : "ssr";
-
 		build.onResolve({ filter }, ({ path, kind, importer, resolveDir }) => {
-			if (generate === "dom") {
+			if (generate === "client") {
 				if (
 					kind === "import-statement" &&
 					// matches our `components/**/*.island.svelte`,
@@ -120,18 +120,19 @@ export const svelte_components = (
 				: await Deno.readTextFile(path);
 
 			try {
-				const { js: { code }, warnings } = compile(source, {
-					generate,
-					css: "external",
-					cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
-					hydratable: generate === "dom",
-					enableSourcemap: false,
-					filename: basename(path),
-				});
+				const { js, warnings } = compile(
+					source,
+					{
+						generate,
+						css: generate === "server" ? "injected" : "external",
+						cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
+						filename: basename(path),
+					},
+				);
 
-				if (generate === "dom" && path.endsWith(".island.svelte")) {
+				if (generate === "client" && path.endsWith(".island.svelte")) {
 					/** Dynamic function to be inlined in the output. */
-					const hydrator = (name: string, Component: ComponentType) => {
+					const hydrator = (name: string, Component: Component) => {
 						try {
 							document.querySelectorAll(
 								`one-claw[name='${name}']:not(one-claw one-claw)`,
@@ -144,7 +145,8 @@ export const svelte_components = (
 								);
 								console.log(target);
 								const props = JSON.parse(target.getAttribute("props") ?? "{}");
-								new Component({ target, props, hydrate: true });
+								// @ts-expect-error -- it’s injected below
+								hydrate(Component, { target, props });
 								console.log(
 									`Done in %c${
 										Math.round((performance.now() - load) * 1000) / 1000
@@ -158,26 +160,34 @@ export const svelte_components = (
 						}
 					};
 
-					return ({
-						contents: `${
-							specifiers(code)
-						};(${hydrator.toString()})("${name}", ${name}_island)`,
+					return {
+						contents: [
+							`import { hydrate } from 'npm:svelte@${VERSION}'`,
+							specifiers(js.code),
+							`(${hydrator.toString()})("${name}", ${name}_island)`,
+						].join(";\n"),
 						warnings: warnings.map(
 							(warning) => convertMessage(path, source, warning),
 						),
-					});
+					};
 				}
 
-				return ({ contents: specifiers(code) });
-			} catch (error) {
 				return {
-					errors: [
-						convertMessage(path, source, {
-							message: String(error),
-							code: "???",
-						}),
-					],
+					contents: specifiers(js.code),
 				};
+			} catch (error) {
+				// technically a CompileError
+				{
+					return {
+						contents: "",
+						warnings: [
+							convertMessage(path, source, {
+								message: "[svelte] " + String(error),
+								code: "???",
+							}),
+						],
+					};
+				}
 			}
 		});
 	},

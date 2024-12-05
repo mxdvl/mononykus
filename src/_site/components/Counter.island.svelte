@@ -1,11 +1,17 @@
 <script>
     import Nested from "./Nested.svelte";
-    import { onMount } from "svelte";
 
-    export let count = 3;
-    let mounted = false;
-    onMount(async () => {
+    let { count = 3 } = $props();
+    let mounted = $state(false);
+
+    function hasMounted() {
+        console.log("Mounting");
         mounted = true;
+    }
+
+    $effect(() => {
+        console.log("…mounting");
+        hasMounted();
     });
 </script>
 

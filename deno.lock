@@ -1,43 +1,41 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@luca/esbuild-deno-loader@~0.10.3": "0.10.3",
-    "jsr:@std/assert@~0.213.1": "0.213.1",
+    "jsr:@luca/esbuild-deno-loader@0.11": "0.11.0",
+    "jsr:@std/async@^1.0.9": "1.0.9",
+    "jsr:@std/bytes@^1.0.2": "1.0.4",
     "jsr:@std/cli@^1.0.6": "1.0.7",
-    "jsr:@std/cli@^1.0.7": "1.0.7",
-    "jsr:@std/encoding@0.213": "0.213.1",
     "jsr:@std/encoding@^1.0.5": "1.0.5",
     "jsr:@std/fmt@^1.0.3": "1.0.3",
     "jsr:@std/fs@^1.0.6": "1.0.6",
     "jsr:@std/html@^1.0.3": "1.0.3",
     "jsr:@std/http@^1.0.11": "1.0.11",
-    "jsr:@std/jsonc@0.213": "0.213.1",
     "jsr:@std/media-types@^1.1.0": "1.1.0",
     "jsr:@std/net@^1.0.4": "1.0.4",
-    "jsr:@std/path@0.213": "0.213.1",
+    "jsr:@std/path@^1.0.6": "1.0.8",
     "jsr:@std/path@^1.0.8": "1.0.8",
     "jsr:@std/streams@^1.0.8": "1.0.8",
     "npm:esbuild@0.24": "0.24.0",
     "npm:prettier@^3.0.2": "3.4.1",
-    "npm:svelte@5.4.0": "5.4.0_acorn@8.14.0"
+    "npm:svelte@5.7.1": "5.7.1_acorn@8.14.0"
   },
   "jsr": {
-    "@luca/esbuild-deno-loader@0.10.3": {
-      "integrity": "32fc93f7e7f78060234fd5929a740668aab1c742b808c6048b57f9aaea514921",
+    "@luca/esbuild-deno-loader@0.11.0": {
+      "integrity": "c05a989aa7c4ee6992a27be5f15cfc5be12834cab7ff84cabb47313737c51a2c",
       "dependencies": [
-        "jsr:@std/encoding@0.213",
-        "jsr:@std/jsonc",
-        "jsr:@std/path@0.213"
+        "jsr:@std/bytes",
+        "jsr:@std/encoding",
+        "jsr:@std/path@^1.0.6"
       ]
     },
-    "@std/assert@0.213.1": {
-      "integrity": "24c28178b30c8e0782c18e8e94ea72b16282207569cdd10ffb9d1d26f2edebfe"
+    "@std/async@1.0.9": {
+      "integrity": "c6472fd0623b3f3daae023cdf7ca5535e1b721dfbf376562c0c12b3fb4867f91"
+    },
+    "@std/bytes@1.0.4": {
+      "integrity": "11a0debe522707c95c7b7ef89b478c13fb1583a7cfb9a85674cd2cc2e3a28abc"
     },
     "@std/cli@1.0.7": {
       "integrity": "98359df9df586a69015ba570305183b0cb9e7d53c05ea2016ef9a3e77e82c7cd"
-    },
-    "@std/encoding@0.213.1": {
-      "integrity": "fcbb6928713dde941a18ca5db88ca1544d0755ec8fb20fe61e2dc8144b390c62"
     },
     "@std/encoding@1.0.5": {
       "integrity": "ecf363d4fc25bd85bd915ff6733a7e79b67e0e7806334af15f4645c569fefc04"
@@ -57,8 +55,8 @@
     "@std/http@1.0.11": {
       "integrity": "f1928e69e7dcf1664e22d153934cb866bf31e1bbe4bc59f8ac1b4d0e98cb7558",
       "dependencies": [
-        "jsr:@std/cli@^1.0.6",
-        "jsr:@std/encoding@^1.0.5",
+        "jsr:@std/cli",
+        "jsr:@std/encoding",
         "jsr:@std/fmt",
         "jsr:@std/html",
         "jsr:@std/media-types",
@@ -67,23 +65,11 @@
         "jsr:@std/streams"
       ]
     },
-    "@std/jsonc@0.213.1": {
-      "integrity": "5578f21aa583b7eb7317eed077ffcde47b294f1056bdbb9aacec407758637bfe",
-      "dependencies": [
-        "jsr:@std/assert"
-      ]
-    },
     "@std/media-types@1.1.0": {
       "integrity": "c9d093f0c05c3512932b330e3cc1fe1d627b301db33a4c2c2185c02471d6eaa4"
     },
     "@std/net@1.0.4": {
       "integrity": "2f403b455ebbccf83d8a027d29c5a9e3a2452fea39bb2da7f2c04af09c8bc852"
-    },
-    "@std/path@0.213.1": {
-      "integrity": "f187bf278a172752e02fcbacf6bd78a335ed320d080a7ed3a5a59c3e88abc673",
-      "dependencies": [
-        "jsr:@std/assert"
-      ]
     },
     "@std/path@1.0.8": {
       "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"
@@ -271,8 +257,8 @@
     "prettier@3.4.1": {
       "integrity": "sha512-G+YdqtITVZmOJje6QkXQWzl3fSfMxFwm1tjTyo9exhkmWSqC4Yhd1+lug++IlR2mvRVAxEDDWYkQdeSztajqgg=="
     },
-    "svelte@5.4.0_acorn@8.14.0": {
-      "integrity": "sha512-2I/mjD8cXDpKfdfUK+T6yo/OzugMXIm8lhyJUFM5F/gICMYnkl3C/+4cOSpia8TqpDsi6Qfm5+fdmBNMNmaf2g==",
+    "svelte@5.7.1_acorn@8.14.0": {
+      "integrity": "sha512-kUtiiNcN7ssi5X8OQW8IILoI53RUudjn8TD1910i8cg5c5IRZ4IuaDO1vFl+kZcvv1geYBxlFpi/mj09m/CCBg==",
       "dependencies": [
         "@ampproject/remapping",
         "@jridgewell/sourcemap-codec",
@@ -295,15 +281,15 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@luca/esbuild-deno-loader@~0.10.3",
+      "jsr:@luca/esbuild-deno-loader@0.11",
       "jsr:@std/async@^1.0.9",
-      "jsr:@std/cli@^1.0.7",
+      "jsr:@std/cli@^1.0.6",
       "jsr:@std/fs@^1.0.6",
       "jsr:@std/http@^1.0.11",
-      "jsr:@std/path@^1.0.8",
+      "jsr:@std/path@^1.0.6",
       "npm:esbuild@0.24",
       "npm:prettier@^3.0.2",
-      "npm:svelte@5.4.0"
+      "npm:svelte@5.7.1"
     ]
   }
 }

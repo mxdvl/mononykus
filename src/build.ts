@@ -28,6 +28,9 @@ const flags = parseArgs(Deno.args, {
 	},
 });
 
+// Used by npm:esm-env
+Deno.env.set("NODE_ENV", flags.watch ? "development" : "production");
+
 const options = {
 	site_dir: slashify(flags.site_dir),
 	out_dir: slashify(flags.out_dir),

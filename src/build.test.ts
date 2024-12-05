@@ -45,7 +45,7 @@ Deno.test({
 		console.log(watcher);
 
 		assert(html.startsWith(
-			"<!doctype html>",
+			"<!DOCTYPE html>",
 		));
 		assert(html.includes(
 			"<title>Mononykus – Deno + Svelte</title>",

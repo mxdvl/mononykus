@@ -15,6 +15,7 @@
     "jsr:@std/fs@~0.229.3": "0.229.3",
     "jsr:@std/http@~0.224.5": "0.224.5",
     "jsr:@std/internal@1": "1.0.5",
+    "jsr:@std/json@~0.213.1": "0.213.1",
     "jsr:@std/jsonc@0.213": "0.213.1",
     "jsr:@std/media-types@^1.0.0-rc.1": "1.0.3",
     "jsr:@std/net@~0.224.3": "0.224.5",
@@ -99,10 +100,14 @@
     "@std/internal@1.0.5": {
       "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
     },
+    "@std/json@0.213.1": {
+      "integrity": "f572b1de605d07c4a5602445dac54bfc51b1fb87a3710a17aed2608bfca54e68"
+    },
     "@std/jsonc@0.213.1": {
       "integrity": "5578f21aa583b7eb7317eed077ffcde47b294f1056bdbb9aacec407758637bfe",
       "dependencies": [
-        "jsr:@std/assert@~0.213.1"
+        "jsr:@std/assert@~0.213.1",
+        "jsr:@std/json"
       ]
     },
     "@std/media-types@1.0.3": {

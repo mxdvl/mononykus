@@ -11,7 +11,6 @@ const FAILURE_FLAG = "<!--mononykus:failed-->";
 async function render(
 	{ text }: OutputFile,
 ): Promise<{ html: string; head: string }> {
-	// console.log("OUTPUT\n\n", text, "\n\n\n\n");
 	try {
 		const { default: Component } = await import(
 			"data:application/javascript," + encodeURIComponent(text)

@@ -1,8 +1,8 @@
 import { basename, dirname, normalize as normalise, resolve } from "@std/path";
 import type { Plugin } from "esbuild";
-import { compile, VERSION } from "svelte/compiler";
+import { compile, VERSION, type Warning } from "svelte/compiler";
 import type { Component } from "svelte";
-import { hydrate } from "svelte";
+import type {} from "esbuild";
 
 const filter = /\.svelte$/;
 const name = "mononykus/svelte";
@@ -43,7 +43,7 @@ const specifiers = (code: string) =>
 const convertMessage = (
 	path: string,
 	source: string,
-	{ message, start, end }: ReturnType<typeof compile>["warnings"][number],
+	{ message, start, end }: Warning,
 ) => {
 	if (!start || !end) {
 		return { text: message };
@@ -65,11 +65,10 @@ const convertMessage = (
 export const svelte_components = (
 	site_dir: string,
 	base_path: string,
+	generate: "client" | "server",
 ): Plugin => ({
 	name,
 	setup(build) {
-		const generate = build.initialOptions.write ? "client" : "server";
-
 		build.onResolve({ filter }, ({ path, kind, importer, resolveDir }) => {
 			if (generate === "client") {
 				if (
@@ -121,7 +120,7 @@ export const svelte_components = (
 				: await Deno.readTextFile(path);
 
 			try {
-				const { js, css, warnings } = compile(
+				const { js, warnings, metadata } = compile(
 					source,
 					{
 						generate,
@@ -146,6 +145,7 @@ export const svelte_components = (
 								);
 								console.log(target);
 								const props = JSON.parse(target.getAttribute("props") ?? "{}");
+								// @ts-expect-error -- it’s injected below
 								hydrate(Component, { target, props });
 								console.log(
 									`Done in %c${
@@ -160,29 +160,34 @@ export const svelte_components = (
 						}
 					};
 
-					return ({
-						contents: `${
-							specifiers(js.code)
-						};(${hydrator.toString()})("${name}", ${name}_island)`,
+					return {
+						contents: [
+							`import { hydrate } from 'npm:svelte@${VERSION}'`,
+							specifiers(js.code),
+							`(${hydrator.toString()})("${name}", ${name}_island)`,
+						].join(";\n"),
 						warnings: warnings.map(
 							(warning) => convertMessage(path, source, warning),
 						),
-					});
+					};
 				}
 
-				// fixme: add export for js
-				console.debug(css?.code);
-
-				return ({ contents: specifiers(js.code) });
-			} catch (error) {
 				return {
-					errors: [
-						convertMessage(path, source, {
-							message: String(error),
-							code: "???",
-						}),
-					],
+					contents: specifiers(js.code),
 				};
+			} catch (error) {
+				// technically a CompileError
+				{
+					return {
+						contents: "",
+						warnings: [
+							convertMessage(path, source, {
+								message: "[svelte] " + String(error),
+								code: "???",
+							}),
+						],
+					};
+				}
 			}
 		});
 	},

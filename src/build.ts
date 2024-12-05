@@ -8,7 +8,9 @@ import { svelte_components } from "./esbuild_plugins/svelte_components.ts";
 import { create_handler } from "./server.ts";
 import { write_islands } from "./esbuild_plugins/write_islands.ts";
 
-const slashify = (path: string) => normalize(path + "/");
+function slashify(path: string): string {
+	return normalize(path + "/");
+}
 
 type Options = {
 	base: string;
@@ -32,12 +34,12 @@ const flags = parseArgs(Deno.args, {
 // Used by npm:esm-env
 Deno.env.set("NODE_ENV", flags.watch ? "development" : "production");
 
-const options = {
+const options: Options = {
 	site_dir: slashify(flags.site_dir),
 	out_dir: slashify(flags.out_dir),
 	base: slashify(flags.base),
 	minify: !flags.watch || flags.minify,
-} as const satisfies Options;
+};
 
 // clean out old builds, if they exist
 const clean = async (out_dir: Options["out_dir"]) => {

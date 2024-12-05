@@ -120,7 +120,7 @@ export const svelte_components = (
 				: await Deno.readTextFile(path);
 
 			try {
-				const { js, warnings, metadata } = compile(
+				const { js, warnings } = compile(
 					source,
 					{
 						generate,

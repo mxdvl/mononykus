@@ -95,7 +95,7 @@ export const svelte_components = (
 					source,
 					{
 						generate,
-						css: generate === "server" ? "injected" : "external",
+						css: "injected",
 						cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
 						filename: basename(path),
 					},

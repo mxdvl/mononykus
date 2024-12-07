@@ -19,8 +19,6 @@ export const svelte_modules = (generate: "client" | "server"): Plugin => ({
 					filename: basename(path),
 				});
 
-				console.log(js.code);
-
 				return {
 					contents: specifiers(js.code),
 					warnings: warnings.map((warning) =>

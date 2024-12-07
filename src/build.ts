@@ -32,9 +32,6 @@ const flags = parseArgs(Deno.args, {
 	},
 });
 
-// Used by npm:esm-env
-Deno.env.set("NODE_ENV", flags.watch ? "development" : "production");
-
 const options: Options = {
 	site_dir: slashify(flags.site_dir),
 	out_dir: slashify(flags.out_dir),
@@ -91,6 +88,7 @@ export const rebuild = async ({
 		format: "esm",
 		minify,
 		bundle: true,
+		conditions: [flags.watch ? "development" : "production"],
 	} as const satisfies Partial<esbuild.BuildOptions>;
 
 	const routesESBuildConfig: esbuild.BuildOptions = {

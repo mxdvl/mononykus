@@ -1,17 +1,17 @@
 const key = "claw:count";
 
-let count = $state(1);
-
-export const claws = {
-	count,
+export const claws = $state({
+	count: 1,
 	scratch() {
-		count++;
+		console.log("scratchin");
+		claws.count++;
 	},
 	read() {
 		try {
+			console.log("reading");
 			const saved = parseInt(localStorage.getItem(key) ?? "NaN", 10);
 			if (!isNaN(saved)) {
-				count = saved;
+				claws.count = saved;
 			}
 		} catch {
 			// do nothing
@@ -19,9 +19,9 @@ export const claws = {
 	},
 	write() {
 		try {
-			localStorage.setItem(key, String(count));
+			localStorage.setItem(key, String(claws.count));
 		} catch {
 			// do nothing
 		}
 	},
-};
+});

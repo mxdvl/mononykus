@@ -1,7 +1,5 @@
 <script>
-  import Logo from "./Logo.svelte";
-
-  const items = ["One", "Two", "Three"];
+    import Logo from "./Logo.island.svelte";
 </script>
 
 <header>

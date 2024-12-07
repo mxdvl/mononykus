@@ -7,6 +7,7 @@ import { build_routes } from "./esbuild_plugins/build_routes.ts";
 import { svelte_components } from "./esbuild_plugins/svelte_components.ts";
 import { create_handler } from "./server.ts";
 import { write_islands } from "./esbuild_plugins/write_islands.ts";
+import { svelte_modules } from "./esbuild_plugins/svelte_modules.ts";
 
 function slashify(path: string): string {
 	return normalize(path + "/");
@@ -96,6 +97,7 @@ export const rebuild = async ({
 		entryPoints: await get_svelte_files({ site_dir, dir: "routes/" }),
 		write: false,
 		plugins: [
+			svelte_modules("server"),
 			svelte_components(site_dir, base, "server"),
 			...denoPlugins(),
 			build_routes,
@@ -108,6 +110,7 @@ export const rebuild = async ({
 		entryPoints: await get_svelte_files({ site_dir, dir: "components/" }),
 		write: false,
 		plugins: [
+			svelte_modules("client"),
 			svelte_components(site_dir, base, "client"),
 			...denoPlugins(),
 			write_islands,

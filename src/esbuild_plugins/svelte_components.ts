@@ -1,11 +1,11 @@
 import { basename, dirname, normalize as normalise, resolve } from "@std/path";
 import type { Plugin } from "esbuild";
-import { compile, VERSION, type Warning } from "svelte/compiler";
+import { compile, VERSION } from "svelte/compiler";
 import type { Component } from "svelte";
-import type {} from "esbuild";
+import { convertMessage, specifiers } from "./svelte.ts";
 
 const filter = /\.svelte$/;
-const name = "mononykus/svelte";
+const name = "mononykus/svelte:component";
 
 /** force wrapping the actual component in a synthetic one */
 const ssr_island = "?ssr_island";
@@ -32,35 +32,6 @@ const OneClaw = (
 		one-claw { display: contents }
 	</style>
 `;
-
-const SVELTE_IMPORTS = /(from|import) ['"](?:svelte)(\/?[\w\/-]*)['"]/g;
-
-/** Convert `svelte/*` imports to `npm:svelte@x.y.z/*` */
-const specifiers = (code: string) =>
-	code.replaceAll(SVELTE_IMPORTS, `$1 'npm:svelte@${VERSION}$2'`);
-
-/** From https://esbuild.github.io/plugins/#svelte-plugin */
-const convertMessage = (
-	path: string,
-	source: string,
-	{ message, start, end }: Warning,
-) => {
-	if (!start || !end) {
-		return { text: message };
-	}
-	const lineText = source.split(/\r\n|\r|\n/g)[start.line - 1];
-	const lineEnd = start.line === end.line ? end.column : lineText?.length ?? 0;
-	return {
-		text: message,
-		location: {
-			file: path,
-			line: start.line,
-			column: start.column,
-			length: lineEnd - start.column,
-			lineText,
-		},
-	};
-};
 
 export const svelte_components = (
 	site_dir: string,
@@ -192,5 +163,3 @@ export const svelte_components = (
 		});
 	},
 });
-
-export { VERSION };

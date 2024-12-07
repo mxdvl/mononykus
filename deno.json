@@ -4,8 +4,8 @@
 	"license": "MIT",
 	"exports": "./src/build.ts",
 	"tasks": {
-		"build": "NODE_ENV=production deno run -A src/build.ts --site_dir src/_site",
-		"dev": "NODE_ENV=development deno run -A src/build.ts --site_dir src/_site --watch --base=mononykus"
+		"build": "deno run -A src/build.ts --site_dir src/_site",
+		"dev": "deno run -A src/build.ts --site_dir src/_site --watch --base=mononykus"
 	},
 	"compilerOptions": {
 		"strict": true,

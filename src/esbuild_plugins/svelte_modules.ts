@@ -10,12 +10,6 @@ const name = "mononykus/svelte:module";
 export const svelte_modules = (generate: "client" | "server"): Plugin => ({
 	name,
 	setup(build) {
-		// build.onResolve({ filter }, ({ path, kind, importer, resolveDir }) => {
-		// 	return {
-		// 		path: resolve(resolveDir, path),
-		// 	};
-		// });
-
 		build.onLoad({ filter }, async ({ path }) => {
 			const source = await Deno.readTextFile(path);
 

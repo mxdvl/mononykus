@@ -9,18 +9,14 @@ on:
 jobs:
   health:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
 
-      - uses: denoland/setup-deno@v1
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v1
         with:
           deno-version: v2.1
-
-      - name: Cache Deno dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.DENO_DIR }}
-          key: ${{ hashFiles('deno.lock') }}
 
       - name: Format
         run: deno fmt --check

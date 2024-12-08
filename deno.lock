@@ -2,6 +2,8 @@
   "version": "4",
   "specifiers": {
     "jsr:@luca/esbuild-deno-loader@0.11": "0.11.0",
+    "jsr:@std/assert@*": "1.0.8",
+    "jsr:@std/async@*": "1.0.9",
     "jsr:@std/async@^1.0.9": "1.0.9",
     "jsr:@std/bytes@^1.0.2": "1.0.4",
     "jsr:@std/cli@^1.0.6": "1.0.7",
@@ -10,6 +12,7 @@
     "jsr:@std/fs@^1.0.6": "1.0.6",
     "jsr:@std/html@^1.0.3": "1.0.3",
     "jsr:@std/http@^1.0.11": "1.0.11",
+    "jsr:@std/internal@^1.0.5": "1.0.5",
     "jsr:@std/media-types@^1.1.0": "1.1.0",
     "jsr:@std/net@^1.0.4": "1.0.4",
     "jsr:@std/path@^1.0.6": "1.0.8",
@@ -26,6 +29,12 @@
         "jsr:@std/bytes",
         "jsr:@std/encoding",
         "jsr:@std/path@^1.0.6"
+      ]
+    },
+    "@std/assert@1.0.8": {
+      "integrity": "ebe0bd7eb488ee39686f77003992f389a06c3da1bbd8022184804852b2fa641b",
+      "dependencies": [
+        "jsr:@std/internal"
       ]
     },
     "@std/async@1.0.9": {
@@ -64,6 +73,9 @@
         "jsr:@std/path@^1.0.8",
         "jsr:@std/streams"
       ]
+    },
+    "@std/internal@1.0.5": {
+      "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
     },
     "@std/media-types@1.1.0": {
       "integrity": "c9d093f0c05c3512932b330e3cc1fe1d627b301db33a4c2c2185c02471d6eaa4"

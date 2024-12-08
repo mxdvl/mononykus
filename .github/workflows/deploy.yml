@@ -17,9 +17,6 @@ permissions:
   id-token: write # Needed for authentication
   pages: write # Needed for Github Pages
 
-env:
-  DENO_DIR: /var/cache/deno
-
 jobs:
   deno:
     name: Deploy to Deno Deploy

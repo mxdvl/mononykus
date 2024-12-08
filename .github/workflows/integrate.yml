@@ -6,9 +6,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-env:
-  DENO_DIR: /var/cache/deno
-
 jobs:
   health:
     runs-on: ubuntu-latest

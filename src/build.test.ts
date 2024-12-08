@@ -3,8 +3,8 @@ import { delay } from "jsr:@std/async";
 
 Deno.test({
 	name: "tasks",
-	async fn(task) {
-		await task.step({
+	async fn(test) {
+		await test.step({
 			name: "build",
 			async fn() {
 				const command = new Deno.Command("deno", {
@@ -16,7 +16,7 @@ Deno.test({
 			},
 		});
 
-		await task.step({
+		await test.step({
 			name: "dev",
 			async fn() {
 				const command = new Deno.Command("deno", {

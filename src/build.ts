@@ -165,7 +165,10 @@ export const watch = async (
 
 	await _rebuild();
 
-	Deno.serve({ port: 4507, signal }, create_handler({ base, out_dir }));
+	const { finished } = Deno.serve(
+		{ port: 4507, signal },
+		create_handler({ base, out_dir }),
+	);
 
 	const watcher = Deno.watchFs(site_dir);
 	signal.addEventListener("abort", () => {
@@ -183,6 +186,7 @@ export const watch = async (
 
 	console.log("\nShutting down gracefully, light as a feather…");
 	await esbuild.stop();
+	await finished;
 };
 
 if (import.meta.main) {

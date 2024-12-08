@@ -58,12 +58,6 @@ jobs:
         with:
           deno-version: v2.1
 
-      - name: Cache Deno dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.DENO_DIR }}
-          key: ${{ hashFiles('deno.lock') }}
-
       - name: Build svelte for GH
         run: deno task build --base=mononykus
 

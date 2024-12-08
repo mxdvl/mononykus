@@ -6,10 +6,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-# Set DENO_DIR to an absolute or relative path on the runner.
-env:
-  DENO_DIR: cache/deno
-
 jobs:
   health:
     runs-on: ubuntu-latest
@@ -21,12 +17,6 @@ jobs:
         uses: denoland/setup-deno@v1
         with:
           deno-version: v2.1
-
-      - name: Cache Deno dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.DENO_DIR }}
-          key: ${{ hashFiles('deno.lock') }}
 
       - name: Format
         run: deno fmt --check

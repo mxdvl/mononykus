@@ -17,9 +17,6 @@ permissions:
   id-token: write # Needed for authentication
   pages: write # Needed for Github Pages
 
-env:
-  DENO_DIR: cache/deno
-
 jobs:
   deno:
     name: Deploy to Deno Deploy
@@ -33,12 +30,6 @@ jobs:
         uses: denoland/setup-deno@v1
         with:
           deno-version: v2.1
-
-      - name: Cache Deno dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.DENO_DIR }}
-          key: ${{ hashFiles('deno.lock') }}
 
       - name: Build svelte
         run: deno task build

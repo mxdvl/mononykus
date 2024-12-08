@@ -32,7 +32,7 @@ jobs:
       - name: Set up Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.44
+          deno-version: v2.1
 
       - name: Cache Deno dependencies
         uses: actions/cache@v4
@@ -65,7 +65,7 @@ jobs:
       - name: Set up Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.44
+          deno-version: v2.1
 
       - name: Cache Deno dependencies
         uses: actions/cache@v4

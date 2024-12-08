@@ -1,12 +1,11 @@
 import { format } from "prettier";
 
 interface TemplateOptions {
-	css: string;
 	head: string;
 	html: string;
 }
 
-const template = ({ css, head, html }: TemplateOptions) =>
+const template = ({ head, html }: TemplateOptions) =>
 	`<!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -14,7 +13,6 @@ const template = ({ css, head, html }: TemplateOptions) =>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		${head}
-		<style>${css}</style>
 	</head>
 	<body>
 		${html}
@@ -22,16 +20,11 @@ const template = ({ css, head, html }: TemplateOptions) =>
 </html>
 `;
 
-export const get_route_html = ({ html, css, head }: {
+export const get_route_html = ({ html, head }: {
 	html: string;
-	css: string;
 	head: string;
 }): Promise<string> => {
-	const page = template({
-		css,
-		head,
-		html,
-	});
+	const page = template({ head, html });
 
 	try {
 		return format(

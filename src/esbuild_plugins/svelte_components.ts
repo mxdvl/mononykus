@@ -1,14 +1,16 @@
 import { basename, dirname, normalize as normalise, resolve } from "@std/path";
 import type { Plugin } from "esbuild";
 import { compile, VERSION } from "svelte/compiler";
-import type { ComponentType } from "svelte";
+import type { Component } from "svelte";
+import { convertMessage, specifiers } from "./svelte.ts";
 
 const filter = /\.svelte$/;
-const name = "mononykus/svelte";
+const name = "mononykus/svelte:component";
 
 /** force wrapping the actual component in a synthetic one */
 const ssr_island = "?ssr_island";
 
+/** Wrapper component for islands to be hydrated, which serialises props. */
 const OneClaw = (
 	{ path, name, module_src }: {
 		path: string;
@@ -31,21 +33,15 @@ const OneClaw = (
 	</style>
 `;
 
-const SVELTE_IMPORTS = /(from|import) ['"](?:svelte)(\/?[\w\/-]*)['"]/g;
-
-const specifiers = (code: string) =>
-	code.replaceAll(SVELTE_IMPORTS, `$1 'npm:svelte@${VERSION}$2'`);
-
 export const svelte_components = (
 	site_dir: string,
 	base_path: string,
+	generate: "client" | "server",
 ): Plugin => ({
 	name,
 	setup(build) {
-		const generate = build.initialOptions.write ? "dom" : "ssr";
-
 		build.onResolve({ filter }, ({ path, kind, importer, resolveDir }) => {
-			if (generate === "dom") {
+			if (generate === "client") {
 				if (
 					kind === "import-statement" &&
 					// matches our `components/**/*.island.svelte`,
@@ -53,7 +49,7 @@ export const svelte_components = (
 					path.endsWith(".island.svelte")
 				) {
 					return {
-						path: path.replace(/\.svelte$/, ".js"),
+						path: path.replace(filter, ".js"),
 						external: true,
 					};
 				} else {
@@ -94,53 +90,76 @@ export const svelte_components = (
 				? OneClaw({ path, name, module_src })
 				: await Deno.readTextFile(path);
 
-			const { js: { code } } = compile(source, {
-				generate,
-				css: "external",
-				cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
-				hydratable: generate === "dom",
-				enableSourcemap: false,
-				filename: basename(path),
-			});
+			try {
+				const { js, warnings } = compile(
+					source,
+					{
+						generate,
+						css: "injected",
+						cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
+						filename: basename(path),
+					},
+				);
 
-			if (generate === "dom" && path.endsWith(".island.svelte")) {
-				const hydrator = (name: string, Component: ComponentType) => {
-					try {
-						document.querySelectorAll(
-							`one-claw[name='${name}']:not(one-claw one-claw)`,
-						).forEach((target) => {
-							const load = performance.now();
-							console.groupCollapsed(
-								`Hydrating %c${name}%c`,
-								"color: orange",
-								"color: reset",
-							);
-							console.log(target);
-							const props = JSON.parse(target.getAttribute("props") ?? "{}");
-							new Component({ target, props, hydrate: true });
-							console.log(
-								`Done in %c${
-									Math.round((performance.now() - load) * 1000) / 1000
-								}ms`,
-								"color: orange",
-							);
-							console.groupEnd();
-						});
-					} catch (_) {
-						console.error(_);
-					}
+				if (generate === "client" && path.endsWith(".island.svelte")) {
+					/** Dynamic function to be inlined in the output. */
+					const hydrator = (name: string, Component: Component) => {
+						try {
+							document.querySelectorAll(
+								`one-claw[name='${name}']:not(one-claw one-claw)`,
+							).forEach((target) => {
+								const load = performance.now();
+								console.groupCollapsed(
+									`Hydrating %c${name}%c`,
+									"color: orange",
+									"color: reset",
+								);
+								console.log(target);
+								const props = JSON.parse(target.getAttribute("props") ?? "{}");
+								// @ts-expect-error -- it’s injected below
+								hydrate(Component, { target, props });
+								console.log(
+									`Done in %c${
+										Math.round((performance.now() - load) * 1000) / 1000
+									}ms`,
+									"color: orange",
+								);
+								console.groupEnd();
+							});
+						} catch (error) {
+							console.error(error);
+						}
+					};
+
+					return {
+						contents: [
+							`import { hydrate } from 'npm:svelte@${VERSION}'`,
+							specifiers(js.code),
+							`(${hydrator.toString()})("${name}", ${name}_island)`,
+						].join(";\n"),
+						warnings: warnings.map(
+							(warning) => convertMessage(path, source, warning),
+						),
+					};
+				}
+
+				return {
+					contents: specifiers(js.code),
 				};
-
-				return ({
-					contents: `${
-						specifiers(code)
-					};(${hydrator.toString()})("${name}", ${name}_island)`,
-				});
+			} catch (error) {
+				// technically a CompileError
+				{
+					return {
+						contents: "",
+						warnings: [
+							convertMessage(path, source, {
+								message: "[svelte] " + String(error),
+								code: "???",
+							}),
+						],
+					};
+				}
 			}
-
-			return ({ contents: specifiers(code) });
 		});
 	},
 });
-
-export { VERSION };

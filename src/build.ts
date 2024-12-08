@@ -6,8 +6,12 @@ import * as esbuild from "esbuild";
 import { build_routes } from "./esbuild_plugins/build_routes.ts";
 import { svelte_components } from "./esbuild_plugins/svelte_components.ts";
 import { create_handler } from "./server.ts";
+import { write_islands } from "./esbuild_plugins/write_islands.ts";
+import { svelte_modules } from "./esbuild_plugins/svelte_modules.ts";
 
-const slashify = (path: string) => normalize(path + "/");
+function slashify(path: string): string {
+	return normalize(path + "/");
+}
 
 type Options = {
 	base: string;
@@ -78,19 +82,21 @@ export const rebuild = async ({
 	out_dir,
 	site_dir,
 	minify,
-}: Options): Promise<void> => {
+} = options): Promise<void> => {
 	const baseESBuildConfig = {
 		logLevel: "info",
 		format: "esm",
 		minify,
 		bundle: true,
+		conditions: [flags.watch ? "development" : "production"],
 	} as const satisfies Partial<esbuild.BuildOptions>;
 
 	const routesESBuildConfig: esbuild.BuildOptions = {
 		entryPoints: await get_svelte_files({ site_dir, dir: "routes/" }),
 		write: false,
 		plugins: [
-			svelte_components(site_dir, base),
+			svelte_modules("server"),
+			svelte_components(site_dir, base, "server"),
 			...denoPlugins(),
 			build_routes,
 		],
@@ -100,21 +106,25 @@ export const rebuild = async ({
 
 	const islandsESBuildConfig: esbuild.BuildOptions = {
 		entryPoints: await get_svelte_files({ site_dir, dir: "components/" }),
-		write: true,
+		write: false,
 		plugins: [
-			svelte_components(site_dir, base),
+			svelte_modules("client"),
+			svelte_components(site_dir, base, "client"),
 			...denoPlugins(),
+			write_islands,
 		],
 		outdir: out_dir + "components/",
-		splitting: true,
+		splitting: false,
 		...baseESBuildConfig,
 	};
 
-	await Promise.all([
+	const results = await Promise.allSettled([
 		esbuild.build(routesESBuildConfig),
 		esbuild.build(islandsESBuildConfig),
 		copy_assets({ site_dir, out_dir }),
 	]);
+	const issues = results.filter(({ status }) => status === "rejected").length;
+	if (issues > 0) console.warn(`Encoutered ${issues} issues`);
 };
 
 export const build = async (

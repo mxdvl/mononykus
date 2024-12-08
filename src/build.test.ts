@@ -21,22 +21,24 @@ Deno.test({
 			async fn() {
 				const command = new Deno.Command("deno", {
 					args: ["task", "dev"],
+					stdout: "null",
+					stderr: "null",
 				});
 
 				const process = command.spawn();
 
-				let port_is_open = false;
-				while (!port_is_open) {
+				/**
+				 * Represents a failing promise while we get a real one
+				 * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/408
+				 */
+				const pending = new Response(null, { status: 408 });
+
+				let response = pending;
+				while (!response.ok) {
+					response = await fetch("http://localhost:4507/mononykus/")
+						.catch(() => pending);
 					await delay(12);
-					const response = await fetch(
-						"http://localhost:4507/mononykus/",
-					).catch(() => ({ ok: false, body: { cancel: () => undefined } }));
-
-					await response.body?.cancel();
-					port_is_open = response.ok;
 				}
-
-				const response = await fetch("http://localhost:4507/mononykus/");
 
 				const html = await response.text();
 

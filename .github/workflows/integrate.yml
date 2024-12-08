@@ -6,6 +6,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Set DENO_DIR to an absolute or relative path on the runner.
+env:
+  DENO_DIR: cache/deno
+
 jobs:
   health:
     runs-on: ubuntu-latest

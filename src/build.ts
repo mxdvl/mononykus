@@ -8,6 +8,7 @@ import { svelte_components } from "./esbuild_plugins/svelte_components.ts";
 import { create_handler } from "./server.ts";
 import { write_islands } from "./esbuild_plugins/write_islands.ts";
 import { svelte_modules } from "./esbuild_plugins/svelte_modules.ts";
+import { VERSION } from "svelte/compiler";
 
 function slashify(path: string): string {
 	return normalize(path + "/");
@@ -89,6 +90,9 @@ export const rebuild = async ({
 		minify,
 		bundle: true,
 		conditions: [flags.watch ? "development" : "production"],
+		logOverride: {
+			"suspicious-nullish-coalescing": "verbose",
+		},
 	} as const satisfies Partial<esbuild.BuildOptions>;
 
 	const routesESBuildConfig: esbuild.BuildOptions = {
@@ -138,6 +142,8 @@ export const build = async (
 	const base = slashify(_base);
 	const out_dir = slashify(_out_dir);
 	const site_dir = slashify(_site_dir);
+
+	console.info(`\nMononykus: building with Svelte v${VERSION}\n\n`);
 
 	await clean(out_dir);
 

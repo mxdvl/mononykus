@@ -91,6 +91,8 @@ export const rebuild = async ({
 		bundle: true,
 		conditions: [flags.watch ? "development" : "production"],
 		logOverride: {
+			// Svelte does this a lot for its templates
+			// e.g. `$.get(value) ?? ""`
 			"suspicious-nullish-coalescing": "verbose",
 		},
 	} as const satisfies Partial<esbuild.BuildOptions>;

@@ -1,5 +1,39 @@
 {
 	"languages": {
+		"JSONC": {
+			"prettier": {
+				"allowed": false
+			},
+			"formatter": {
+				"external": {
+					"command": "deno",
+					"arguments": ["fmt", "-"]
+				}
+			},
+			"format_on_save": {
+				"external": {
+					"command": "deno",
+					"arguments": ["fmt", "-"]
+				}
+			}
+		},
+		"JSON": {
+			"prettier": {
+				"allowed": false
+			},
+			"formatter": {
+				"external": {
+					"command": "deno",
+					"arguments": ["fmt", ""]
+				}
+			},
+			"format_on_save": {
+				"external": {
+					"command": "deno",
+					"arguments": ["fmt", "-"]
+				}
+			}
+		},
 		"JavaScript": {
 			"language_servers": [
 				"deno",

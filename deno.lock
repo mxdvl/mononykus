@@ -20,7 +20,7 @@
     "jsr:@std/streams@^1.0.8": "1.0.8",
     "npm:esbuild@0.24": "0.24.0",
     "npm:prettier@^3.0.2": "3.4.1",
-    "npm:svelte@5.7.1": "5.7.1_acorn@8.14.0"
+    "npm:svelte@5.9.0": "5.9.0_acorn@8.14.0"
   },
   "jsr": {
     "@luca/esbuild-deno-loader@0.11.0": {
@@ -269,8 +269,8 @@
     "prettier@3.4.1": {
       "integrity": "sha512-G+YdqtITVZmOJje6QkXQWzl3fSfMxFwm1tjTyo9exhkmWSqC4Yhd1+lug++IlR2mvRVAxEDDWYkQdeSztajqgg=="
     },
-    "svelte@5.7.1_acorn@8.14.0": {
-      "integrity": "sha512-kUtiiNcN7ssi5X8OQW8IILoI53RUudjn8TD1910i8cg5c5IRZ4IuaDO1vFl+kZcvv1geYBxlFpi/mj09m/CCBg==",
+    "svelte@5.9.0_acorn@8.14.0": {
+      "integrity": "sha512-ZcC3BtjIDa4yfhAyAr94MxDQLD97zbpXmaUldFv2F5AkdZwYgQYB3BZVNRU5zEVaeeHoAns8ADiRMnre3QmpxQ==",
       "dependencies": [
         "@ampproject/remapping",
         "@jridgewell/sourcemap-codec",
@@ -301,7 +301,7 @@
       "jsr:@std/path@^1.0.6",
       "npm:esbuild@0.24",
       "npm:prettier@^3.0.2",
-      "npm:svelte@5.7.1"
+      "npm:svelte@5.9.0"
     ]
   }
 }

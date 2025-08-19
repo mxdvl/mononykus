@@ -27,7 +27,7 @@
 		"@std/fs": "jsr:@std/fs@^1",
 		"@std/http": "jsr:@std/http@^1",
 		"@std/path": "jsr:@std/path@^1",
-		"esbuild": "npm:esbuild@~0.25",
+		"esbuild": "npm:esbuild@~0.24",
 		"prettier": "npm:prettier@^3",
 		"svelte": "npm:svelte@^5"
 	}

@@ -1,6 +1,6 @@
 {
 	"name": "@mxdvl/mononykus",
-	"version": "0.8.6",
+	"version": "0.8.7",
 	"license": "MIT",
 	"exports": "./src/build.ts",
 	"tasks": {
@@ -21,14 +21,14 @@
 		"exclude": ["build", "src/_site/build", ".cache"]
 	},
 	"imports": {
-		"@luca/esbuild-deno-loader": "jsr:@luca/esbuild-deno-loader@^0.11.0",
-		"@std/async": "jsr:@std/async@^1.0.9",
-		"@std/cli": "jsr:@std/cli@^1.0.6",
-		"@std/fs": "jsr:@std/fs@^1.0.6",
-		"@std/http": "jsr:@std/http@^1.0.11",
-		"@std/path": "jsr:@std/path@^1.0.6",
-		"esbuild": "npm:esbuild@~0.24.0",
-		"prettier": "npm:prettier@^3.0.2",
-		"svelte": "npm:svelte@5.9.0"
+		"@luca/esbuild-deno-loader": "jsr:@luca/esbuild-deno-loader@~0.11",
+		"@std/async": "jsr:@std/async@^1",
+		"@std/cli": "jsr:@std/cli@^1",
+		"@std/fs": "jsr:@std/fs@^1",
+		"@std/http": "jsr:@std/http@^1",
+		"@std/path": "jsr:@std/path@^1",
+		"esbuild": "npm:esbuild@~0.25",
+		"prettier": "npm:prettier@^3",
+		"svelte": "npm:svelte@^5"
 	}
 }

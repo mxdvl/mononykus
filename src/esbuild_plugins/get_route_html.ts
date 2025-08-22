@@ -20,14 +20,13 @@ const template = ({ head, html }: TemplateOptions) =>
 </html>
 `;
 
-export const get_route_html = ({ html, head }: {
-	html: string;
-	head: string;
-}): Promise<string> => {
+export async function get_route_html(
+	{ html, head }: TemplateOptions,
+): Promise<string> {
 	const page = template({ head, html });
 
-	try {
-		return format(
+	const formatted = false
+		? await format(
 			page,
 			{
 				parser: "html",
@@ -35,9 +34,8 @@ export const get_route_html = ({ html, head }: {
 				htmlWhitespaceSensitivity: "css",
 				bracketSameLine: true,
 			},
-		);
-	} catch (_) {
-		console.warn("Could not format the html");
-		return Promise.resolve(page);
-	}
-};
+		).catch(() => page)
+		: page;
+
+	return formatted;
+}

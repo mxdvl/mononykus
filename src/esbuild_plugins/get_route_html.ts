@@ -22,10 +22,11 @@ const template = ({ head, html }: TemplateOptions) =>
 
 export async function get_route_html(
 	{ html, head }: TemplateOptions,
+	pretty = false,
 ): Promise<string> {
 	const page = template({ head, html });
 
-	const formatted = false
+	const formatted = pretty
 		? await format(
 			page,
 			{

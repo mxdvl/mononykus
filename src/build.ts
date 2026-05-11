@@ -99,6 +99,7 @@ export const rebuild = async ({
 
 	const routesESBuildConfig: esbuild.BuildOptions = {
 		entryPoints: await get_svelte_files({ site_dir, dir: "routes/" }),
+		platform: "node",
 		write: false,
 		plugins: [
 			svelte_modules("server"),
@@ -112,6 +113,7 @@ export const rebuild = async ({
 
 	const islandsESBuildConfig: esbuild.BuildOptions = {
 		entryPoints: await get_svelte_files({ site_dir, dir: "components/" }),
+		platform: "browser",
 		write: false,
 		plugins: [
 			svelte_modules("client"),

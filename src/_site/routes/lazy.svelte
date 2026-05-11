@@ -2,7 +2,7 @@
     import Header from "../components/Header.svelte";
     import Body from "../components/Body.svelte";
 
-    const result = await Promise.resolve("Something");
+    const promise = Promise.resolve("This is async");
 </script>
 
 <svelte:head>
@@ -14,8 +14,9 @@
     <main>
         <h1>Mononykus: supports <code>await</code> in Svelte</h1>
 
-        <p>{result}</p>
-        <!-- <p>{await Promise.resolve("This is async")}</p> -->
+        <p>This is sync…</p>
+
+        <p>…{await promise}</p>
     </main>
 </Body>
 

@@ -1,55 +1,31 @@
 {
 	"languages": {
 		"JSONC": {
-			"prettier": {
-				"allowed": false
-			},
-			"formatter": {
-				"external": {
-					"command": "deno",
-					"arguments": ["fmt", "-"]
-				}
-			},
-			"format_on_save": {
-				"external": {
-					"command": "deno",
-					"arguments": ["fmt", "-"]
-				}
-			}
+			"formatter": "language_server",
+			"language_servers": [
+				"deno",
+				"..."
+			]
 		},
 		"JSON": {
-			"prettier": {
-				"allowed": false
-			},
-			"formatter": {
-				"external": {
-					"command": "deno",
-					"arguments": ["fmt", ""]
-				}
-			},
-			"format_on_save": {
-				"external": {
-					"command": "deno",
-					"arguments": ["fmt", "-"]
-				}
-			}
+			"formatter": "language_server",
+			"language_servers": [
+				"deno",
+				"..."
+			]
 		},
 		"JavaScript": {
+			"formatter": "language_server",
 			"language_servers": [
 				"deno",
 				"!typescript-language-server",
 				"!vtsls",
 				"!eslint",
 				"..."
-			],
-			"format_on_save": {
-				"external": {
-					"command": "deno",
-					"arguments": ["fmt", "-"]
-				}
-			}
+			]
 		},
 		"TypeScript": {
+			"formatter": "language_server",
 			"language_servers": [
 				"deno",
 				"!ts",
@@ -57,13 +33,7 @@
 				"!vtsls",
 				"!eslint",
 				"..."
-			],
-			"format_on_save": {
-				"external": {
-					"command": "deno",
-					"arguments": ["fmt", "-"]
-				}
-			}
+			]
 		}
 	}
 }

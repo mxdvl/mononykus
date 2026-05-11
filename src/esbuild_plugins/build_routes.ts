@@ -7,6 +7,7 @@ import { render as renderSSR } from "svelte/server";
 import "svelte/internal/flags/async";
 
 const FAILURE_FLAG = "<!--mononykus:failed-->";
+const DEBUG_ASYNC_SSR = Deno.env.get("MONONYKUS_DEBUG_ASYNC_SSR") === "1";
 
 /** safely render Svelte components */
 async function render(
@@ -19,7 +20,15 @@ async function render(
 			default: Component;
 		};
 
-		const { body: html, head: raw_head } = await renderSSR(Component);
+		const render_result = renderSSR(Component);
+		if (DEBUG_ASYNC_SSR) {
+			console.log(
+				`[async-ssr] render result is thenable=${
+					typeof (render_result as PromiseLike<unknown>).then === "function"
+				}`,
+			);
+		}
+		const { body: html, head: raw_head } = await render_result;
 
 		// remove any duplicate module imports (in cases where a page uses an island more than once)
 		const modules = new Set();
@@ -33,6 +42,11 @@ async function render(
 				return module;
 			},
 		);
+		if (DEBUG_ASYNC_SSR) {
+			console.log(
+				`[async-ssr] output html=${html.length} head=${head.length}`,
+			);
+		}
 
 		return { html, head };
 	} catch (error) {
@@ -55,8 +69,18 @@ export const build_routes: Plugin = {
 			for (const route of routes) {
 				const dist_path = route.path.replace(".js", ".html");
 				await ensureDir(dirname(dist_path));
+				if (DEBUG_ASYNC_SSR) {
+					console.log(`[async-ssr] building route ${dist_path}`);
+				}
 
 				const template = await render(route);
+				if (DEBUG_ASYNC_SSR) {
+					console.log(
+						`[async-ssr] route ${dist_path} failed=${
+							template.html.startsWith(FAILURE_FLAG)
+						}`,
+					);
+				}
 
 				await Deno.writeTextFile(
 					dist_path,

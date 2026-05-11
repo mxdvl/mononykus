@@ -1,55 +1,57 @@
 {
+	"lsp": {
+		"json-language-server": {
+			"settings": {
+				"json": {
+					"schemas": [
+						{
+							"fileMatch": [
+								"deno.json",
+								"deno.jsonc"
+							],
+							"url": "https://raw.githubusercontent.com/denoland/deno/refs/heads/main/cli/schemas/config-file.v1.json"
+						}
+					]
+				}
+			}
+		},
+		"deno": {
+			"settings": {
+				"deno": {
+					"enable": true
+				}
+			}
+		}
+	},
 	"languages": {
 		"JSONC": {
-			"prettier": {
-				"allowed": false
-			},
-			"formatter": {
-				"external": {
-					"command": "deno",
-					"arguments": ["fmt", "-"]
-				}
-			},
-			"format_on_save": {
-				"external": {
-					"command": "deno",
-					"arguments": ["fmt", "-"]
-				}
-			}
+			"format_on_save": "off",
+			"formatter": "language_server",
+			"language_servers": [
+				"deno"
+			]
 		},
 		"JSON": {
-			"prettier": {
-				"allowed": false
-			},
-			"formatter": {
-				"external": {
-					"command": "deno",
-					"arguments": ["fmt", ""]
-				}
-			},
-			"format_on_save": {
-				"external": {
-					"command": "deno",
-					"arguments": ["fmt", "-"]
-				}
-			}
+			"format_on_save": "off",
+			"formatter": "language_server",
+			"language_servers": [
+				"deno"
+			]
 		},
 		"JavaScript": {
+			"format_on_save": "on",
+			"formatter": "language_server",
 			"language_servers": [
 				"deno",
 				"!typescript-language-server",
 				"!vtsls",
 				"!eslint",
 				"..."
-			],
-			"format_on_save": {
-				"external": {
-					"command": "deno",
-					"arguments": ["fmt", "-"]
-				}
-			}
+			]
 		},
 		"TypeScript": {
+			"format_on_save": "on",
+			"formatter": "language_server",
 			"language_servers": [
 				"deno",
 				"!ts",
@@ -57,13 +59,7 @@
 				"!vtsls",
 				"!eslint",
 				"..."
-			],
-			"format_on_save": {
-				"external": {
-					"command": "deno",
-					"arguments": ["fmt", "-"]
-				}
-			}
+			]
 		}
 	}
 }

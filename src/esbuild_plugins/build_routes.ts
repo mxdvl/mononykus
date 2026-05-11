@@ -20,8 +20,6 @@ async function render(
 
 		const { body: html, head: raw_head } = renderSSR(Component);
 
-		// const css = raw_css?.code ?? "";
-
 		// remove any duplicate module imports (in cases where a page uses an island more than once)
 		const modules = new Set();
 		const head = raw_head.replace(

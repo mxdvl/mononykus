@@ -1,20 +1,45 @@
 {
+	"lsp": {
+		"json-language-server": {
+			"settings": {
+				"json": {
+					"schemas": [
+						{
+							"fileMatch": [
+								"deno.json",
+								"deno.jsonc"
+							],
+							"url": "https://raw.githubusercontent.com/denoland/deno/refs/heads/main/cli/schemas/config-file.v1.json"
+						}
+					]
+				}
+			}
+		},
+		"deno": {
+			"settings": {
+				"deno": {
+					"enable": true
+				}
+			}
+		}
+	},
 	"languages": {
 		"JSONC": {
+			"format_on_save": "off",
 			"formatter": "language_server",
 			"language_servers": [
-				"deno",
-				"..."
+				"deno"
 			]
 		},
 		"JSON": {
+			"format_on_save": "off",
 			"formatter": "language_server",
 			"language_servers": [
-				"deno",
-				"..."
+				"deno"
 			]
 		},
 		"JavaScript": {
+			"format_on_save": "on",
 			"formatter": "language_server",
 			"language_servers": [
 				"deno",
@@ -25,6 +50,7 @@
 			]
 		},
 		"TypeScript": {
+			"format_on_save": "on",
 			"formatter": "language_server",
 			"language_servers": [
 				"deno",

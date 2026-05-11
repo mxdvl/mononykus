@@ -17,6 +17,7 @@ export const svelte_modules = (generate: "client" | "server"): Plugin => ({
 				const { js, warnings } = compileModule(source, {
 					generate,
 					filename: basename(path),
+					experimental: { async: true },
 				});
 
 				return {

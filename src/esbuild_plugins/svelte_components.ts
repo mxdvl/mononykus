@@ -98,6 +98,7 @@ export const svelte_components = (
 						css: "injected",
 						cssHash: ({ hash, css }) => `◖${hash(css)}◗`,
 						filename: basename(path),
+						experimental: { async: true },
 					},
 				);
 

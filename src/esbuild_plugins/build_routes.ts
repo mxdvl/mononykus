@@ -18,7 +18,7 @@ async function render(
 			default: Component;
 		};
 
-		const { body: html, head: raw_head } = renderSSR(Component);
+		const { body: html, head: raw_head } = await renderSSR(Component);
 
 		// const css = raw_css?.code ?? "";
 

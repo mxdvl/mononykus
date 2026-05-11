@@ -20,8 +20,6 @@ async function render(
 
 		const { body: html, head: raw_head } = await renderSSR(Component);
 
-		// const css = raw_css?.code ?? "";
-
 		// remove any duplicate module imports (in cases where a page uses an island more than once)
 		const modules = new Set();
 		const head = raw_head.replace(
@@ -52,8 +50,7 @@ export const build_routes: Plugin = {
 
 			const routes = result.outputFiles ?? [];
 
-			const failures = new Set();
-			for (const route of routes) {
+			const results = await Promise.all(routes.map(async (route) => {
 				const dist_path = route.path.replace(".js", ".html");
 				await ensureDir(dirname(dist_path));
 
@@ -64,9 +61,8 @@ export const build_routes: Plugin = {
 					await get_route_html(template),
 				);
 
-				if (!template.html.startsWith(FAILURE_FLAG)) continue;
-				failures.add(dist_path);
-			}
+				return template.html.startsWith(FAILURE_FLAG) ? dist_path : undefined;
+			}));
 
 			console.log(
 				`Built ${routes.length} routes in ${
@@ -74,7 +70,8 @@ export const build_routes: Plugin = {
 				}ms`,
 			);
 
-			if (failures.size > 0) {
+			const failures = results.filter((result) => !!result);
+			if (failures.length > 0) {
 				console.warn(
 					["–––", "Failed to build some routes:", ...failures].join("\n"),
 				);
